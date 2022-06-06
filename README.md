@@ -13,7 +13,7 @@ To install the mod, first download the original Litematica and MaLiLib from [her
 You will also need [Fabric API](https://www.curseforge.com/minecraft/mc-mods/fabric-api/).
 Finally, move the printer's .jar from [releases](https://github.com/aleksilassila/litematica-printing/releases/latest) to your mods folder.
 
-在原作基础上增加了破基岩，挖掘，排流体功能。
+此打印机为二改版.在原作基础上增加了破基岩，挖掘，排流体功能。
 具体使用细节：https://www.bilibili.com/video/BV1bW4y1C7zJ/
 
 ![Demo](printer_demo.gif)
