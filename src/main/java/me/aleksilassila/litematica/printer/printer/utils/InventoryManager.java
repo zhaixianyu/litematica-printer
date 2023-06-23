@@ -6,6 +6,7 @@ package me.aleksilassila.litematica.printer.printer.utils;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.Blocks;
 import net.minecraft.client.MinecraftClient;
+import net.minecraft.client.network.ClientPlayNetworkHandler;
 import net.minecraft.enchantment.EnchantmentHelper;
 import net.minecraft.enchantment.Enchantments;
 import net.minecraft.entity.effect.StatusEffectUtil;
@@ -15,10 +16,49 @@ import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.item.ItemConvertible;
 import net.minecraft.item.ItemStack;
 import net.minecraft.network.packet.c2s.play.UpdateSelectedSlotC2SPacket;
+import net.minecraft.screen.slot.SlotActionType;
 import net.minecraft.tag.FluidTags;
 
 public class InventoryManager {
+    public static void refresh()
+    {
+        MinecraftClient mc = MinecraftClient.getInstance();
+        ClientPlayNetworkHandler networkHandler = mc.getNetworkHandler();
+        if (networkHandler != null && mc.player != null)
+        {
+//            ItemStack uniqueItem = new ItemStack(Items.STONE);
+//            uniqueItem.getOrCreateTag().putDouble("force_resync", Double.NaN);  // Tags with NaN are not equal
+//			networkHandler.sendPacket(new ClickWindowC2SPacket(
+//					mc.player.container.syncId,
+//					//#if MC >= 11700
+//					//$$ mc.player.currentScreenHandler.getRevision(),
+//					//#endif
+//					-999, 2,
+//					SlotActionType.QUICK_CRAFT,
+//					uniqueItem,
+//
+//					//#if MC >= 11700
+//					//$$ new Int2ObjectOpenHashMap<>()
+//					//#else
+//					mc.player.container.getNextActionId(mc.player.inventory)
+//					//#endif
+//			));
+            mc.interactionManager.clickSlot(mc.player.currentScreenHandler.syncId, -999, 2, SlotActionType.QUICK_CRAFT, mc.player);
+
+//			InfoUtils.printActionbarMessage("tweakermore.impl.refreshInventory.refreshed");
+        }
+    }
+    static int i = 0;
     public static boolean switchToItem(ItemConvertible item) {
+
+//        Item tm;
+//        if (item instanceof Item) {
+//            tm = (Item) item;
+//        } else {
+//            tm = item.asItem();
+//        }
+//        Printer.getPrinter().switchToItems(MinecraftClient.getInstance().player,new Item[]{tm});
+
         MinecraftClient minecraftClient = MinecraftClient.getInstance();
         PlayerInventory playerInventory = minecraftClient.player.getInventory();
 
@@ -27,16 +67,18 @@ public class InventoryManager {
         if ("diamond_pickaxe".equals(item.toString())) {
             i = getEfficientTool(playerInventory);
         }
-
         if (i != -1) {
+
             if (PlayerInventory.isValidHotbarIndex(i)) {
                 playerInventory.selectedSlot = i;
             } else {
                 minecraftClient.interactionManager.pickFromInventory(i);
             }
             minecraftClient.getNetworkHandler().sendPacket(new UpdateSelectedSlotC2SPacket(playerInventory.selectedSlot));
+            refresh();
             return true;
         }
+
         return false;
     }
 
@@ -130,7 +172,7 @@ public class InventoryManager {
             return "bedrockminer.fail.missing.redstonetorch";
         }
 
-        if (InventoryManager.getInventoryItemCount(Blocks.SLIME_BLOCK)<1){
+        if (InventoryManager.getInventoryItemCount(Blocks.SLIME_BLOCK) < 1) {
             return "bedrockminer.fail.missing.slime";
         }
 

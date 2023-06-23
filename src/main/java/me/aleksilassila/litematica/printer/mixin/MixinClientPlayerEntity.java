@@ -1,10 +1,10 @@
 package me.aleksilassila.litematica.printer.mixin;
 
 import com.mojang.authlib.GameProfile;
-import fi.dy.masa.litematica.world.SchematicWorldHandler;
 import me.aleksilassila.litematica.printer.LitematicaMixinMod;
 import me.aleksilassila.litematica.printer.printer.Printer;
 import me.aleksilassila.litematica.printer.printer.UpdateChecker;
+import me.aleksilassila.litematica.printer.printer.zxy.ZxyUtils;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.network.AbstractClientPlayerEntity;
 import net.minecraft.client.network.ClientPlayerEntity;
@@ -17,6 +17,10 @@ import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
+import static me.aleksilassila.litematica.printer.printer.memory.MemoryUtils.handleItemsFromScreen;
+import static me.aleksilassila.litematica.printer.printer.zxy.OpenInventoryPacket.openIng;
+import static me.aleksilassila.litematica.printer.printer.zxy.ZxyUtils.*;
+
 @Mixin(ClientPlayerEntity.class)
 public class MixinClientPlayerEntity extends AbstractClientPlayerEntity {
 	boolean didCheckForUpdates = false;
@@ -27,7 +31,22 @@ public class MixinClientPlayerEntity extends AbstractClientPlayerEntity {
 
     @Shadow
 	protected MinecraftClient client;
+//	@Inject(at = @At("HEAD"), method = "collideWithEntity")
 
+
+
+	@Inject(at = @At("HEAD"), method = "closeScreen")
+	public void closeScreen(CallbackInfo ci) {
+		if((LitematicaMixinMod.PRINT_MODE.getBooleanValue() || LitematicaMixinMod.PRINT.getKeybind().isPressed() || adding) && !qw){
+			if(!client.player.currentScreenHandler.equals(client.player.playerScreenHandler)){
+				handleItemsFromScreen(client.player.currentScreenHandler);
+			}
+		}
+	}
+	@Inject(at = @At("TAIL"), method = "closeScreen")
+	public void close(CallbackInfo ci) {
+		openIng = false;
+	}
 	@Inject(at = @At("TAIL"), method = "tick")
 	public void tick(CallbackInfo ci) {
 //		if (!didCheckForUpdates) {
@@ -35,21 +54,22 @@ public class MixinClientPlayerEntity extends AbstractClientPlayerEntity {
 //
 //			checkForUpdates();
 //		}
-		
+
 		if (Printer.getPrinter() == null) {
 			Printer.init(client);
 			return;
 		}
+		ZxyUtils.addInv();
+		if(num==1 || num == 3)ZxyUtils.syncInv();
+		ZxyUtils.tick();
 
-		if (!(LitematicaMixinMod.PRINT_MODE.getBooleanValue() || LitematicaMixinMod.PRINT.getKeybind().isPressed()))
-			return;
+		if(!(LitematicaMixinMod.PRINT_MODE.getBooleanValue() || LitematicaMixinMod.PRINT.getKeybind().isPressed())) return;
 		if(Printer.up){
 			checkForUpdates();
 			Printer.up = false;
 		}
 		Printer.getPrinter().tick();
 	}
-
 	public void checkForUpdates() {
         new Thread(() -> {
             String version = UpdateChecker.version;

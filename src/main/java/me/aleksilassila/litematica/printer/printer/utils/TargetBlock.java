@@ -7,6 +7,8 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Direction;
 
 import java.util.ArrayList;
+
+import static me.aleksilassila.litematica.printer.printer.utils.BreakingFlowController.poslist;
 //import net.minecraft.world.World;
 
 public class TargetBlock {
@@ -19,6 +21,7 @@ public class TargetBlock {
     private int tickTimes;
     private boolean hasTried;
     private int stuckTicksCounter;
+    public ArrayList<BlockPos> temppos = new ArrayList<>();
 
     public TargetBlock(BlockPos pos, ClientWorld world) {
         this.hasTried = false;
@@ -31,7 +34,7 @@ public class TargetBlock {
         if (redstoneTorchBlockPos == null) {
             this.slimeBlockPos = CheckingEnvironment.findPossibleSlimeBlockPos(world, pos);
             if (slimeBlockPos != null) {
-                BlockPlacer.simpleBlockPlacement(slimeBlockPos, Blocks.SLIME_BLOCK);
+                BlockPlacer.simpleBlockPlacement(this,slimeBlockPos, Blocks.SLIME_BLOCK);
                 redstoneTorchBlockPos = slimeBlockPos.up();
             } else {
                 this.status = Status.FAILED;
@@ -42,13 +45,12 @@ public class TargetBlock {
     public Status tick() {
         this.tickTimes++;
         updateStatus();
-        System.out.println(this.status);
         switch (this.status) {
             case UNINITIALIZED:
                 InventoryManager.switchToItem(Blocks.PISTON);
                 BlockPlacer.pistonPlacement(this.pistonBlockPos, Direction.UP);
                 InventoryManager.switchToItem(Blocks.REDSTONE_TORCH);
-                BlockPlacer.simpleBlockPlacement(this.redstoneTorchBlockPos, Blocks.REDSTONE_TORCH);
+                BlockPlacer.simpleBlockPlacement(this,this.redstoneTorchBlockPos, Blocks.REDSTONE_TORCH);
                 break;
             case UNEXTENDED_WITH_POWER_SOURCE:
                 break;
@@ -60,30 +62,40 @@ public class TargetBlock {
                 }
                 //打掉活塞
                 BlockBreaker.breakBlock(this.world, this.pistonBlockPos);
+                for (int i = 1; i < 6; i++) {
+                    poslist.add(pistonBlockPos.up(i));
+                }
                 //放置朝下的活塞
                 BlockPlacer.pistonPlacement(this.pistonBlockPos, Direction.DOWN);
                 this.hasTried = true;
                 break;
             case RETRACTED:
-                BlockBreaker.breakBlock(world, pistonBlockPos);
-                BlockBreaker.breakBlock(world, pistonBlockPos.up());
+                poslist.add(pistonBlockPos);
+                poslist.add(pistonBlockPos.up());
+//                BlockBreaker.breakBlock(world, pistonBlockPos);
+//                BlockBreaker.breakBlock(world, pistonBlockPos.up());
                 if (this.slimeBlockPos != null) {
-                    BlockBreaker.breakBlock(world, slimeBlockPos);
+                    poslist.add(slimeBlockPos);
+//                    BlockBreaker.breakBlock(world, slimeBlockPos);
                 }
                 return Status.RETRACTED;
             case RETRACTING:
                 return Status.RETRACTING;
             case UNEXTENDED_WITHOUT_POWER_SOURCE:
                 InventoryManager.switchToItem(Blocks.REDSTONE_TORCH);
-                BlockPlacer.simpleBlockPlacement(this.redstoneTorchBlockPos, Blocks.REDSTONE_TORCH);
+                BlockPlacer.simpleBlockPlacement(this,this.redstoneTorchBlockPos, Blocks.REDSTONE_TORCH);
                 break;
             case FAILED:
-                BlockBreaker.breakBlock(world, pistonBlockPos);
-                BlockBreaker.breakBlock(world, pistonBlockPos.up());
+                poslist.add(pistonBlockPos);
+                poslist.add(pistonBlockPos.up());
+//                BlockBreaker.breakBlock(world, pistonBlockPos);
+//                BlockBreaker.breakBlock(world, pistonBlockPos.up());
                 return Status.FAILED;
             case STUCK:
-                BlockBreaker.breakBlock(world, pistonBlockPos);
-                BlockBreaker.breakBlock(world, pistonBlockPos.up());
+                poslist.add(pistonBlockPos);
+                poslist.add(pistonBlockPos.up());
+//                BlockBreaker.breakBlock(world, pistonBlockPos);
+//                BlockBreaker.breakBlock(world, pistonBlockPos.up());
                 break;
             case NEEDS_WAITING:
                 break;
@@ -107,6 +119,14 @@ public class TargetBlock {
         return blockPos;
     }
 
+    public BlockPos geths() {
+        return redstoneTorchBlockPos;
+    }
+    public BlockPos getnyk() {
+        return slimeBlockPos;
+    }
+
+
     public ClientWorld getWorld() {
         return world;
     }
@@ -124,7 +144,7 @@ public class TargetBlock {
         if (this.redstoneTorchBlockPos == null) {
             this.slimeBlockPos = CheckingEnvironment.findPossibleSlimeBlockPos(world, blockPos);
             if (slimeBlockPos != null) {
-                BlockPlacer.simpleBlockPlacement(slimeBlockPos, Blocks.SLIME_BLOCK);
+                BlockPlacer.simpleBlockPlacement(this,slimeBlockPos, Blocks.SLIME_BLOCK);
                 redstoneTorchBlockPos = slimeBlockPos.up();
             } else {
                 this.status = Status.FAILED;

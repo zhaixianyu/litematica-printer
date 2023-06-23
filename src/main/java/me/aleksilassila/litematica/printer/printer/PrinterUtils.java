@@ -32,16 +32,16 @@ public class PrinterUtils {
 		if (Implementation.getAbilities(playerEntity).creativeMode) return true;
 		else {
 			Inventory inv = Implementation.getInventory(playerEntity);
-
 			for (Item item : items) {
 				for (int i = 0; i < inv.size(); i++) {
-					if (inv.getStack(i).getItem() == item && inv.getStack(i).getCount() > 0)
-						return true;
+					if (inv.getStack(i).getItem() == item && inv.getStack(i).getCount() > 0) {
+                        return true;
+                    }
 				}
-			}
+                Printer.items2.add(item);
+            }
 		}
-
-		return false;
+        return false;
 	}
 
     protected static boolean isDoubleSlab(BlockState state) {

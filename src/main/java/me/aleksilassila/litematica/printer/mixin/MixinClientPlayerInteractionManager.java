@@ -1,8 +1,6 @@
 package me.aleksilassila.litematica.printer.mixin;
 
 import me.aleksilassila.litematica.printer.interfaces.IClientPlayerInteractionManager;
-import me.aleksilassila.litematica.printer.printer.PlacementGuide;
-import me.aleksilassila.litematica.printer.printer.Printer;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.network.ClientPlayerEntity;
 import net.minecraft.client.network.ClientPlayerInteractionManager;
@@ -34,6 +32,12 @@ public abstract class MixinClientPlayerInteractionManager implements IClientPlay
 		interactItem(client.player, client.world, Hand.MAIN_HAND);
 //		System.out.println("Printer interactBlock: pos: (" + pos.toShortString() + "), side: " + side.getName() + ", vector: " + hitVec.toString());
 	}
+	@Inject(at = @At("HEAD"), method = "interactBlock")
+	public void interactBlock(ClientPlayerEntity player, ClientWorld world, Hand hand, BlockHitResult hitResult, CallbackInfoReturnable<ActionResult> cir){
+
+	}
+
+
 
 	@Shadow
 	public abstract ActionResult interactBlock(
@@ -43,7 +47,6 @@ public abstract class MixinClientPlayerInteractionManager implements IClientPlay
 	@Shadow
 	public abstract ActionResult interactItem(PlayerEntity playerEntity_1,
                                               World world_1, Hand hand_1);
-
 //	@Inject(at = @At("HEAD"), method = "interactBlock")
 //	public void interactBlock(ClientPlayerEntity player, ClientWorld world, Hand hand, BlockHitResult hitResult, CallbackInfoReturnable<ActionResult> cir) {
 //		System.out.println("Player interactBlock: pos: (" + hitResult.getBlockPos().toShortString() + "), side: " + hitResult.getSide().getName() + ", vector: " + hitResult.getPos().toString());
