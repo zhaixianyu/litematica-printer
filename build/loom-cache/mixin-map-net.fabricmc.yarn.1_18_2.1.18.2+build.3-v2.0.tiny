@@ -3,6 +3,9 @@ FIELD	me/aleksilassila/litematica/printer/mixin/ClientPlayNetworkHandlerMixin	Ln
 FIELD	me/aleksilassila/litematica/printer/mixin/ClientPlayNetworkHandlerMixin	Lnet/minecraft/client/MinecraftClient;	client	field_3690
 FIELD	me/aleksilassila/litematica/printer/mixin/MixinClientPlayerEntity	Lnet/minecraft/client/MinecraftClient;	client	field_3937
 FIELD	me/aleksilassila/litematica/printer/mixin/MixinClientPlayerInteractionManager	Lnet/minecraft/client/MinecraftClient;	client	field_3712
+FIELD	me/aleksilassila/litematica/printer/mixin/MixinClientPlayNetworkHandler	Lnet/minecraft/client/MinecraftClient;	client	field_3690
+FIELD	me/aleksilassila/litematica/printer/mixin/MixinHandledScreen	Lnet/minecraft/screen/slot/Slot;	focusedSlot	field_2787
+FIELD	me/aleksilassila/litematica/printer/mixin/openinv/MixinMinecraftClient	Lnet/minecraft/client/gui/screen/Screen;	currentScreen	field_1755
 METHOD	me/aleksilassila/litematica/printer/mixin/ClientPlayNetworkHandlerMixin	(Lnet/minecraft/network/Packet;)V	sendPacket	method_2883
 METHOD	me/aleksilassila/litematica/printer/mixin/MixinClientPlayerInteractionManager	(Lnet/minecraft/client/network/ClientPlayerEntity;Lnet/minecraft/client/world/ClientWorld;Lnet/minecraft/util/Hand;Lnet/minecraft/util/hit/BlockHitResult;)Lnet/minecraft/util/ActionResult;	interactBlock	method_2896
 METHOD	me/aleksilassila/litematica/printer/mixin/MixinClientPlayerInteractionManager	(Lnet/minecraft/entity/player/PlayerEntity;Lnet/minecraft/world/World;Lnet/minecraft/util/Hand;)Lnet/minecraft/util/ActionResult;	interactItem	method_2919
