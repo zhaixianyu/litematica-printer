@@ -5,7 +5,8 @@
   "compatibilityLevel": "JAVA_16",
   "mixins": [
     "openinv.MixinLootableContainerBlockEntity",
-    "openinv.MixinServerPlayerEntity"
+    "openinv.MixinServerPlayerEntity",
+    "openinv.MixinServerWorld"
   ],
   "client": [
     "ClientPlayNetworkHandlerMixin",
