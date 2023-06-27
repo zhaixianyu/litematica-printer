@@ -1,0 +1,205 @@
+---- Minecraft Crash Report ----
+// This doesn't make any sense!
+
+Time: 2022/3/24 上午7:24
+Description: Ticking entity
+
+java.lang.NullPointerException: Cannot invoke "fi.dy.masa.litematica.world.WorldSchematic.getBlockState(net.minecraft.util.math.BlockPos)" because "this.worldSchematic" is null
+	at me.aleksilassila.litematica.printer.printer.Printer.jymod(Printer.java:71)
+	at me.aleksilassila.litematica.printer.printer.Printer.onTick(Printer.java:87)
+	at net.minecraft.client.network.ClientPlayerEntity.handler$zzm000$tick(ClientPlayerEntity.java:1325)
+	at net.minecraft.client.network.ClientPlayerEntity.tick(ClientPlayerEntity.java)
+	at net.minecraft.client.world.ClientWorld.tickEntity(ClientWorld.java:217)
+	at net.minecraft.world.World.tickEntity(World.java:485)
+	at net.minecraft.client.world.ClientWorld.method_32124(ClientWorld.java:200)
+	at net.minecraft.world.EntityList.forEach(EntityList.java:54)
+	at net.minecraft.client.world.ClientWorld.tickEntities(ClientWorld.java:196)
+	at net.minecraft.client.MinecraftClient.tick(MinecraftClient.java:1761)
+	at net.minecraft.client.MinecraftClient.render(MinecraftClient.java:1091)
+	at net.minecraft.client.MinecraftClient.run(MinecraftClient.java:737)
+	at net.minecraft.client.main.Main.main(Main.java:236)
+	at java.base/jdk.internal.reflect.NativeMethodAccessorImpl.invoke0(Native Method)
+	at java.base/jdk.internal.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:77)
+	at java.base/jdk.internal.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43)
+	at java.base/java.lang.reflect.Method.invoke(Method.java:568)
+	at net.fabricmc.loader.impl.game.minecraft.MinecraftGameProvider.launch(MinecraftGameProvider.java:416)
+	at net.fabricmc.loader.impl.launch.knot.Knot.launch(Knot.java:77)
+	at net.fabricmc.loader.impl.launch.knot.KnotClient.main(KnotClient.java:23)
+	at net.fabricmc.devlaunchinjector.Main.main(Main.java:86)
+
+
+A detailed walkthrough of the error, its code path and all known details is as follows:
+---------------------------------------------------------------------------------------
+
+-- Head --
+Thread: Render thread
+Stacktrace:
+	at me.aleksilassila.litematica.printer.printer.Printer.jymod(Printer.java:71)
+	at me.aleksilassila.litematica.printer.printer.Printer.onTick(Printer.java:87)
+	at net.minecraft.client.network.ClientPlayerEntity.handler$zzm000$tick(ClientPlayerEntity.java:1325)
+	at net.minecraft.client.network.ClientPlayerEntity.tick(ClientPlayerEntity.java)
+	at net.minecraft.client.world.ClientWorld.tickEntity(ClientWorld.java:217)
+	at net.minecraft.world.World.tickEntity(World.java:485)
+	at net.minecraft.client.world.ClientWorld.method_32124(ClientWorld.java:200)
+	at net.minecraft.world.EntityList.forEach(EntityList.java:54)
+	at net.minecraft.client.world.ClientWorld.tickEntities(ClientWorld.java:196)
+
+-- Entity being ticked --
+Details:
+	Entity Type: minecraft:player (net.minecraft.client.network.ClientPlayerEntity)
+	Entity ID: 1
+	Entity Name: Player74
+	Entity's Exact location: -576.19, 162.60, 275.76
+	Entity's Block location: World: (-577,162,275), Section: (at 15,2,3 in -37,10,17; chunk contains blocks -592,0,272 to -577,255,287), Region: (-2,0; contains chunks -64,0 to -33,31, blocks -1024,0,0 to -513,255,511)
+	Entity's Momentum: 0.00, 0.00, 0.00
+	Entity's Passengers: []
+	Entity's Vehicle: null
+Stacktrace:
+	at net.minecraft.world.World.tickEntity(World.java:485)
+	at net.minecraft.client.world.ClientWorld.method_32124(ClientWorld.java:200)
+	at net.minecraft.world.EntityList.forEach(EntityList.java:54)
+	at net.minecraft.client.world.ClientWorld.tickEntities(ClientWorld.java:196)
+	at net.minecraft.client.MinecraftClient.tick(MinecraftClient.java:1761)
+	at net.minecraft.client.MinecraftClient.render(MinecraftClient.java:1091)
+	at net.minecraft.client.MinecraftClient.run(MinecraftClient.java:737)
+	at net.minecraft.client.main.Main.main(Main.java:236)
+	at java.base/jdk.internal.reflect.NativeMethodAccessorImpl.invoke0(Native Method)
+	at java.base/jdk.internal.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:77)
+	at java.base/jdk.internal.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43)
+	at java.base/java.lang.reflect.Method.invoke(Method.java:568)
+	at net.fabricmc.loader.impl.game.minecraft.MinecraftGameProvider.launch(MinecraftGameProvider.java:416)
+	at net.fabricmc.loader.impl.launch.knot.Knot.launch(Knot.java:77)
+	at net.fabricmc.loader.impl.launch.knot.KnotClient.main(KnotClient.java:23)
+	at net.fabricmc.devlaunchinjector.Main.main(Main.java:86)
+
+-- Affected level --
+Details:
+	All players: 1 total; [ClientPlayerEntity['Player74'/1, l='ClientLevel', x=-576.19, y=162.60, z=275.76]]
+	Chunk stats: 961, 231
+	Level dimension: minecraft:the_nether
+	Level spawn location: World: (-512,78,80), Section: (at 0,14,0 in -32,4,5; chunk contains blocks -512,0,80 to -497,255,95), Region: (-1,0; contains chunks -32,0 to -1,31, blocks -512,0,0 to -1,255,511)
+	Level time: 1081946 game time, 1081946 day time
+	Server brand: fabric
+	Server type: Integrated singleplayer server
+Stacktrace:
+	at net.minecraft.client.world.ClientWorld.addDetailsToCrashReport(ClientWorld.java:407)
+	at net.minecraft.client.MinecraftClient.addDetailsToCrashReport(MinecraftClient.java:2376)
+	at net.minecraft.client.MinecraftClient.run(MinecraftClient.java:756)
+	at net.minecraft.client.main.Main.main(Main.java:236)
+	at java.base/jdk.internal.reflect.NativeMethodAccessorImpl.invoke0(Native Method)
+	at java.base/jdk.internal.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:77)
+	at java.base/jdk.internal.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43)
+	at java.base/java.lang.reflect.Method.invoke(Method.java:568)
+	at net.fabricmc.loader.impl.game.minecraft.MinecraftGameProvider.launch(MinecraftGameProvider.java:416)
+	at net.fabricmc.loader.impl.launch.knot.Knot.launch(Knot.java:77)
+	at net.fabricmc.loader.impl.launch.knot.KnotClient.main(KnotClient.java:23)
+	at net.fabricmc.devlaunchinjector.Main.main(Main.java:86)
+
+-- Last reload --
+Details:
+	Reload number: 1
+	Reload reason: initial
+	Finished: Yes
+	Packs: Default, Fabric Mods
+
+-- System Details --
+Details:
+	Minecraft Version: 1.18.2
+	Minecraft Version ID: 1.18.2
+	Operating System: Windows 10 (amd64) version 10.0
+	Java Version: 17.0.2, Oracle Corporation
+	Java VM Version: Java HotSpot(TM) 64-Bit Server VM (mixed mode, sharing), Oracle Corporation
+	Memory: 648138752 bytes (618 MiB) / 2187329536 bytes (2086 MiB) up to 4276092928 bytes (4078 MiB)
+	CPUs: 16
+	Processor Vendor: AuthenticAMD
+	Processor Name: AMD Ryzen 7 5800X 8-Core Processor             
+	Identifier: AuthenticAMD Family 25 Model 33 Stepping 0
+	Microarchitecture: Zen 3
+	Frequency (GHz): 3.80
+	Number of physical packages: 1
+	Number of physical CPUs: 8
+	Number of logical CPUs: 16
+	Graphics card #0 name: NVIDIA GeForce GTX 650 Ti BOOST
+	Graphics card #0 vendor: NVIDIA (0x10de)
+	Graphics card #0 VRAM (MB): 2048.00
+	Graphics card #0 deviceId: 0x11c2
+	Graphics card #0 versionInfo: DriverVersion=30.0.14.7298
+	Memory slot #0 capacity (MB): 8192.00
+	Memory slot #0 clockSpeed (GHz): 3.20
+	Memory slot #0 type: DDR4
+	Memory slot #1 capacity (MB): 8192.00
+	Memory slot #1 clockSpeed (GHz): 3.20
+	Memory slot #1 type: DDR4
+	Virtual memory max (MB): 29621.59
+	Virtual memory used (MB): 17106.73
+	Swap memory total (MB): 13312.00
+	Swap memory used (MB): 254.62
+	JVM Flags: 0 total; 
+	Fabric Mods: 
+		fabric: Fabric API 0.48.0+1.18.2
+		fabric-api-base: Fabric API Base 0.4.4+d7c144a860
+		fabric-api-lookup-api-v1: Fabric API Lookup API (v1) 1.5.7+d7c144a860
+		fabric-biome-api-v1: Fabric Biome API (v1) 8.0.3+801ec85b60
+		fabric-blockrenderlayer-v1: Fabric BlockRenderLayer Registration (v1) 1.1.12+3ac43d9560
+		fabric-command-api-v1: Fabric Command API (v1) 1.1.9+d7c144a860
+		fabric-commands-v0: Fabric Commands (v0) 0.2.8+b4f4f6cd60
+		fabric-containers-v0: Fabric Containers (v0) 0.1.21+d7c144a860
+		fabric-content-registries-v0: Fabric Content Registries (v0) 3.0.2+d82b939260
+		fabric-crash-report-info-v1: Fabric Crash Report Info (v1) 0.1.11+3ac43d9560
+		fabric-data-generation-api-v1: Fabric Data Generation API (v1) 2.0.7+6d3e563660
+		fabric-dimensions-v1: Fabric Dimensions API (v1) 2.1.17+2540745460
+		fabric-entity-events-v1: Fabric Entity Events (v1) 1.4.8+d7c144a860
+		fabric-events-interaction-v0: Fabric Events Interaction (v0) 0.4.19+d7c144a860
+		fabric-events-lifecycle-v0: Fabric Events Lifecycle (v0) 0.2.13+d7c144a860
+		fabric-game-rule-api-v1: Fabric Game Rule API (v1) 1.0.13+d7c144a860
+		fabric-gametest-api-v1: Fabric Game Test API (v1) 1.0.15+2540745460
+		fabric-item-api-v1: Fabric Item API (v1) 1.3.3+691a79b560
+		fabric-item-groups-v0: Fabric Item Groups (v0) 0.3.10+3ac43d9560
+		fabric-key-binding-api-v1: Fabric Key Binding API (v1) 1.0.12+54e5b2ec60
+		fabric-keybindings-v0: Fabric Key Bindings (v0) 0.2.10+b4f4f6cd60
+		fabric-lifecycle-events-v1: Fabric Lifecycle Events (v1) 2.0.2+2540745460
+		fabric-loot-tables-v1: Fabric Loot Tables (v1) 1.0.11+d7c144a860
+		fabric-mining-level-api-v1: Fabric Mining Level API (v1) 2.0.4+d1027f7d60
+		fabric-models-v0: Fabric Models (v0) 0.3.6+d7c144a860
+		fabric-networking-api-v1: Fabric Networking API (v1) 1.0.21+d882b91560
+		fabric-networking-v0: Fabric Networking (v0) 0.3.8+b4f4f6cd60
+		fabric-object-builder-api-v1: Fabric Object Builder API (v1) 2.0.3+40c91ec860
+		fabric-particles-v1: Fabric Particles (v1) 0.2.12+526dc1ac60
+		fabric-registry-sync-v0: Fabric Registry Sync (v0) 0.9.8+0d9ab37260
+		fabric-renderer-api-v1: Fabric Renderer API (v1) 0.4.13+d882b91560
+		fabric-renderer-indigo: Fabric Renderer - Indigo 0.4.17+d8c7b9ae60
+		fabric-renderer-registries-v1: Fabric Renderer Registries (v1) 3.2.11+b4f4f6cd60
+		fabric-rendering-data-attachment-v1: Fabric Rendering Data Attachment (v1) 0.3.7+d7c144a860
+		fabric-rendering-fluids-v1: Fabric Rendering Fluids (v1) 2.0.2+54e5b2ec60
+		fabric-rendering-v0: Fabric Rendering (v0) 1.1.13+b4f4f6cd60
+		fabric-rendering-v1: Fabric Rendering (v1) 1.10.7+54e5b2ec60
+		fabric-resource-conditions-api-v1: Fabric Resource Conditions API (v1) 2.0.2+d1027f7d60
+		fabric-resource-loader-v0: Fabric Resource Loader (v0) 0.4.18+2de5574560
+		fabric-screen-api-v1: Fabric Screen API (v1) 1.0.10+d882b91560
+		fabric-screen-handler-api-v1: Fabric Screen Handler API (v1) 1.1.14+40c91ec860
+		fabric-textures-v0: Fabric Textures (v0) 1.0.12+3ac43d9560
+		fabric-transfer-api-v1: Fabric Transfer API (v1) 1.5.14+cca23f9360
+		fabric-transitive-access-wideners-v1: Fabric Transitive Access Wideners (v1) 1.0.0+40c91ec860
+		fabricloader: Fabric Loader 0.13.3
+		java: Java HotSpot(TM) 64-Bit Server VM 17
+		litematica: Litematica 0.11.1
+		litematica_printer: Litematica Printer 2.1
+		malilib: MaLiLib 0.12.0
+		minecraft: Minecraft 1.18.2
+	Launched Version: Fabric
+	Backend library: LWJGL version 3.2.2 build 10
+	Backend API: NVIDIA GeForce GTX 650 Ti BOOST/PCIe/SSE2 GL version 3.2.0 NVIDIA 472.98, NVIDIA Corporation
+	Window size: 854x480
+	GL Caps: Using framebuffer using OpenGL 3.2
+	GL debug messages: 
+	Using VBOs: Yes
+	Is Modded: Definitely; Client brand changed to 'fabric'; Server brand changed to 'fabric'
+	Type: Integrated Server (map_client.txt)
+	Graphics mode: fancy
+	Resource Packs: Fabric Mods
+	Current Language: 简体中文 (中国)
+	CPU: 16x AMD Ryzen 7 5800X 8-Core Processor 
+	Server Running: true
+	Player Count: 1 / 8; [ServerPlayerEntity['Player74'/1, l='ServerLevel[新的世界]', x=-576.19, y=162.60, z=275.76]]
+	Data Packs: vanilla, Fabric Mods
+	World Generation: Stable

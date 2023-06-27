@@ -1,0 +1,24 @@
+{
+  "classNames": [
+    "TankHandledScreen",
+    "VentHandledScreen",
+    "LiquidGeneratorHandledScreen",
+    "SolidGeneratorHandledScreen",
+    "ElectricSmelterHandledScreen",
+    "AlloySmelterHandledScreen",
+    "TrituratorHandledScreen",
+    "PresserHandledScreen",
+    "ElectrolyzerHandledScreen",
+    "FluidMixerHandledScreen",
+    "BufferHandledScreen",
+    "FluidExtractorHandledScreen",
+    "FluidInserterHandledScreen",
+    "BlockPlacerHandledScreen",
+    "BlockBreakerHandledScreen",
+    "CapacitorHandledScreen"
+  ],
+  "horizontalAlignment": "RIGHT",
+  "horizontalOffset": -14,
+  "verticalAlignment": "TOP",
+  "verticalOffset": 30
+}

@@ -1,0 +1,44 @@
+{
+  "selections": {
+    "mode": "NORMAL",
+    "current": "F:\\game\\Minecraft\\mod\\litematica-printer-litematica-printer2.4-Revision1.18\\run\\config\\litematica\\area_selections_per_world\\daemon.zerodayunion.com_31111\\area_selections\\ABAB.json"
+  },
+  "placements": {},
+  "schematic_projects_manager": {},
+  "operation_mode": "AREA_SELECTION",
+  "render_range": {
+    "mode": "ALL",
+    "axis": "Y",
+    "layer_single": 0,
+    "layer_above": 0,
+    "layer_below": 0,
+    "layer_range_min": 0,
+    "layer_range_max": 0,
+    "hotkey_range_min": false,
+    "hotkey_range_max": false
+  },
+  "area_simple": {
+    "name": "Unnamed",
+    "current": "Unnamed",
+    "boxes": [
+      {
+        "pos1": [
+          -34,
+          63,
+          -31
+        ],
+        "pos2": [
+          -21,
+          66,
+          -23
+        ],
+        "name": "Unnamed"
+      }
+    ]
+  },
+  "tool_mode_data": {
+    "delete": {
+      "use_placement": false
+    }
+  }
+}

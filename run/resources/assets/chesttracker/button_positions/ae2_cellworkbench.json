@@ -1,0 +1,9 @@
+{
+  "classNames": [
+    "CellWorkbenchScreen"
+  ],
+  "horizontalAlignment": "RIGHT",
+  "horizontalOffset": -50,
+  "verticalAlignment": "TOP",
+  "verticalOffset": -10
+}

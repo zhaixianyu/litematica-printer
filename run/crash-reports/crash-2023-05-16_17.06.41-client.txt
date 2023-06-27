@@ -1,0 +1,246 @@
+---- Minecraft Crash Report ----
+// Hey, that tickles! Hehehe!
+
+Time: 2023/5/16 下午5:06
+Description: keyPressed event handler
+
+java.lang.NullPointerException: Cannot invoke "net.minecraft.item.ItemStack.getNbt()" because "toFind" is null
+	at red.jackf.chesttracker.memory.MemoryDatabase.lambda$findItems$6(MemoryDatabase.java:266)
+	at java.base/java.util.stream.MatchOps$1MatchSink.accept(MatchOps.java:90)
+	at java.base/java.util.ArrayList$ArrayListSpliterator.tryAdvance(ArrayList.java:1602)
+	at java.base/java.util.stream.ReferencePipeline.forEachWithCancel(ReferencePipeline.java:129)
+	at java.base/java.util.stream.AbstractPipeline.copyIntoWithCancel(AbstractPipeline.java:527)
+	at java.base/java.util.stream.AbstractPipeline.copyInto(AbstractPipeline.java:513)
+	at java.base/java.util.stream.AbstractPipeline.wrapAndCopyInto(AbstractPipeline.java:499)
+	at java.base/java.util.stream.MatchOps$MatchOp.evaluateSequential(MatchOps.java:230)
+	at java.base/java.util.stream.MatchOps$MatchOp.evaluateSequential(MatchOps.java:196)
+	at java.base/java.util.stream.AbstractPipeline.evaluate(AbstractPipeline.java:234)
+	at java.base/java.util.stream.ReferencePipeline.anyMatch(ReferencePipeline.java:632)
+	at red.jackf.chesttracker.memory.MemoryDatabase.findItems(MemoryDatabase.java:266)
+	at net.minecraft.client.network.ClientPlayerEntity.handler$zeg000$a(ClientPlayerEntity.java:1848)
+	at net.minecraft.client.network.ClientPlayerEntity.closeHandledScreen(ClientPlayerEntity.java)
+	at net.minecraft.client.gui.screen.ingame.HandledScreen.close(HandledScreen.java:642)
+	at net.minecraft.client.gui.screen.ingame.HandledScreen.keyPressed(HandledScreen.java:574)
+	at net.minecraft.client.Keyboard.method_1454(Keyboard.java:384)
+	at net.minecraft.client.gui.screen.Screen.wrapScreenError(Screen.java:492)
+	at net.minecraft.client.Keyboard.onKey(Keyboard.java:380)
+	at net.minecraft.client.Keyboard.method_22678(Keyboard.java:472)
+	at net.minecraft.util.thread.ThreadExecutor.execute(ThreadExecutor.java:103)
+	at net.minecraft.client.Keyboard.method_22676(Keyboard.java:472)
+	at org.lwjgl.glfw.GLFWKeyCallbackI.callback(GLFWKeyCallbackI.java:37)
+	at org.lwjgl.system.JNI.invokeV(Native Method)
+	at org.lwjgl.glfw.GLFW.glfwPollEvents(GLFW.java:3101)
+	at com.mojang.blaze3d.systems.RenderSystem.flipFrame(RenderSystem.java:197)
+	at net.minecraft.client.util.Window.swapBuffers(Window.java:310)
+	at net.minecraft.client.MinecraftClient.render(MinecraftClient.java:1147)
+	at net.minecraft.client.MinecraftClient.run(MinecraftClient.java:737)
+	at net.minecraft.client.main.Main.main(Main.java:236)
+	at net.fabricmc.loader.impl.game.minecraft.MinecraftGameProvider.launch(MinecraftGameProvider.java:460)
+	at net.fabricmc.loader.impl.launch.knot.Knot.launch(Knot.java:74)
+	at net.fabricmc.loader.impl.launch.knot.KnotClient.main(KnotClient.java:23)
+	at net.fabricmc.devlaunchinjector.Main.main(Main.java:86)
+
+
+A detailed walkthrough of the error, its code path and all known details is as follows:
+---------------------------------------------------------------------------------------
+
+-- Head --
+Thread: Render thread
+Stacktrace:
+	at red.jackf.chesttracker.memory.MemoryDatabase.lambda$findItems$6(MemoryDatabase.java:266)
+	at java.base/java.util.stream.MatchOps$1MatchSink.accept(MatchOps.java:90)
+	at java.base/java.util.ArrayList$ArrayListSpliterator.tryAdvance(ArrayList.java:1602)
+	at java.base/java.util.stream.ReferencePipeline.forEachWithCancel(ReferencePipeline.java:129)
+	at java.base/java.util.stream.AbstractPipeline.copyIntoWithCancel(AbstractPipeline.java:527)
+	at java.base/java.util.stream.AbstractPipeline.copyInto(AbstractPipeline.java:513)
+	at java.base/java.util.stream.AbstractPipeline.wrapAndCopyInto(AbstractPipeline.java:499)
+	at java.base/java.util.stream.MatchOps$MatchOp.evaluateSequential(MatchOps.java:230)
+	at java.base/java.util.stream.MatchOps$MatchOp.evaluateSequential(MatchOps.java:196)
+	at java.base/java.util.stream.AbstractPipeline.evaluate(AbstractPipeline.java:234)
+	at java.base/java.util.stream.ReferencePipeline.anyMatch(ReferencePipeline.java:632)
+	at red.jackf.chesttracker.memory.MemoryDatabase.findItems(MemoryDatabase.java:266)
+	at net.minecraft.client.network.ClientPlayerEntity.handler$zeg000$a(ClientPlayerEntity.java:1848)
+	at net.minecraft.client.network.ClientPlayerEntity.closeHandledScreen(ClientPlayerEntity.java)
+	at net.minecraft.client.gui.screen.ingame.HandledScreen.close(HandledScreen.java:642)
+	at net.minecraft.client.gui.screen.ingame.HandledScreen.keyPressed(HandledScreen.java:574)
+	at net.minecraft.client.Keyboard.method_1454(Keyboard.java:384)
+	at net.minecraft.client.gui.screen.Screen.wrapScreenError(Screen.java:492)
+	at net.minecraft.client.Keyboard.onKey(Keyboard.java:380)
+	at net.minecraft.client.Keyboard.method_22678(Keyboard.java:472)
+	at net.minecraft.util.thread.ThreadExecutor.execute(ThreadExecutor.java:103)
+	at net.minecraft.client.Keyboard.method_22676(Keyboard.java:472)
+	at org.lwjgl.glfw.GLFWKeyCallbackI.callback(GLFWKeyCallbackI.java:37)
+	at org.lwjgl.system.JNI.invokeV(Native Method)
+	at org.lwjgl.glfw.GLFW.glfwPollEvents(GLFW.java:3101)
+	at com.mojang.blaze3d.systems.RenderSystem.flipFrame(RenderSystem.java:197)
+
+-- Affected screen --
+Details:
+	Screen name: net.minecraft.client.gui.screen.ingame.HopperScreen
+Stacktrace:
+	at net.minecraft.client.gui.screen.Screen.wrapScreenError(Screen.java:492)
+	at net.minecraft.client.Keyboard.onKey(Keyboard.java:380)
+	at net.minecraft.client.Keyboard.method_22678(Keyboard.java:472)
+	at net.minecraft.util.thread.ThreadExecutor.execute(ThreadExecutor.java:103)
+	at net.minecraft.client.Keyboard.method_22676(Keyboard.java:472)
+	at org.lwjgl.glfw.GLFWKeyCallbackI.callback(GLFWKeyCallbackI.java:37)
+	at org.lwjgl.system.JNI.invokeV(Native Method)
+	at org.lwjgl.glfw.GLFW.glfwPollEvents(GLFW.java:3101)
+	at com.mojang.blaze3d.systems.RenderSystem.flipFrame(RenderSystem.java:197)
+	at net.minecraft.client.util.Window.swapBuffers(Window.java:310)
+	at net.minecraft.client.MinecraftClient.render(MinecraftClient.java:1147)
+	at net.minecraft.client.MinecraftClient.run(MinecraftClient.java:737)
+	at net.minecraft.client.main.Main.main(Main.java:236)
+	at net.fabricmc.loader.impl.game.minecraft.MinecraftGameProvider.launch(MinecraftGameProvider.java:460)
+	at net.fabricmc.loader.impl.launch.knot.Knot.launch(Knot.java:74)
+	at net.fabricmc.loader.impl.launch.knot.KnotClient.main(KnotClient.java:23)
+	at net.fabricmc.devlaunchinjector.Main.main(Main.java:86)
+
+-- Affected level --
+Details:
+	All players: 1 total; [ClientPlayerEntity['Player360'/651, l='ClientLevel', x=4.91, y=99.00, z=-3.43]]
+	Chunk stats: 729, 461
+	Level dimension: minecraft:overworld
+	Level spawn location: World: (0,88,0), Section: (at 0,8,0 in 0,5,0; chunk contains blocks 0,-64,0 to 15,319,15), Region: (0,0; contains chunks 0,0 to 31,31, blocks 0,-64,0 to 511,319,511)
+	Level time: 770178 game time, 770178 day time
+	Server brand: fabric
+	Server type: Non-integrated multiplayer server
+Stacktrace:
+	at net.minecraft.client.world.ClientWorld.addDetailsToCrashReport(ClientWorld.java:407)
+	at net.minecraft.client.MinecraftClient.addDetailsToCrashReport(MinecraftClient.java:2376)
+	at net.minecraft.client.MinecraftClient.run(MinecraftClient.java:756)
+	at net.minecraft.client.main.Main.main(Main.java:236)
+	at net.fabricmc.loader.impl.game.minecraft.MinecraftGameProvider.launch(MinecraftGameProvider.java:460)
+	at net.fabricmc.loader.impl.launch.knot.Knot.launch(Knot.java:74)
+	at net.fabricmc.loader.impl.launch.knot.KnotClient.main(KnotClient.java:23)
+	at net.fabricmc.devlaunchinjector.Main.main(Main.java:86)
+
+-- Last reload --
+Details:
+	Reload number: 1
+	Reload reason: initial
+	Finished: Yes
+	Packs: Default, Fabric Mods
+
+-- System Details --
+Details:
+	Minecraft Version: 1.18.2
+	Minecraft Version ID: 1.18.2
+	Operating System: Windows 10 (amd64) version 10.0
+	Java Version: 18.0.2.1, Oracle Corporation
+	Java VM Version: Java HotSpot(TM) 64-Bit Server VM (mixed mode, sharing), Oracle Corporation
+	Memory: 1145142368 bytes (1092 MiB) / 2394947584 bytes (2284 MiB) up to 4227858432 bytes (4032 MiB)
+	CPUs: 8
+	Processor Vendor: GenuineIntel
+	Processor Name: 12th Gen Intel(R) Core(TM) i3-12100
+	Identifier: Intel64 Family 6 Model 151 Stepping 5
+	Microarchitecture: unknown
+	Frequency (GHz): 3.30
+	Number of physical packages: 1
+	Number of physical CPUs: 4
+	Number of logical CPUs: 8
+	Graphics card #0 name: NVIDIA GeForce GTX 1060 5GB
+	Graphics card #0 vendor: NVIDIA (0x10de)
+	Graphics card #0 VRAM (MB): 4095.00
+	Graphics card #0 deviceId: 0x1c04
+	Graphics card #0 versionInfo: DriverVersion=31.0.15.1694
+	Graphics card #1 name: Intel(R) UHD Graphics 730
+	Graphics card #1 vendor: Intel Corporation (0x8086)
+	Graphics card #1 VRAM (MB): 1024.00
+	Graphics card #1 deviceId: 0x4692
+	Graphics card #1 versionInfo: DriverVersion=30.0.101.1371
+	Memory slot #0 capacity (MB): 8192.00
+	Memory slot #0 clockSpeed (GHz): 3.20
+	Memory slot #0 type: DDR4
+	Memory slot #1 capacity (MB): 8192.00
+	Memory slot #1 clockSpeed (GHz): 3.20
+	Memory slot #1 type: DDR4
+	Virtual memory max (MB): 24314.18
+	Virtual memory used (MB): 20268.36
+	Swap memory total (MB): 8192.00
+	Swap memory used (MB): 1099.28
+	JVM Flags: 0 total; 
+	Fabric Mods: 
+		carpet 1.4.69
+		chesttracker 1.1.16
+			libgui 5.3.1+1.18
+				jankson 4.0.0+j1.2.0
+				libninepatch 1.1.0
+			whereisit 1.14.10
+		cloth-api 3.2.64
+			cloth-client-events-v0 3.2.64
+			cloth-common-events-v1 3.2.64
+			cloth-datagen-api-v1 3.2.64
+			cloth-scissors-api-v1 3.2.64
+			cloth-utils-v1 3.2.64
+		cloth-config 6.4.90
+			cloth-basic-math 0.6.1
+		fabric 0.53.0+1.18.2
+		fabric-api-base 0.4.4+d7c144a860
+		fabric-api-lookup-api-v1 1.6.0+2373a54560
+		fabric-biome-api-v1 8.0.4+7b0f312660
+		fabric-blockrenderlayer-v1 1.1.12+3ac43d9560
+		fabric-command-api-v1 1.1.9+d7c144a860
+		fabric-commands-v0 0.2.8+b4f4f6cd60
+		fabric-containers-v0 0.1.21+d7c144a860
+		fabric-content-registries-v0 3.0.4+d82b939260
+		fabric-convention-tags-v1 1.0.1+474e4f7960
+		fabric-crash-report-info-v1 0.2.0+a6b0947860
+		fabric-data-generation-api-v1 2.0.9+e19de87d60
+		fabric-dimensions-v1 2.1.17+2540745460
+		fabric-entity-events-v1 1.4.8+d7c144a860
+		fabric-events-interaction-v0 0.4.19+d7c144a860
+		fabric-events-lifecycle-v0 0.2.15+d7c144a860
+		fabric-game-rule-api-v1 1.0.13+d7c144a860
+		fabric-gametest-api-v1 1.0.17+91b7aa6660
+		fabric-item-api-v1 1.5.0+85719ab760
+		fabric-item-groups-v0 0.3.12+91896a4960
+		fabric-key-binding-api-v1 1.0.12+54e5b2ec60
+		fabric-keybindings-v0 0.2.10+b4f4f6cd60
+		fabric-lifecycle-events-v1 2.0.3+2d83e92c60
+		fabric-loot-tables-v1 1.0.11+d7c144a860
+		fabric-mining-level-api-v1 2.1.1+81ea5b3c60
+		fabric-models-v0 0.3.6+d7c144a860
+		fabric-networking-api-v1 1.0.21+d882b91560
+		fabric-networking-v0 0.3.8+b4f4f6cd60
+		fabric-object-builder-api-v1 2.1.1+032c981d60
+		fabric-particles-v1 0.2.12+526dc1ac60
+		fabric-registry-sync-v0 0.9.8+0d9ab37260
+		fabric-renderer-api-v1 0.4.13+d882b91560
+		fabric-renderer-indigo 0.5.0+7faf0d8860
+		fabric-renderer-registries-v1 3.2.11+b4f4f6cd60
+		fabric-rendering-data-attachment-v1 0.3.7+d7c144a860
+		fabric-rendering-fluids-v1 2.0.2+54e5b2ec60
+		fabric-rendering-v0 1.1.13+b4f4f6cd60
+		fabric-rendering-v1 1.10.7+54e5b2ec60
+		fabric-resource-conditions-api-v1 2.0.3+91b7aa6660
+		fabric-resource-loader-v0 0.5.0+2afceb2960
+		fabric-screen-api-v1 1.0.10+d882b91560
+		fabric-screen-handler-api-v1 1.2.0+1f6558e860
+		fabric-textures-v0 1.0.12+3ac43d9560
+		fabric-transfer-api-v1 1.6.1+f4563ac860
+		fabric-transitive-access-wideners-v1 1.0.0+bd8a4a1860
+		fabricloader 0.14.6
+		java 18
+		litematica 0.11.1
+		litematica_printer 2.4
+		malilib 0.12.0
+		minecraft 1.18.2
+		quickshulker 1.3.9-1.18
+			kyrptconfig 1.4.6-1.18
+				blue_endless_jankson 1.2.1
+			shulkerutils 1.0.4-1.18
+		tweakeroo 0.13.3
+	Launched Version: Fabric
+	Backend library: LWJGL version 3.2.2 build 10
+	Backend API: NVIDIA GeForce GTX 1060 5GB/PCIe/SSE2 GL version 3.2.0 NVIDIA 516.94, NVIDIA Corporation
+	Window size: 854x480
+	GL Caps: Using framebuffer using OpenGL 3.2
+	GL debug messages: 
+	Using VBOs: Yes
+	Is Modded: Definitely; Client brand changed to 'fabric'
+	Type: Client (map_client.txt)
+	Graphics mode: fancy
+	Resource Packs: vanilla, Fabric Mods
+	Current Language: 简体中文 (中国大陆)
+	CPU: 8x 12th Gen Intel(R) Core(TM) i3-12100

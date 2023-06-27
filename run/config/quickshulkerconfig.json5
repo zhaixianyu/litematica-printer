@@ -1,0 +1,28 @@
+{
+	// Activation key
+	"keybinding": "key.keyboard.k",
+	// Right Clicking with shulker in hand opens it
+	"rightClickToOpen": true,
+	// Hitting the keybind with shulker in hand opens it
+	"keybind": true,
+	// Hitting the keybind while hovering over shulker in inv opens it
+	"keybingInInv": true,
+	// Right Clicking a shulker in your inv opens it
+	"rightClickInv": true,
+	// Right Clicking the opened shulker in your inv closes it
+	"rightClickClose": false,
+	// Right Clicking a shulker with an item inserts it
+	"supportsBundlingInsert": true,
+	// Right Clicking an item with a shulker inserts it
+	"supportsBundlingPickup": true,
+	// Right Clicking an empty slot with a shulker extracts an item
+	"supportsBundlingExtract": true,
+	// Enable opening Shulker Boxes
+	"quickShulkerBox": true,
+	// Enable opening Crafting Tables
+	"quickCraftingTables": true,
+	// Enable opening Stonecutter
+	"quickStonecutter": true,
+	// Enable opening EnderChest
+	"quickEChest": true
+}

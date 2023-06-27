@@ -1,0 +1,19 @@
+{
+  "clientOptions": {
+    "fadeOutTime": 200,
+    "colour": 5242703,
+    "alternateColour": 16732159,
+    "rainbowMode": true,
+    "disableSlotHighlight": false,
+    "forceSimpleRender": false,
+    "textSizeModifier": 100,
+    "showLabelsForResults": true,
+    "maximumResults": 0
+  },
+  "serverOptions": {
+    "searchRadius": 16,
+    "doDeepSearch": true,
+    "printSearchTime": false,
+    "cooldownTicks": 5
+  }
+}

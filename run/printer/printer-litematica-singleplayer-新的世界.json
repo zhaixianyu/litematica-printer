@@ -1,0 +1,47 @@
+{
+  "minecraft:the_nether": [
+    [
+      [
+        -91,
+        131,
+        57
+      ],
+      {
+        "position": [
+          -91,
+          131,
+          57
+        ],
+        "items": [
+          {
+            "id": "minecraft:glass",
+            "count": 1344
+          }
+        ],
+        "manualTitle": false
+      }
+    ],
+    [
+      [
+        -90,
+        128,
+        41
+      ],
+      {
+        "position": [
+          -90,
+          128,
+          41
+        ],
+        "items": [
+          {
+            "id": "minecraft:orange_shulker_box",
+            "count": 1,
+            "tag": "{BlockEntityTag:{Items:[{Count:64b,Slot:21b,id:\"minecraft:torch\"},{Count:64b,Slot:22b,id:\"minecraft:torch\"},{Count:64b,Slot:23b,id:\"minecraft:torch\"},{Count:64b,Slot:24b,id:\"minecraft:torch\"}],id:\"minecraft:shulker_box\"},display:{Lore:[\u0027\"(+NBT)\"\u0027]}}"
+          }
+        ],
+        "manualTitle": false
+      }
+    ]
+  ]
+}
