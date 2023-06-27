@@ -4,7 +4,9 @@
   "package": "me.aleksilassila.litematica.printer.mixin",
   "compatibilityLevel": "JAVA_16",
   "mixins": [
-    "openinv.MixinWCardPanel"
+    "openinv.MixinLootableContainerBlockEntity",
+    "openinv.MixinServerPlayerEntity",
+    "openinv.MixinServerWorld"
   ],
   "client": [
     "ClientPlayNetworkHandlerMixin",
@@ -24,6 +26,7 @@
     "openinv.MixinMemoryDatabase",
     "openinv.MixinMinecraftClient",
     "openinv.MixinRealmsMainScreen",
+    "openinv.MixinWCardPanel",
     "openinv.WItemListPanelMixin"
   ],
   "injectors": {
