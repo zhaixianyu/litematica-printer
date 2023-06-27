@@ -254,16 +254,12 @@ public class Printer extends PrinterUtils {
             }
         }
     }
-
-    boolean singleplayer = false;
-
     public boolean verify() {
-        if (singleplayer) return true;
+        if (client.isInSingleplayer()) return true;
         String address = null;
         try {
             address = client.getCurrentServerEntry().address.split(":")[0];
         } catch (Exception e) {
-            singleplayer = true;
             e.printStackTrace();
             return true;
         }
@@ -335,10 +331,7 @@ public class Printer extends PrinterUtils {
                 isOpenHandler = false;
             }
         }
-
-
         if(isOpenHandler)return;
-
         if (LitematicaMixinMod.BEDROCK.getBooleanValue()) {
             jymod(data);
             return;
