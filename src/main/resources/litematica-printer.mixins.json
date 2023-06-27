@@ -4,16 +4,18 @@
   "package": "me.aleksilassila.litematica.printer.mixin",
   "compatibilityLevel": "JAVA_16",
   "mixins": [
+    "openinv.MixinLootableContainerBlockEntity",
+    "openinv.MixinServerPlayerEntity"
   ],
   "client": [
-    "ConfigsMixin",
-    "GuiConfigsMixin",
-	"InputHandlerMixin",
-	"MixinClientPlayerEntity",
-	"MixinClientPlayerInteractionManager",
     "ClientPlayNetworkHandlerMixin",
-    "PlayerMoveC2SPacketAccessor",
-    "FlowerPotBlockAccessor"
+    "ConfigsMixin",
+    "FlowerPotBlockAccessor",
+    "GuiConfigsMixin",
+    "InputHandlerMixin",
+    "MixinClientPlayerEntity",
+    "MixinClientPlayerInteractionManager",
+    "PlayerMoveC2SPacketAccessor"
   ],
   "injectors": {
     "defaultRequire": 1
