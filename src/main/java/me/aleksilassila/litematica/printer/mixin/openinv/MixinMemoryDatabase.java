@@ -93,7 +93,6 @@ public abstract class MixinMemoryDatabase {
         if (namedLocation != null) {
             namedLocation.remove(pos);
         }
-
     }
     @Inject(at = @At("HEAD"),method = "getAllMemories")
     public void getAllMemories(Identifier worldId, CallbackInfoReturnable<List<ItemStack>> cir) {

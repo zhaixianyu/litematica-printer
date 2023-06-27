@@ -26,7 +26,6 @@ public class MixinLootableContainerBlockEntity extends BlockEntity {
             if(player.equals(player1)) cir.setReturnValue(true);
         }
     }
-
     /**
      * @author 1
      * @reason 1
