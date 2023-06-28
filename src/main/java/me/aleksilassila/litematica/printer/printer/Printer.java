@@ -175,11 +175,11 @@ public class Printer extends PrinterUtils {
                             try {
                                 ItemStringReader read = new ItemStringReader(new StringReader(blocklist.get(i)),true);
                                 read.consume();
-                                items2.add(read.getItem());
+                                fluid.add(read.getItem());
                             } catch (Exception e) {
                             }
                         }
-                        switchToItems(data.player, items2.toArray(new Item[items2.size()]));
+                        switchToItems(data.player, fluid.toArray(new Item[fluid.size()]));
                         Item item = Implementation.getInventory(data.player).getMainHandStack().getItem();
                         String itemid = Registry.ITEM.getId(item).toString();
                         if(!blocklist.stream().anyMatch(b -> itemid.contains(b) || item.getName().toString().contains(b))) return;
@@ -277,6 +277,7 @@ public class Printer extends PrinterUtils {
     Item[] item2 = null;
     List<String> blocklist;
     public static HashSet<Item> items2 = new HashSet<>();
+    public static HashSet<Item> fluid = new HashSet<>();
     static LinkedList<TempPos> tempList = new LinkedList<>();
     class TempPos{
         public TempPos(BlockPos pos, int tick) {
