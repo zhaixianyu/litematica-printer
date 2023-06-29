@@ -1,5 +1,5 @@
 plugins {
-	id 'fabric-loom' version '0.12-SNAPSHOT'
+	id 'fabric-loom' version '1.2-SNAPSHOT'
 	id 'maven-publish'
 }
 
@@ -31,7 +31,8 @@ repositories {
 	// for more information about repositories.
 }
 
-dependencies {// To change the versions see the gradle.properties file
+dependencies {
+	// To change the versions see the gradle.properties file
 	minecraft "com.mojang:minecraft:${project.minecraft_version}"
 	mappings "net.fabricmc:yarn:${project.yarn_mappings}:v2"
 	modImplementation "net.fabricmc:fabric-loader:${project.loader_version}"
@@ -65,11 +66,9 @@ dependencies {// To change the versions see the gradle.properties file
 	modImplementation 'net.kyrptonaught:kyrptconfig:1.4.6-1.18'
 //	include 'net.kyrptonaught:kyrptconfig:1.4.6-1.18'
 	modImplementation 'net.kyrptonaught:shulkerutils:1.0.4-1.18'
-//	include 'net.kyrptonaught:shulkerutils:1.0.4-1.18'
 
 	// Uncomment the following line to enable the deprecated Fabric API modules.
 	// These are included in the Fabric API production distribution and allow you to update your mod to the latest modules at a later more convenient time.
-
 
 	// modImplementation "net.fabricmc.fabric-api:fabric-api-deprecated:${project.fabric_version}"
 }
@@ -90,8 +89,6 @@ java {
 	// Loom will automatically attach sourcesJar to a RemapSourcesJar task and to the "build" task
 	// if it is present.
 	// If you remove this line, sources will not be generated.
-	// 不能带中文 可恶啊
-//	archivesBaseName = "[投影打印机_宅闲鱼二改版]"+project.archives_base_name+new Date().format("yyyyMMdd", TimeZone.getTimeZone("GMT+08:00"))
 	archivesBaseName = project.archives_base_name+"-"+ project.minecraft_version +"-"+new Date().format("yyyyMMdd", TimeZone.getTimeZone("GMT+08:00"))
 	withSourcesJar()
 
@@ -104,9 +101,7 @@ jar {
 		rename { "${it}_${project.archivesBaseName}"}
 	}
 }
-tasks.withType(JavaCompile).configureEach {
-	options.encoding = "UTF-8"
-}
+
 // configure the maven publication
 publishing {
 	publications {
@@ -121,5 +116,16 @@ publishing {
 		// Notice: This block does NOT have the same function as the block in the top level.
 		// The repositories here will be used for publishing your artifact, not for
 		// retrieving dependencies.
+	}
+}
+loom{
+	runConfigs.named("client") {
+		programArgs([
+				"--width",
+				"1280",
+				"--height",
+				"720",
+		])
+		runDir("run")
 	}
 }

@@ -1,5 +1,6 @@
 package me.aleksilassila.litematica.printer.printer.zxy;
 
+import com.google.common.collect.Maps;
 import fi.dy.masa.malilib.util.ItemType;
 import me.aleksilassila.litematica.printer.LitematicaMixinMod;
 import me.aleksilassila.litematica.printer.printer.Printer;
@@ -11,10 +12,13 @@ import net.minecraft.block.BlockWithEntity;
 import net.minecraft.block.entity.BlockEntity;
 import net.minecraft.block.entity.ShulkerBoxBlockEntity;
 import net.minecraft.client.MinecraftClient;
+import net.minecraft.client.gui.hud.InGameHud;
 import net.minecraft.entity.mob.ShulkerEntity;
 import net.minecraft.item.ItemStack;
+import net.minecraft.network.MessageType;
 import net.minecraft.screen.ScreenHandler;
 import net.minecraft.screen.slot.SlotActionType;
+import net.minecraft.text.Text;
 import net.minecraft.text.TranslatableText;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.hit.BlockHitResult;
