@@ -60,16 +60,13 @@ public class Printer extends PrinterUtils {
             AreaSelection i = DataManager.getSelectionManager().getCurrentSelection();
             if (i == null) return false;
             if (DataManager.getSelectionManager().getSelectionMode() == NORMAL) {
-                boolean fw = false;
                 List<Box> arr = i.getAllSubRegionBoxes();
                 for (int j = 0; j < arr.size(); j++) {
                     if (comparePos(arr.get(j), pos)) {
                         return true;
-                    } else {
-                        fw = false;
                     }
                 }
-                return fw;
+                return false;
             } else {
                 Box box = i.getSubRegionBox(DataManager.getSimpleArea().getName());
                 return comparePos(box, pos);
@@ -96,15 +93,9 @@ public class Printer extends PrinterUtils {
                     kpos1.getY() > kpos2.getY() ? kpos1.getY() : kpos2.getY(),
                     kpos1.getZ() > kpos2.getZ() ? kpos1.getZ() : kpos2.getZ()
             };
-            if (
-                    x < min[0] || x > max[0] ||
-                            y < min[1] || y > max[1] ||
-                            z < min[2] || z > max[2]
-            ) {
-                return false;
-            } else {
-                return true;
-            }
+            return x >= min[0] && x <= max[0] &&
+                    y >= min[1] && y <= max[1] &&
+                    z >= min[2] && z <= max[2];
         }
 
         public ClientPlayerEntity player;
