@@ -78,7 +78,7 @@
     "printInAir": true,
     "replaceFluids": true,
     "stripLogs": false,
-    "破基岩模式": false,
+    "破基岩模式": true,
     "挖掘": false,
     "排流体方块名单": [
       "minecraft:sand"
@@ -369,7 +369,7 @@
     "verifierErrorHilightMaxPositions": 1000
   },
   "Visuals": {
-    "enableRendering": true,
+    "enableRendering": false,
     "enableSchematicRendering": true,
     "enableAreaSelectionBoxesRendering": true,
     "enablePlacementBoxesRendering": true,
