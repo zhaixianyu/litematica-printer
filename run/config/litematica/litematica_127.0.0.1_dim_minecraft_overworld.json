@@ -199,10 +199,10 @@
     "origin_selected": true
   },
   "schematic_projects_manager": {},
-  "operation_mode": "SCHEMATIC_PLACEMENT",
+  "operation_mode": "AREA_SELECTION",
   "render_range": {
     "mode": "ALL",
-    "axis": "Y",
+    "axis": "y",
     "layer_single": 0,
     "layer_above": 0,
     "layer_below": 0,
@@ -217,14 +217,14 @@
     "boxes": [
       {
         "pos1": [
-          -2,
-          96,
-          -4
+          56,
+          61,
+          -116
         ],
         "pos2": [
-          -2,
-          96,
-          -4
+          110,
+          65,
+          -28
         ],
         "name": "Unnamed"
       }

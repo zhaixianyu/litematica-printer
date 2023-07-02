@@ -2,64 +2,20 @@
   "minecraft:overworld": [
     [
       [
-        41,
-        66,
-        13
+        89,
+        63,
+        -26
       ],
       {
         "position": [
-          41,
-          66,
-          13
+          89,
+          63,
+          -26
         ],
         "items": [
           {
-            "id": "minecraft:potion",
-            "count": 1,
-            "tag": "{Potion:\"minecraft:water\"}"
-          }
-        ],
-        "manualTitle": false
-      }
-    ],
-    [
-      [
-        42,
-        66,
-        13
-      ],
-      {
-        "position": [
-          42,
-          66,
-          13
-        ],
-        "items": [
-          {
-            "id": "minecraft:potion",
-            "count": 1,
-            "tag": "{Potion:\"minecraft:water\"}"
-          }
-        ],
-        "manualTitle": false
-      }
-    ],
-    [
-      [
-        44,
-        66,
-        13
-      ],
-      {
-        "position": [
-          44,
-          66,
-          13
-        ],
-        "items": [
-          {
-            "id": "minecraft:tnt",
-            "count": 64
+            "id": "minecraft:sand",
+            "count": 1664
           }
         ],
         "manualTitle": false
