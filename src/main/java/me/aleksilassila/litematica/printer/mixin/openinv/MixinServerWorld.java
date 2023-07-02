@@ -2,9 +2,12 @@ package me.aleksilassila.litematica.printer.mixin.openinv;
 
 import me.aleksilassila.litematica.printer.printer.zxy.OpenInventoryPacket;
 import me.aleksilassila.litematica.printer.printer.zxy.TickList;
+import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.server.world.ServerWorld;
+import net.minecraft.util.math.BlockPos;
+import net.minecraft.world.chunk.Chunk;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
