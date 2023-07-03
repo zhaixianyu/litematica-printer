@@ -373,7 +373,7 @@
     "enableSchematicRendering": true,
     "enableAreaSelectionBoxesRendering": true,
     "enablePlacementBoxesRendering": true,
-    "enableSchematicBlocksRendering": true,
+    "enableSchematicBlocksRendering": false,
     "enableSchematicOverlay": true,
     "ignoreExistingFluids": false,
     "overlayReducedInnerSides": false,
