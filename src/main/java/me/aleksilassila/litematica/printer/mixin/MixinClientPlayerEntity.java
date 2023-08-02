@@ -59,10 +59,11 @@ public class MixinClientPlayerEntity extends AbstractClientPlayerEntity {
 			Printer.init(client);
 			return;
 		}
-		ZxyUtils.addInv();
-		if(num==1 || num == 3)ZxyUtils.syncInv();
-		ZxyUtils.tick();
-
+		if(LitematicaMixinMod.INVENTORY.getBooleanValue()){
+			ZxyUtils.addInv();
+			if(num==1 || num == 3)ZxyUtils.syncInv();
+			ZxyUtils.tick();
+		}
 		if(!(LitematicaMixinMod.PRINT_MODE.getBooleanValue() || LitematicaMixinMod.PRINT.getKeybind().isPressed())) return;
 		if(Printer.up){
 			checkForUpdates();

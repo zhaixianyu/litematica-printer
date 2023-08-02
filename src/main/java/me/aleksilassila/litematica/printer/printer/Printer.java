@@ -15,6 +15,7 @@ import me.aleksilassila.litematica.printer.printer.memory.Memory;
 import me.aleksilassila.litematica.printer.printer.memory.MemoryDatabase;
 import me.aleksilassila.litematica.printer.printer.utils.BreakingFlowController;
 import me.aleksilassila.litematica.printer.printer.zxy.OpenInventoryPacket;
+import net.kyrptonaught.quickshulker.client.ClientUtil;
 import net.minecraft.block.*;
 import net.minecraft.block.enums.ChestType;
 import net.minecraft.client.MinecraftClient;
@@ -280,6 +281,29 @@ public class Printer extends PrinterUtils {
         public BlockPos pos;
         public int tick;
     }
+    public boolean switchItem(){
+        if(items2.size() != 0 && !isOpenHandler && !openIng){
+            if(LitematicaMixinMod.QUICKSHULKER.getBooleanValue() && openShulker(items2)){
+                return true;
+            }else if(LitematicaMixinMod.INVENTORY.getBooleanValue()){
+                for (Item item : items2) {
+                    MemoryDatabase database = MemoryDatabase.getCurrent();
+                    if (database != null) {
+                        for (Identifier dimension : database.getDimensions()) {
+                            for (Memory memory : database.findItems(item.getDefaultStack(), dimension)) {
+                                OpenInventoryPacket.sendOpenInventory(memory.getPosition(), RegistryKey.of(Registry.WORLD_KEY, dimension));
+                                isOpenHandler = true;
+                                return true;
+                            }
+                        }
+                    }
+                }
+                items2 = new HashSet<>();
+                isOpenHandler = false;
+            }
+        }
+        return false;
+    }
     public void tick() {
         if (!verify()) return;
         TempData data = new TempData(client.player, client.world, SchematicWorldHandler.getSchematicWorld());
@@ -304,27 +328,9 @@ public class Printer extends PrinterUtils {
             isFacing = false;
         }
 
-        if(items2.size() != 0 && !isOpenHandler && !openIng){
-            if(LitematicaMixinMod.QUICKSHULKER.getBooleanValue() && openShulker(items2)){
-                return;
-            }else if(LitematicaMixinMod.INVENTORY.getBooleanValue()){
-                for (Item item : items2) {
-                    MemoryDatabase database = MemoryDatabase.getCurrent();
-                    if (database != null) {
-                        for (Identifier dimension : database.getDimensions()) {
-                            for (Memory memory : database.findItems(item.getDefaultStack(), dimension)) {
-                                OpenInventoryPacket.sendOpenInventory(memory.getPosition(), RegistryKey.of(Registry.WORLD_KEY, dimension));
-                                isOpenHandler = true;
-                                return;
-                            }
-                        }
-                    }
-                }
-                items2 = new HashSet<>();
-                isOpenHandler = false;
-            }
-        }
         if(isOpenHandler)return;
+        if(switchItem()) return;
+
         if (LitematicaMixinMod.BEDROCK.getBooleanValue()) {
             jymod(data);
             return;
@@ -542,14 +548,16 @@ public class Printer extends PrinterUtils {
                     DefaultedList<ItemStack> items1 = fi.dy.masa.malilib.util.InventoryUtils.getStoredItems(stack, -1);
                     if(items1.stream().anyMatch(s1 -> s1.getItem().equals(item))){
                         try {
-                            Class quickShulker = Class.forName("net.kyrptonaught.quickshulker.client.ClientUtil");
+                            Class<?> quickShulker = Class.forName("net.kyrptonaught.quickshulker.client.ClientUtil");
                             Method checkAndSend = quickShulker.getDeclaredMethod("CheckAndSend",ItemStack.class,int.class);
+                            ClientUtil.CheckAndSend(stack,i);
                             if(i<9) i+=36;
                             checkAndSend.invoke(checkAndSend,stack,i);
                             isOpenHandler = true;
                             //                                    System.out.println("open "+b);
                             return true;
                         } catch (Exception e) {
+
                         }
                     }
                 }

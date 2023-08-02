@@ -215,7 +215,6 @@ public class ZxyUtils {
                 }
             }
             client.inGameHud.setOverlayMessage(new TranslatableText("打印机库存已清空"), false);
-
         }
         for (BlockPos pos : syncPosList) {
             RenderUtils.FOUND_ITEM_POSITIONS.put(pos, new PositionData(pos, client.world.getTime(), VoxelShapes.fullCube(), 10, 10, 6, null));
