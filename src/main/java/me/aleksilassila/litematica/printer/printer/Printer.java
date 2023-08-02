@@ -534,24 +534,32 @@ public class Printer extends PrinterUtils {
 
     boolean openShulker(HashSet<Item> items){
         for (Item item : items) {
+            //获取玩家ui
             ScreenHandler sc = MinecraftClient.getInstance().player.playerScreenHandler;
 //            if(!MinecraftClient.getInstance().player.currentScreenHandler.equals(sc))return false;
+            //循环每个物品栏
             for (int i = 0; i < sc.slots.size(); i++) {
                 ItemStack stack = sc.slots.get(i).getStack();
                 if(i<9){
                     int i2 = i+36;
                     stack = sc.slots.get(i2).getStack();
                 }
+                //获取物品id
                 Item item2 = sc.slots.get(i).getStack().getItem();
                 String itemid = Registry.ITEM.getId(item2).toString();
+                //确认是盒子
                 if(itemid.contains("shulker_box")){
+                    //用masa的方法获取盒子的库存列表
                     DefaultedList<ItemStack> items1 = fi.dy.masa.malilib.util.InventoryUtils.getStoredItems(stack, -1);
+                    //确认是有所需的物品
                     if(items1.stream().anyMatch(s1 -> s1.getItem().equals(item))){
                         try {
                             Class<?> quickShulker = Class.forName("net.kyrptonaught.quickshulker.client.ClientUtil");
                             Method checkAndSend = quickShulker.getDeclaredMethod("CheckAndSend",ItemStack.class,int.class);
                             ClientUtil.CheckAndSend(stack,i);
+                            //这里做个修正物品栏id
                             if(i<9) i+=36;
+                            //发送打开盒子的方法
                             checkAndSend.invoke(checkAndSend,stack,i);
                             isOpenHandler = true;
                             //                                    System.out.println("open "+b);
