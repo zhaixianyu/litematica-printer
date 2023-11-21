@@ -4,8 +4,8 @@
 Time: 2023/2/25 上午3:09
 Description: Ticking entity
 
-java.lang.NullPointerException: Cannot invoke "net.minecraft.util.math.BlockPos.equals(Object)" because the return value of "me.aleksilassila.litematica.printer.printer.utils.TargetBlock.getnyk()" is null
-	at me.aleksilassila.litematica.printer.printer.utils.BreakingFlowController.addBlockPosToList(BreakingFlowController.java:53)
+java.lang.NullPointerException: Cannot invoke "net.minecraft.util.math.BlockPos.equals(Object)" because the return value of "me.aleksilassila.litematica.printer.printer.bedrockUtils.TargetBlock.getnyk()" is null
+	at me.aleksilassila.litematica.printer.printer.bedrockUtils.BreakingFlowController.addBlockPosToList(BreakingFlowController.java:53)
 	at me.aleksilassila.litematica.printer.printer.Printer.jymod(Printer.java:209)
 	at me.aleksilassila.litematica.printer.printer.Printer.tick(Printer.java:245)
 	at net.minecraft.client.network.ClientPlayerEntity.handler$zhl000$tick(ClientPlayerEntity.java:2151)
@@ -35,7 +35,7 @@ A detailed walkthrough of the error, its code path and all known details is as f
 -- Head --
 Thread: Render thread
 Stacktrace:
-	at me.aleksilassila.litematica.printer.printer.utils.BreakingFlowController.addBlockPosToList(BreakingFlowController.java:53)
+	at me.aleksilassila.litematica.printer.printer.bedrockUtils.BreakingFlowController.addBlockPosToList(BreakingFlowController.java:53)
 	at me.aleksilassila.litematica.printer.printer.Printer.jymod(Printer.java:209)
 	at me.aleksilassila.litematica.printer.printer.Printer.tick(Printer.java:245)
 	at net.minecraft.client.network.ClientPlayerEntity.handler$zhl000$tick(ClientPlayerEntity.java:2151)

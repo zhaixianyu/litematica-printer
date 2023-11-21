@@ -5,9 +5,9 @@ Time: 2023/2/25 上午3:44
 Description: Ticking entity
 
 java.lang.ClassCastException: class net.minecraft.block.PistonBlock cannot be cast to class net.minecraft.item.Item (net.minecraft.block.PistonBlock and net.minecraft.item.Item are in unnamed module of loader net.fabricmc.loader.impl.launch.knot.KnotClassLoader @63eef88a)
-	at me.aleksilassila.litematica.printer.printer.utils.InventoryManager.switchToItem(InventoryManager.java:34)
-	at me.aleksilassila.litematica.printer.printer.utils.TargetBlock.tick(TargetBlock.java:52)
-	at me.aleksilassila.litematica.printer.printer.utils.BreakingFlowController.tick(BreakingFlowController.java:101)
+	at me.aleksilassila.litematica.printer.printer.bedrockUtils.InventoryManager.switchToItem(InventoryManager.java:34)
+	at me.aleksilassila.litematica.printer.printer.bedrockUtils.TargetBlock.tick(TargetBlock.java:52)
+	at me.aleksilassila.litematica.printer.printer.bedrockUtils.BreakingFlowController.tick(BreakingFlowController.java:101)
 	at me.aleksilassila.litematica.printer.printer.Printer.jymod(Printer.java:194)
 	at me.aleksilassila.litematica.printer.printer.Printer.tick(Printer.java:245)
 	at net.minecraft.client.network.ClientPlayerEntity.handler$zjc000$tick(ClientPlayerEntity.java:2151)
@@ -37,9 +37,9 @@ A detailed walkthrough of the error, its code path and all known details is as f
 -- Head --
 Thread: Render thread
 Stacktrace:
-	at me.aleksilassila.litematica.printer.printer.utils.InventoryManager.switchToItem(InventoryManager.java:34)
-	at me.aleksilassila.litematica.printer.printer.utils.TargetBlock.tick(TargetBlock.java:52)
-	at me.aleksilassila.litematica.printer.printer.utils.BreakingFlowController.tick(BreakingFlowController.java:101)
+	at me.aleksilassila.litematica.printer.printer.bedrockUtils.InventoryManager.switchToItem(InventoryManager.java:34)
+	at me.aleksilassila.litematica.printer.printer.bedrockUtils.TargetBlock.tick(TargetBlock.java:52)
+	at me.aleksilassila.litematica.printer.printer.bedrockUtils.BreakingFlowController.tick(BreakingFlowController.java:101)
 	at me.aleksilassila.litematica.printer.printer.Printer.jymod(Printer.java:194)
 	at me.aleksilassila.litematica.printer.printer.Printer.tick(Printer.java:245)
 	at net.minecraft.client.network.ClientPlayerEntity.handler$zjc000$tick(ClientPlayerEntity.java:2151)
