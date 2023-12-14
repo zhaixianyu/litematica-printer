@@ -1,4 +1,4 @@
-version:3465
+version:3578
 autoJump:false
 operatorItemsTab:false
 autoSuggestions:true
@@ -30,6 +30,7 @@ glintSpeed:0.5
 glintStrength:0.75
 damageTiltStrength:1.0
 highContrast:false
+narratorHotkey:true
 gamma:1.0
 renderDistance:31
 simulationDistance:31
@@ -118,9 +119,9 @@ key_key.hotbar.6:key.keyboard.6
 key_key.hotbar.7:key.keyboard.7
 key_key.hotbar.8:key.keyboard.8
 key_key.hotbar.9:key.keyboard.9
-key_key.whereisit.finditem:key.keyboard.y
+key_key.chesttracker.open_gui:key.keyboard.grave.accent
+key_key.whereisit.search:key.keyboard.y
 key_key.modmenu.open_menu:key.keyboard.unknown
-key_key.chesttracker.opengui:key.keyboard.unknown
 soundCategory_master:0.28711012
 soundCategory_music:0.0
 soundCategory_record:1.0
