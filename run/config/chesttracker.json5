@@ -1,22 +1,26 @@
 {
-	"visualOptions": {
-		"borderColour": 47871,
-		"nameRenderRange": 12,
-		"rowCount": 6,
-		"columnCount": 9,
-		"hideDeleteButton": false,
-		"enableButton": true,
-		"hideDatabaseInfo": false
+	gui: {
+		autofocus_search_bar: false,
+		show_autocomplete: true,
+		autocomplete_shows_regular_names: true,
+		show_resize_widget: true,
+		grid_width: 9,
+		grid_height: 6,
+		hide_memory_ids: false,
+		item_list_text_scale: 0
 	},
-	"databaseOptions": {
-		"destroyedMemoryCheckInterval": 10,
-		"readableFiles": true,
-		"safeFileNames": false,
-		"prefixFilesWithUsername": false
+	rendering: {
+		name_range: 12
 	},
-	"miscOptions": {
-		"printGuiClassNames": false,
-		"rememberNewChests": true,
-		"searchRange": 98
+	debug: {
+		show_dev_hud: false
+	},
+	storage: {
+		readable_json_memories: false,
+		storage_backend: "NBT"
+	},
+	compatibility: {
+		shulker_box_tooltip_integration: true,
+		wthit_integration: true
 	}
 }
