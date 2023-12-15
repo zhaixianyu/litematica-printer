@@ -1,7 +1,7 @@
 {
 	gui: {
 		autofocus_search_bar: false,
-		show_autocomplete: true,
+		show_autocomplete: false,
 		autocomplete_shows_regular_names: true,
 		show_resize_widget: true,
 		grid_width: 9,
@@ -16,7 +16,7 @@
 		show_dev_hud: false
 	},
 	storage: {
-		readable_json_memories: false,
+		readable_json_memories: true,
 		storage_backend: "NBT"
 	},
 	compatibility: {
