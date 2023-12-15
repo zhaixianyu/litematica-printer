@@ -19,7 +19,6 @@
     "MixinClientPlayNetworkHandler",
     "PlayerMoveC2SPacketAccessor",
     "jackf.ChestTrackerScreenMixin",
-    "jackf.MemoryBankInterface",
     "jackf.MemoryBankMixin",
     "jackf.SearchablesUtilMixin",
     "openinv.MixinMinecraftClient"
