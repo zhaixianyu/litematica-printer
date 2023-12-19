@@ -55,7 +55,7 @@ textBackgroundOpacity:0.5
 backgroundForChatOnly:true
 hideServerAddress:false
 advancedItemTooltips:true
-pauseOnLostFocus:true
+pauseOnLostFocus:false
 overrideWidth:0
 overrideHeight:0
 chatHeightFocused:1.0
@@ -119,9 +119,9 @@ key_key.hotbar.6:key.keyboard.6
 key_key.hotbar.7:key.keyboard.7
 key_key.hotbar.8:key.keyboard.8
 key_key.hotbar.9:key.keyboard.9
-key_key.modmenu.open_menu:key.keyboard.unknown
 key_key.chesttracker.open_gui:key.keyboard.grave.accent
 key_key.whereisit.search:key.keyboard.y
+key_key.modmenu.open_menu:key.keyboard.unknown
 soundCategory_master:0.28711012
 soundCategory_music:0.0
 soundCategory_record:1.0
