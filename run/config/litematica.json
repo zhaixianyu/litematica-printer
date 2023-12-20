@@ -13,8 +13,8 @@
   },
   "Generic": {
     "远程交互容器": true,
-    "快捷潜影盒": true,
-    "排流体": true,
+    "快捷潜影盒": false,
+    "排流体": false,
     "是否放置侦测器和红石块": true,
     "areaSelectionsPerWorld": true,
     "changeSelectedCornerOnMove": true,

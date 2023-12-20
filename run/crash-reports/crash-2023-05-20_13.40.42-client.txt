@@ -4,7 +4,7 @@
 Time: 2023/5/20 下午1:40
 Description: Unexpected error
 
-java.lang.NullPointerException: Cannot invoke "net.minecraft.util.registry.RegistryKey.getValue()" because "me.aleksilassila.litematica.printer.printer.zxy.OpenInventoryPacket.key" is null
+java.lang.NullPointerException: Cannot invoke "net.minecraft.util.registry.RegistryKey.getValue()" because "me.aleksilassila.litematica.printer.printer.zxy.Utils.OpenInventoryPacket.key" is null
 	at red.jackf.chesttracker.memory.MemoryUtils.handleItemsFromScreen(MemoryUtils.java:587)
 	at net.minecraft.client.MinecraftClient.handler$zha000$chestTracker$countItemsBeforeClose(MinecraftClient.java:6458)
 	at net.minecraft.client.MinecraftClient.setScreen(MinecraftClient.java:968)

@@ -5,7 +5,7 @@ Time: 2023/5/16 上午3:05
 Description: Ticking entity
 
 java.lang.RuntimeException: java.io.NotSerializableException: net.minecraft.util.registry.RegistryKey
-	at me.aleksilassila.litematica.printer.printer.zxy.OpenInventoryPacket.sendOpenInventory(OpenInventoryPacket.java:66)
+	at me.aleksilassila.litematica.printer.printer.zxy.Utils.OpenInventoryPacket.sendOpenInventory(OpenInventoryPacket.java:66)
 	at me.aleksilassila.litematica.printer.printer.Printer.openChestBlock(Printer.java:439)
 	at me.aleksilassila.litematica.printer.printer.Printer.tick(Printer.java:299)
 	at net.minecraft.client.network.ClientPlayerEntity.handler$zhd000$tick(ClientPlayerEntity.java:2332)
@@ -30,7 +30,7 @@ Caused by: java.io.NotSerializableException: net.minecraft.util.registry.Registr
 	at java.base/java.io.ObjectOutputStream.writeOrdinaryObject(ObjectOutputStream.java:1443)
 	at java.base/java.io.ObjectOutputStream.writeObject0(ObjectOutputStream.java:1186)
 	at java.base/java.io.ObjectOutputStream.writeObject(ObjectOutputStream.java:358)
-	at me.aleksilassila.litematica.printer.printer.zxy.OpenInventoryPacket.sendOpenInventory(OpenInventoryPacket.java:59)
+	at me.aleksilassila.litematica.printer.printer.zxy.Utils.OpenInventoryPacket.sendOpenInventory(OpenInventoryPacket.java:59)
 	... 17 more
 
 
@@ -40,7 +40,7 @@ A detailed walkthrough of the error, its code path and all known details is as f
 -- Head --
 Thread: Render thread
 Stacktrace:
-	at me.aleksilassila.litematica.printer.printer.zxy.OpenInventoryPacket.sendOpenInventory(OpenInventoryPacket.java:66)
+	at me.aleksilassila.litematica.printer.printer.zxy.Utils.OpenInventoryPacket.sendOpenInventory(OpenInventoryPacket.java:66)
 	at me.aleksilassila.litematica.printer.printer.Printer.openChestBlock(Printer.java:439)
 	at me.aleksilassila.litematica.printer.printer.Printer.tick(Printer.java:299)
 	at net.minecraft.client.network.ClientPlayerEntity.handler$zhd000$tick(ClientPlayerEntity.java:2332)

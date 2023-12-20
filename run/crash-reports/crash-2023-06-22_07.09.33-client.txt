@@ -15,7 +15,7 @@ java.lang.ExceptionInInitializerError
 	at net.fabricmc.loader.impl.launch.knot.KnotClient.main(KnotClient.java:23)
 	at net.fabricmc.devlaunchinjector.Main.main(Main.java:86)
 Caused by: java.lang.RuntimeException: java.lang.ClassNotFoundException: net.kyrptonaught.quickshulker.client.ClientUtil
-	at me.aleksilassila.litematica.printer.printer.zxy.ZxyUtils.<clinit>(ZxyUtils.java:45)
+	at me.aleksilassila.litematica.printer.printer.zxy.Utils.ZxyUtils.<clinit>(ZxyUtils.java:45)
 	... 9 more
 Caused by: java.lang.ClassNotFoundException: net.kyrptonaught.quickshulker.client.ClientUtil
 	at java.base/jdk.internal.loader.BuiltinClassLoader.loadClass(BuiltinClassLoader.java:641)
@@ -26,7 +26,7 @@ Caused by: java.lang.ClassNotFoundException: net.kyrptonaught.quickshulker.clien
 	at java.base/java.lang.Class.forName0(Native Method)
 	at java.base/java.lang.Class.forName(Class.java:391)
 	at java.base/java.lang.Class.forName(Class.java:382)
-	at me.aleksilassila.litematica.printer.printer.zxy.ZxyUtils.<clinit>(ZxyUtils.java:43)
+	at me.aleksilassila.litematica.printer.printer.zxy.Utils.ZxyUtils.<clinit>(ZxyUtils.java:43)
 	... 9 more
 
 
