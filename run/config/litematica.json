@@ -12,8 +12,8 @@
     "schematicOverlayColorWrongState": "#4CFF9010"
   },
   "Generic": {
-    "远程交互容器": true,
-    "快捷潜影盒": false,
+    "远程交互容器": false,
+    "快捷潜影盒": true,
     "排流体": false,
     "是否放置侦测器和红石块": true,
     "areaSelectionsPerWorld": true,
