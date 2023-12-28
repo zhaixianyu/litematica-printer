@@ -87,10 +87,7 @@
       "minecraft:furnace",
       "shulker",
       "minecraft:chest"
-    ],
-    "test": {
-      "keys": "V"
-    }
+    ]
   },
   "Hotkeys": {
     "addSelectionBox": {
@@ -341,9 +338,6 @@
     },
     "清空打印机库存": {
       "keys": "C,G"
-    },
-    "test": {
-      "keys": "V"
     }
   },
   "InfoOverlays": {
