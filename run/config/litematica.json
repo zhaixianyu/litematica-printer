@@ -12,7 +12,7 @@
     "schematicOverlayColorWrongState": "#4CFF9010"
   },
   "Generic": {
-    "远程交互容器": false,
+    "远程交互容器": true,
     "快捷潜影盒": true,
     "排流体": false,
     "是否放置侦测器和红石块": true,
@@ -72,7 +72,7 @@
     "easyPlaceSwapInterval": 0,
     "pickBlockableSlots": "6,7",
     "toolItem": "",
-    "printingMode": false,
+    "printingMode": true,
     "printInterval": 0,
     "printingRange": 3,
     "printInAir": true,
@@ -81,13 +81,17 @@
     "破基岩模式": false,
     "挖掘": false,
     "排流体方块名单": [
+      "gravel",
       "minecraft:sand"
     ],
     "库存白名单": [
       "minecraft:furnace",
       "shulker",
       "minecraft:chest"
-    ]
+    ],
+    "test": {
+      "keys": "V"
+    }
   },
   "Hotkeys": {
     "addSelectionBox": {
@@ -338,6 +342,9 @@
     },
     "清空打印机库存": {
       "keys": "C,G"
+    },
+    "test": {
+      "keys": "V"
     }
   },
   "InfoOverlays": {
