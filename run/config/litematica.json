@@ -26,7 +26,7 @@
     "debugLogging": false,
     "easyPlaceFirst": true,
     "easyPlaceHoldEnabled": true,
-    "easyPlaceMode": false,
+    "easyPlaceMode": true,
     "easyPlaceSinglePlayerHandling": true,
     "easyPlaceProtocolVersion": "auto",
     "easyPlaceVanillaReach": false,
@@ -72,7 +72,7 @@
     "easyPlaceSwapInterval": 0,
     "pickBlockableSlots": "6,7",
     "toolItem": "",
-    "printingMode": true,
+    "printingMode": false,
     "printInterval": 0,
     "printingRange": 3,
     "printInAir": true,
@@ -107,7 +107,7 @@
       "keys": "BUTTON_2"
     },
     "easyPlaceToggle": {
-      "keys": ""
+      "keys": "KP_DIVIDE"
     },
     "executeOperation": {
       "keys": "KP_ADD"
@@ -376,7 +376,7 @@
     "verifierErrorHilightMaxPositions": 1000
   },
   "Visuals": {
-    "enableRendering": true,
+    "enableRendering": false,
     "enableSchematicRendering": true,
     "enableAreaSelectionBoxesRendering": true,
     "enablePlacementBoxesRendering": true,

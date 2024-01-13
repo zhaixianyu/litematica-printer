@@ -5,5 +5,17 @@
     },
     "done": false
   },
-  "DataVersion": 2975
+  "minecraft:recipes/decorations/crafting_table": {
+    "criteria": {
+      "unlock_right_away": "2023-12-30 23:49:06 +0800"
+    },
+    "done": true
+  },
+  "minecraft:recipes/decorations/chest": {
+    "criteria": {
+      "has_lots_of_items": "2023-12-30 23:49:06 +0800"
+    },
+    "done": true
+  },
+  "DataVersion": 3578
 }

@@ -47,9 +47,9 @@
         "schematic": "C:\\game\\Minecraft\\MyMod\\printer-20.2\\run\\schematics\\hoppertest02.litematic",
         "name": "Unnamed",
         "origin": [
-          -3,
-          86,
-          10
+          1,
+          90,
+          14
         ],
         "rotation": "NONE",
         "mirror": "NONE",
