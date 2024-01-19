@@ -7,11 +7,11 @@
   "Generic": {
     "carpetAccuratePlacementProtocol": true,
     "clientPlacementRotation": true,
-    "fastLeftClickAllowTools": false,
+    "fastLeftClickAllowTools": true,
     "fastPlacementRememberOrientation": true,
     "freeCameraPlayerInputs": false,
     "freeCameraPlayerMovement": false,
-    "handRestockPre": true,
+    "handRestockPre": false,
     "hangableEntityBypassInverse": false,
     "itemUsePacketCheckBypass": true,
     "permanentSneakAllowInGUIs": false,
@@ -21,7 +21,7 @@
     "shulkerDisplayBgColor": true,
     "shulkerDisplayRequireShift": true,
     "slotSyncWorkaround": true,
-    "slotSyncWorkaroundAlways": false,
+    "slotSyncWorkaroundAlways": true,
     "snapAimIndicator": true,
     "snapAimOnlyCloseToAngle": true,
     "snapAimPitchOvershoot": false,
@@ -38,7 +38,7 @@
     "flexibleBlockPlacementOverlayColor": "#C03030F0",
     "snapAimIndicatorColor": "#603030FF",
     "afterClickerClickCount": 1,
-    "blockReachDistance": 4.5,
+    "blockReachDistance": 8.0,
     "breakingGridSize": 3,
     "customInventoryGuiScale": 2,
     "fastBlockPlacementCount": 2,
@@ -84,7 +84,7 @@
       "keys": ""
     },
     "accurateBlockPlacementReverse": {
-      "keys": ""
+      "keys": "LEFT_ALT"
     },
     "breakingRestrictionModeColumn": {
       "keys": ""
@@ -111,13 +111,13 @@
       "keys": ""
     },
     "flexibleBlockPlacementAdjacent": {
-      "keys": ""
+      "keys": "TAB"
     },
     "flexibleBlockPlacementOffset": {
       "keys": "LEFT_CONTROL"
     },
     "flexibleBlockPlacementRotation": {
-      "keys": "LEFT_ALT"
+      "keys": "BUTTON_5"
     },
     "flyPreset1": {
       "keys": ""
@@ -132,10 +132,10 @@
       "keys": ""
     },
     "freeCameraPlayerInputs": {
-      "keys": ""
+      "keys": "LEFT_ALT,D"
     },
     "freeCameraPlayerMovement": {
-      "keys": ""
+      "keys": "LEFT_ALT,BUTTON_4,D"
     },
     "hotbarScroll": {
       "keys": ""
@@ -153,7 +153,7 @@
       "keys": ""
     },
     "inventoryPreview": {
-      "keys": "LEFT_ALT"
+      "keys": "LEFT_ALT,X"
     },
     "openConfigGui": {
       "keys": "X,C"
@@ -162,7 +162,7 @@
       "keys": ""
     },
     "playerInventoryPeek": {
-      "keys": ""
+      "keys": "BUTTON_4"
     },
     "placementRestrictionModeColumn": {
       "keys": "Z,3"
@@ -218,7 +218,7 @@
     "gammaValueOriginal": 1.0,
     "hotbarScrollCurrentRow": 3,
     "slimeBlockSlipperinessOriginal": 0.800000011920929,
-    "snapAimLastYaw": 0.0
+    "snapAimLastYaw": 270.0
   },
   "Lists": {
     "blockTypeBreakRestrictionListType": "blacklist",
@@ -297,7 +297,6 @@
       "minecraft:water_breathing"
     ],
     "repairModeSlots": [
-      "mainhand",
       "offhand"
     ],
     "unstackingItems": [
@@ -319,7 +318,7 @@
       }
     },
     "disableBatSpawning": {
-      "enabled": false,
+      "enabled": true,
       "hotkey": {
         "keys": ""
       }
@@ -349,7 +348,7 @@
       }
     },
     "disableBossFog": {
-      "enabled": false,
+      "enabled": true,
       "hotkey": {
         "keys": ""
       }
@@ -387,11 +386,11 @@
     "disableDeadMobRendering": {
       "enabled": false,
       "hotkey": {
-        "keys": ""
+        "keys": "RIGHT_CONTROL,BACKSPACE"
       }
     },
     "disableDeadMobTargeting": {
-      "enabled": false,
+      "enabled": true,
       "hotkey": {
         "keys": ""
       }
@@ -415,7 +414,7 @@
       }
     },
     "disableFirstPersonEffectParticles": {
-      "enabled": false,
+      "enabled": true,
       "hotkey": {
         "keys": ""
       }
@@ -445,13 +444,13 @@
       }
     },
     "disableNetherFog": {
-      "enabled": false,
+      "enabled": true,
       "hotkey": {
         "keys": ""
       }
     },
     "disableNetherPortalSound": {
-      "enabled": false,
+      "enabled": true,
       "hotkey": {
         "keys": ""
       }
@@ -471,11 +470,11 @@
     "disableParticles": {
       "enabled": false,
       "hotkey": {
-        "keys": ""
+        "keys": "ENTER,BACKSPACE"
       }
     },
     "disablePortalGuiClosing": {
-      "enabled": false,
+      "enabled": true,
       "hotkey": {
         "keys": ""
       }
@@ -483,7 +482,7 @@
     "disableRainEffects": {
       "enabled": false,
       "hotkey": {
-        "keys": ""
+        "keys": "RIGHT_CONTROL,ENTER,BACKSPACE"
       }
     },
     "disableRenderingScaffolding": {
@@ -493,7 +492,7 @@
       }
     },
     "disableRenderDistanceFog": {
-      "enabled": false,
+      "enabled": true,
       "hotkey": {
         "keys": ""
       }
@@ -517,9 +516,9 @@
       }
     },
     "disableSignGui": {
-      "enabled": false,
+      "enabled": true,
       "hotkey": {
-        "keys": ""
+        "keys": "RIGHT_ALT,BACKSPACE"
       }
     },
     "disableSkyDarkness": {
@@ -529,7 +528,7 @@
       }
     },
     "disableSlimeBlockSlowdown": {
-      "enabled": false,
+      "enabled": true,
       "hotkey": {
         "keys": ""
       }
@@ -559,7 +558,7 @@
       }
     },
     "disableWallUnsprint": {
-      "enabled": false,
+      "enabled": true,
       "hotkey": {
         "keys": ""
       }
@@ -612,7 +611,7 @@
       "keys": ""
     },
     "disableDeadMobRendering": {
-      "keys": ""
+      "keys": "RIGHT_CONTROL,BACKSPACE"
     },
     "disableDeadMobTargeting": {
       "keys": ""
@@ -654,13 +653,13 @@
       "keys": ""
     },
     "disableParticles": {
-      "keys": ""
+      "keys": "ENTER,BACKSPACE"
     },
     "disablePortalGuiClosing": {
       "keys": ""
     },
     "disableRainEffects": {
-      "keys": ""
+      "keys": "RIGHT_CONTROL,ENTER,BACKSPACE"
     },
     "disableRenderingScaffolding": {
       "keys": ""
@@ -678,7 +677,7 @@
       "keys": ""
     },
     "disableSignGui": {
-      "keys": ""
+      "keys": "RIGHT_ALT,BACKSPACE"
     },
     "disableSkyDarkness": {
       "keys": ""
@@ -706,7 +705,7 @@
     }
   },
   "TweakToggles": {
-    "tweakAccurateBlockPlacement": false,
+    "tweakAccurateBlockPlacement": true,
     "tweakAfterClicker": false,
     "tweakAimLock": false,
     "tweakAngelBlock": false,
@@ -733,7 +732,7 @@
     "tweakFastRightClick": false,
     "tweakFillCloneLimit": false,
     "tweakFlySpeed": false,
-    "tweakFlexibleBlockPlacement": false,
+    "tweakFlexibleBlockPlacement": true,
     "tweakFreeCamera": false,
     "tweakGammaOverride": false,
     "tweakHandRestock": false,
@@ -744,9 +743,9 @@
     "tweakHotbarSlotCycle": false,
     "tweakHotbarSlotRandomizer": false,
     "tweakHotbarSwap": false,
-    "tweakInventoryPreview": false,
+    "tweakInventoryPreview": true,
     "tweakItemUnstackingProtection": false,
-    "tweakLavaVisibility": false,
+    "tweakLavaVisibility": true,
     "tweakMapPreview": false,
     "tweakMovementKeysLast": false,
     "tweakPeriodicAttack": false,
@@ -760,13 +759,13 @@
     "tweakPlacementRestriction": false,
     "tweakPlacementRestrictionFirst": false,
     "tweakPlacementRestrictionHand": false,
-    "tweakPlayerInventoryPeek": false,
+    "tweakPlayerInventoryPeek": true,
     "tweakPotionWarning": false,
     "tweakPrintDeathCoordinates": false,
     "tweakPickBeforePlace": false,
     "tweakPlayerListAlwaysVisible": false,
     "tweakRenderEdgeChunks": false,
-    "tweakRenderInvisibleEntities": false,
+    "tweakRenderInvisibleEntities": true,
     "tweakRenderLimitEntities": false,
     "tweakRepairMode": false,
     "tweakSculkPulseLength": false,
@@ -775,7 +774,7 @@
     "tweakSnapAim": false,
     "tweakSnapAimLock": false,
     "tweakSneak_1.15.2": false,
-    "tweakSpectatorTeleport": false,
+    "tweakSpectatorTeleport": true,
     "tweakStructureBlockLimit": false,
     "tweakSwapAlmostBrokenTools": false,
     "tweakTabCompleteCoordinate": false,
@@ -846,19 +845,19 @@
       "keys": ""
     },
     "tweakFakeSneaking": {
-      "keys": ""
+      "keys": "DOWN"
     },
     "tweakFakeSneakPlacement": {
-      "keys": ""
+      "keys": "RIGHT_CONTROL,DOWN"
     },
     "tweakFastBlockPlacement": {
-      "keys": ""
+      "keys": "LEFT"
     },
     "tweakFastLeftClick": {
-      "keys": ""
+      "keys": "KP_ADD"
     },
     "tweakFastRightClick": {
-      "keys": ""
+      "keys": "KP_ENTER"
     },
     "tweakFillCloneLimit": {
       "keys": ""
@@ -870,7 +869,7 @@
       "keys": ""
     },
     "tweakFreeCamera": {
-      "keys": ""
+      "keys": "LEFT_ALT,A"
     },
     "tweakGammaOverride": {
       "keys": ""
@@ -885,7 +884,7 @@
       "keys": ""
     },
     "tweakHoldUse": {
-      "keys": ""
+      "keys": "LEFT_CONTROL,LEFT_ALT,BUTTON_4"
     },
     "tweakHotbarScroll": {
       "keys": ""
@@ -915,7 +914,7 @@
       "keys": ""
     },
     "tweakPeriodicAttack": {
-      "keys": ""
+      "keys": "LEFT_CONTROL,LEFT_ALT,BUTTON_5"
     },
     "tweakPeriodicUse": {
       "keys": ""
@@ -972,7 +971,7 @@
       "keys": ""
     },
     "tweakRepairMode": {
-      "keys": ""
+      "keys": "LEFT_ALT,J"
     },
     "tweakSculkPulseLength": {
       "keys": ""
@@ -984,7 +983,7 @@
       "keys": ""
     },
     "tweakSnapAim": {
-      "keys": ""
+      "keys": "LEFT_CONTROL,BUTTON_5"
     },
     "tweakSnapAimLock": {
       "keys": ""
@@ -1005,7 +1004,7 @@
       "keys": ""
     },
     "tweakToolSwitch": {
-      "keys": ""
+      "keys": "UP"
     },
     "tweakWeaponSwitch": {
       "keys": ""

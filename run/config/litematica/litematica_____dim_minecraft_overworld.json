@@ -1,16 +1,60 @@
 {
   "selections": {
-    "mode": "SIMPLE"
+    "mode": "NORMAL",
+    "current": "D:\\Games\\Minecraft\\minecraft\\1.20\\1.20.1\\.minecraft\\config\\litematica\\area_selections_per_world\\___\\area_selections\\1.json"
   },
-  "placements": {},
+  "placements": {
+    "placements": [
+      {
+        "schematic": "D:\\Games\\Minecraft\\minecraft\\1.20\\1.20.1\\.minecraft\\schematics\\49K刷石机.litematic",
+        "name": "49K刷石机",
+        "origin": [
+          -48,
+          90,
+          212
+        ],
+        "rotation": "NONE",
+        "mirror": "NONE",
+        "ignore_entities": false,
+        "enabled": true,
+        "enable_render": true,
+        "render_enclosing_box": false,
+        "locked": false,
+        "locked_coords": 0,
+        "bb_color": 16757504,
+        "verifier_type": "all",
+        "placements": [
+          {
+            "name": "49K刷石机",
+            "placement": {
+              "pos": [
+                0,
+                0,
+                0
+              ],
+              "name": "49K刷石机",
+              "rotation": "NONE",
+              "mirror": "NONE",
+              "locked_coords": 0,
+              "enabled": true,
+              "rendering_enabled": true,
+              "ignore_entities": false
+            }
+          }
+        ]
+      }
+    ],
+    "selected": 0,
+    "origin_selected": true
+  },
   "schematic_projects_manager": {},
-  "operation_mode": "AREA_SELECTION",
+  "operation_mode": "PASTE_SCHEMATIC",
   "render_range": {
-    "mode": "ALL",
-    "axis": "Y",
+    "mode": "ALL_BELOW",
+    "axis": "y",
     "layer_single": 0,
     "layer_above": 0,
-    "layer_below": 0,
+    "layer_below": 102,
     "layer_range_min": 0,
     "layer_range_max": 0,
     "hotkey_range_min": false,
@@ -22,14 +66,14 @@
     "boxes": [
       {
         "pos1": [
-          -13,
-          56,
-          5
+          -3592,
+          -63,
+          1536
         ],
         "pos2": [
-          -8,
-          58,
-          15
+          -3586,
+          -60,
+          1581
         ],
         "name": "Unnamed"
       }

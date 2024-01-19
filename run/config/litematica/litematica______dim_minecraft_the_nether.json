@@ -1,60 +1,16 @@
 {
   "selections": {
-    "mode": "SIMPLE",
-    "current": "C:\\game\\Minecraft\\mod\\litematica-printer-litematica-printer2.4-Revision1.18\\run\\config\\litematica\\area_selections_per_world\\____\\area_selections\\a.json"
+    "mode": "SIMPLE"
   },
-  "placements": {
-    "placements": [
-      {
-        "schematic": "C:\\game\\Minecraft\\MyMod\\print\\litematica-printer\\run\\schematics\\bl2.litematic",
-        "name": "Unnamed",
-        "origin": [
-          -96,
-          128,
-          38
-        ],
-        "rotation": "NONE",
-        "mirror": "NONE",
-        "ignore_entities": false,
-        "enabled": true,
-        "enable_render": true,
-        "render_enclosing_box": false,
-        "locked": false,
-        "locked_coords": 0,
-        "bb_color": 16757504,
-        "verifier_type": "all",
-        "placements": [
-          {
-            "name": "Unnamed",
-            "placement": {
-              "pos": [
-                14,
-                1,
-                13
-              ],
-              "name": "Unnamed",
-              "rotation": "NONE",
-              "mirror": "NONE",
-              "locked_coords": 0,
-              "enabled": true,
-              "rendering_enabled": true,
-              "ignore_entities": false
-            }
-          }
-        ]
-      }
-    ],
-    "selected": 0,
-    "origin_selected": true
-  },
+  "placements": {},
   "schematic_projects_manager": {},
   "operation_mode": "AREA_SELECTION",
   "render_range": {
-    "mode": "ALL",
+    "mode": "ALL_BELOW",
     "axis": "y",
     "layer_single": 0,
     "layer_above": 0,
-    "layer_below": 0,
+    "layer_below": 130,
     "layer_range_min": 0,
     "layer_range_max": 0,
     "hotkey_range_min": false,
@@ -66,14 +22,14 @@
     "boxes": [
       {
         "pos1": [
-          -91,
-          131,
-          57
+          -79,
+          127,
+          49
         ],
         "pos2": [
-          -91,
-          131,
-          57
+          -64,
+          127,
+          62
         ],
         "name": "Unnamed"
       }

@@ -2,204 +2,9 @@
   "selections": {
     "mode": "SIMPLE"
   },
-  "placements": {
-    "placements": [
-      {
-        "schematic": "C:\\game\\Minecraft\\mod\\litematica-printer-litematica-printer2.4-Revision1.18\\run\\schematics\\hoppertest01.litematic",
-        "name": "Unnamed",
-        "origin": [
-          -1,
-          93,
-          50
-        ],
-        "rotation": "NONE",
-        "mirror": "NONE",
-        "ignore_entities": false,
-        "enabled": true,
-        "enable_render": true,
-        "render_enclosing_box": false,
-        "locked": false,
-        "locked_coords": 0,
-        "bb_color": 16757504,
-        "verifier_type": "all",
-        "placements": [
-          {
-            "name": "Unnamed",
-            "placement": {
-              "pos": [
-                0,
-                0,
-                0
-              ],
-              "name": "Unnamed",
-              "rotation": "NONE",
-              "mirror": "NONE",
-              "locked_coords": 0,
-              "enabled": true,
-              "rendering_enabled": true,
-              "ignore_entities": false
-            }
-          }
-        ]
-      },
-      {
-        "schematic": "C:\\game\\Minecraft\\mod\\litematica-printer-litematica-printer2.4-Revision1.18\\run\\schematics\\lmy.litematic",
-        "name": "lmy (Converted Schematic)",
-        "origin": [
-          34,
-          133,
-          12
-        ],
-        "rotation": "NONE",
-        "mirror": "NONE",
-        "ignore_entities": false,
-        "enabled": true,
-        "enable_render": true,
-        "render_enclosing_box": false,
-        "locked": false,
-        "locked_coords": 0,
-        "bb_color": 8404597,
-        "verifier_type": "all",
-        "placements": [
-          {
-            "name": "lmy (Converted Schematic)",
-            "placement": {
-              "pos": [
-                0,
-                0,
-                0
-              ],
-              "name": "lmy (Converted Schematic)",
-              "rotation": "NONE",
-              "mirror": "NONE",
-              "locked_coords": 0,
-              "enabled": true,
-              "rendering_enabled": true,
-              "ignore_entities": false
-            }
-          }
-        ]
-      },
-      {
-        "schematic": "C:\\game\\Minecraft\\mod\\litematica-printer-litematica-printer2.4-Revision1.18\\run\\schematics\\hoppertest02.litematic",
-        "name": "Unnamed",
-        "origin": [
-          -12,
-          98,
-          151
-        ],
-        "rotation": "NONE",
-        "mirror": "NONE",
-        "ignore_entities": false,
-        "enabled": true,
-        "enable_render": true,
-        "render_enclosing_box": false,
-        "locked": false,
-        "locked_coords": 0,
-        "bb_color": 16738304,
-        "verifier_type": "all",
-        "placements": [
-          {
-            "name": "Unnamed",
-            "placement": {
-              "pos": [
-                0,
-                0,
-                0
-              ],
-              "name": "Unnamed",
-              "rotation": "NONE",
-              "mirror": "NONE",
-              "locked_coords": 0,
-              "enabled": true,
-              "rendering_enabled": true,
-              "ignore_entities": false
-            }
-          }
-        ]
-      },
-      {
-        "schematic": "C:\\game\\Minecraft\\mod\\litematica-printer-litematica-printer2.4-Revision1.18\\run\\schematics\\chestTest.litematic",
-        "name": "Unnamed",
-        "origin": [
-          -3,
-          100,
-          -13
-        ],
-        "rotation": "NONE",
-        "mirror": "NONE",
-        "ignore_entities": false,
-        "enabled": true,
-        "enable_render": true,
-        "render_enclosing_box": false,
-        "locked": false,
-        "locked_coords": 0,
-        "bb_color": 10927575,
-        "verifier_type": "all",
-        "placements": [
-          {
-            "name": "Unnamed",
-            "placement": {
-              "pos": [
-                0,
-                0,
-                0
-              ],
-              "name": "Unnamed",
-              "rotation": "NONE",
-              "mirror": "NONE",
-              "locked_coords": 0,
-              "enabled": true,
-              "rendering_enabled": true,
-              "ignore_entities": false
-            }
-          }
-        ]
-      },
-      {
-        "schematic": "C:\\game\\Minecraft\\mod\\litematica-printer-litematica-printer2.4-Revision1.18\\run\\schematics\\hoppertest02.litematic",
-        "name": "Unnamed",
-        "origin": [
-          -62,
-          95,
-          -38
-        ],
-        "rotation": "NONE",
-        "mirror": "NONE",
-        "ignore_entities": false,
-        "enabled": true,
-        "enable_render": true,
-        "render_enclosing_box": false,
-        "locked": false,
-        "locked_coords": 0,
-        "bb_color": 12648480,
-        "verifier_type": "all",
-        "placements": [
-          {
-            "name": "Unnamed",
-            "placement": {
-              "pos": [
-                0,
-                0,
-                0
-              ],
-              "name": "Unnamed",
-              "rotation": "NONE",
-              "mirror": "NONE",
-              "locked_coords": 0,
-              "enabled": true,
-              "rendering_enabled": true,
-              "ignore_entities": false
-            }
-          }
-        ]
-      }
-    ],
-    "selected": 4,
-    "origin_selected": true
-  },
+  "placements": {},
   "schematic_projects_manager": {},
-  "operation_mode": "AREA_SELECTION",
+  "operation_mode": "SCHEMATIC_PLACEMENT",
   "render_range": {
     "mode": "ALL",
     "axis": "y",
@@ -217,14 +22,14 @@
     "boxes": [
       {
         "pos1": [
-          56,
-          61,
-          -116
+          0,
+          0,
+          0
         ],
         "pos2": [
-          110,
-          65,
-          -28
+          0,
+          0,
+          0
         ],
         "name": "Unnamed"
       }
