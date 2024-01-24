@@ -223,6 +223,7 @@
   "Lists": {
     "blockTypeBreakRestrictionListType": "blacklist",
     "blockTypeBreakRestrictionBlackList": [
+      "leaves",
       "minecraft:budding_amethyst"
     ],
     "blockTypeBreakRestrictionWhiteList": [],

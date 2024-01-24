@@ -47,9 +47,9 @@
         "schematic": "C:\\game\\Minecraft\\MyMod\\printer-20.2\\run\\schematics\\hoppertest02.litematic",
         "name": "Unnamed",
         "origin": [
-          1,
-          90,
-          14
+          982,
+          79,
+          989
         ],
         "rotation": "NONE",
         "mirror": "NONE",
@@ -86,7 +86,7 @@
     "origin_selected": true
   },
   "schematic_projects_manager": {},
-  "operation_mode": "SCHEMATIC_PLACEMENT",
+  "operation_mode": "AREA_SELECTION",
   "render_range": {
     "mode": "ALL",
     "axis": "y",
