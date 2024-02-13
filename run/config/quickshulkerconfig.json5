@@ -1,6 +1,6 @@
 {
 	// Activation key
-	"keybinding": "key.keyboard.k",
+	"keybinding": "key.keyboard.j",
 	// Right Clicking with shulker in hand opens it
 	"rightClickToOpen": true,
 	// Hitting the keybind with shulker in hand opens it

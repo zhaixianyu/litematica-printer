@@ -10,7 +10,7 @@
 	},
 	"databaseOptions": {
 		"destroyedMemoryCheckInterval": 10,
-		"readableFiles": true,
+		"readableFiles": false,
 		"safeFileNames": false,
 		"prefixFilesWithUsername": false
 	},

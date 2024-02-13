@@ -14,7 +14,6 @@
   "Generic": {
     "远程交互容器": false,
     "快捷潜影盒": true,
-    "排流体": true,
     "是否放置侦测器和红石块": true,
     "areaSelectionsPerWorld": true,
     "changeSelectedCornerOnMove": true,
@@ -28,7 +27,7 @@
     "easyPlaceHoldEnabled": true,
     "easyPlaceMode": false,
     "easyPlaceSinglePlayerHandling": true,
-    "easyPlaceProtocolVersion": "auto",
+    "easyPlaceProtocolVersion": "v2",
     "easyPlaceVanillaReach": false,
     "executeRequireHoldingTool": true,
     "fixChestMirror": true,
@@ -43,14 +42,14 @@
     "pasteIgnoreCommandLimitWithNbtRestore": true,
     "pasteIgnoreEntities": false,
     "pasteIgnoreInventories": false,
-    "pasteNbtRestoreBehavior": "none",
+    "pasteNbtRestoreBehavior": "place_data_modify",
     "pasteToMcFunctionFiles": false,
     "pasteUseFillCommand": true,
     "pasteUsingCommandsInSp": false,
-    "pickBlockAvoidDamageable": true,
+    "pickBlockAvoidDamageable": false,
     "pickBlockAvoidTools": false,
     "pickBlockEnabled": true,
-    "pickBlockShulkers": false,
+    "pickBlockShulkers": true,
     "placementReplaceBehavior": "all",
     "placementRestriction": false,
     "placementRestrictionWarn": "actionbar",
@@ -62,36 +61,42 @@
     "pasteReplaceBehavior": "none",
     "selectionCornersMode": "expand",
     "commandFillMaxVolume": 32768,
-    "commandLimitPerTick": 64,
+    "commandLimitPerTick": 24,
     "commandNameClone": "clone",
     "commandNameFill": "fill",
     "commandNameSetblock": "setblock",
     "commandNameSummon": "summon",
-    "commandTaskInterval": 1,
-    "customSchematicBaseDirectory": "F:\\game\\Minecraft\\mod修改\\litematica-printer-2.1\\run\\schematics",
+    "commandTaskInterval": 4,
+    "customSchematicBaseDirectory": "D:\\Games\\Minecraft\\minecraft\\1.19.1\\.minecraft\\schematics",
     "easyPlaceSwapInterval": 0,
-    "pickBlockableSlots": "6,7",
-    "toolItem": "",
-    "printingMode": false,
+    "pickBlockableSlots": "6,7,8,9",
+    "toolItem": "minecraft:stick",
+    "printingSwitch": false,
     "printInterval": 0,
     "printingRange": 3,
     "printInAir": true,
     "replaceFluids": true,
     "stripLogs": false,
-    "破基岩模式": false,
-    "挖掘": false,
+    "打印模式": "excavate",
     "排流体方块名单": [
       "minecraft:sand"
     ],
     "库存白名单": [
-      "minecraft:furnace",
-      "shulker",
       "minecraft:chest"
+    ],
+    "打印含水方块": false,
+    "打印受渲染层限制": false,
+    "方块破坏限制模式": "off",
+    "方块破坏白名单列表": [
+      ""
+    ],
+    "方块破坏黑名单列表": [
+      ""
     ]
   },
   "Hotkeys": {
     "addSelectionBox": {
-      "keys": "C,A"
+      "keys": "M,A"
     },
     "cloneSelection": {
       "keys": ""
@@ -103,10 +108,10 @@
       "keys": "BUTTON_2"
     },
     "easyPlaceToggle": {
-      "keys": ""
+      "keys": "RIGHT_CONTROL,M"
     },
     "executeOperation": {
-      "keys": "KP_ADD"
+      "keys": "LEFT_CONTROL,V"
     },
     "invertGhostBlockRenderState": {
       "keys": ""
@@ -115,19 +120,19 @@
       "keys": ""
     },
     "layerModeNext": {
-      "keys": "M,PAGE_UP"
+      "keys": ""
     },
     "layerModePrevious": {
-      "keys": "M,PAGE_DOWN"
+      "keys": ""
     },
     "layerNext": {
-      "keys": "PAGE_UP"
+      "keys": "BUTTON_3,W"
     },
     "layerPrevious": {
-      "keys": "PAGE_DOWN"
+      "keys": "BUTTON_3,S"
     },
     "layerSetHere": {
-      "keys": ""
+      "keys": "BUTTON_3,E"
     },
     "nudgeSelectionNegative": {
       "keys": ""
@@ -145,7 +150,7 @@
       "keys": ""
     },
     "openGuiMainMenu": {
-      "keys": "KP_1"
+      "keys": "M"
     },
     "openGuiMaterialList": {
       "keys": "M,L"
@@ -184,10 +189,10 @@
       "keys": "I"
     },
     "renderOverlayThroughBlocks": {
-      "keys": "RIGHT_CONTROL"
+      "keys": "TAB"
     },
     "rerenderSchematic": {
-      "keys": "F3,M"
+      "keys": "BUTTON_4"
     },
     "saveAreaAsInMemorySchematic": {
       "keys": ""
@@ -196,7 +201,7 @@
       "keys": "LEFT_CONTROL,LEFT_ALT,S"
     },
     "schematicEditBreakPlaceAll": {
-      "keys": ""
+      "keys": "M,BACKSPACE"
     },
     "schematicEditBreakAllExcept": {
       "keys": ""
@@ -250,7 +255,7 @@
       "keys": ""
     },
     "toggleAllRendering": {
-      "keys": "BUTTON_4"
+      "keys": "M,R"
     },
     "toggleAreaSelectionBoxesRendering": {
       "keys": ""
@@ -316,28 +321,19 @@
       "keys": "CAPS_LOCK"
     },
     "破基岩模式": {
-      "keys": "J"
+      "keys": ""
     },
     "挖掘模式": {
-      "keys": "K"
+      "keys": ""
     },
     "打印机库存": {
-      "keys": "G"
+      "keys": ""
     },
     "容器同步": {
-      "keys": "Y",
-      "settings": {
-        "activate_on": "BOTH",
-        "context": "INGAME",
-        "allow_empty": false,
-        "allow_extra_keys": false,
-        "order_sensitive": true,
-        "exclusive": false,
-        "cancel": true
-      }
+      "keys": ""
     },
     "清空打印机库存": {
-      "keys": "C,G"
+      "keys": ""
     }
   },
   "InfoOverlays": {
@@ -369,7 +365,7 @@
     "verifierErrorHilightMaxPositions": 1000
   },
   "Visuals": {
-    "enableRendering": false,
+    "enableRendering": true,
     "enableSchematicRendering": true,
     "enableAreaSelectionBoxesRendering": true,
     "enablePlacementBoxesRendering": true,
@@ -378,7 +374,7 @@
     "ignoreExistingFluids": false,
     "overlayReducedInnerSides": false,
     "renderAreaSelectionBoxSides": true,
-    "renderBlocksAsTranslucent": false,
+    "renderBlocksAsTranslucent": true,
     "renderCollidingSchematicBlocks": false,
     "renderErrorMarkerConnections": false,
     "renderErrorMarkerSides": true,
@@ -396,7 +392,7 @@
     "schematicOverlayTypeWrongBlock": true,
     "schematicOverlayTypeWrongState": true,
     "schematicVerifierUseBlockModels": false,
-    "ghostBlockAlpha": 0.5,
+    "ghostBlockAlpha": 0.6545454545454545,
     "placementBoxSideAlpha": 0.2,
     "schematicOverlayOutlineWidth": 1.0,
     "schematicOverlayOutlineWidthThrough": 3.0

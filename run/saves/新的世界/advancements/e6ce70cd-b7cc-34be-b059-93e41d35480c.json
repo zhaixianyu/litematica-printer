@@ -299,18 +299,6 @@
     },
     "done": true
   },
-  "minecraft:recipes/decorations/soul_campfire": {
-    "criteria": {
-      "has_stick": "2022-03-26 14:20:36 +0800"
-    },
-    "done": true
-  },
-  "minecraft:recipes/combat/crossbow": {
-    "criteria": {
-      "has_stick": "2022-03-26 14:20:36 +0800"
-    },
-    "done": true
-  },
   "minecraft:recipes/decorations/pink_banner": {
     "criteria": {
       "has_pink_wool": "2022-03-26 14:20:36 +0800"
@@ -329,5 +317,11 @@
     },
     "done": true
   },
-  "DataVersion": 2975
+  "minecraft:recipes/decorations/crafting_table": {
+    "criteria": {
+      "unlock_right_away": "2024-01-19 16:51:12 +0800"
+    },
+    "done": true
+  },
+  "DataVersion": 3465
 }

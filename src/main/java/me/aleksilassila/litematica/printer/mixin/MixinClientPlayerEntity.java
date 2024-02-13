@@ -22,64 +22,67 @@ import static me.aleksilassila.litematica.printer.printer.zxy.ZxyUtils.*;
 
 @Mixin(ClientPlayerEntity.class)
 public class MixinClientPlayerEntity extends AbstractClientPlayerEntity {
-	boolean didCheckForUpdates = false;
+    boolean didCheckForUpdates = false;
 
     public MixinClientPlayerEntity(ClientWorld world, GameProfile profile) {
         super(world, profile);
-	}
+    }
 
     @Shadow
-	protected MinecraftClient client;
+    protected MinecraftClient client;
 //	@Inject(at = @At("HEAD"), method = "collideWithEntity")
 
 
+    @Inject(at = @At("HEAD"), method = "closeScreen")
+    public void closeScreen(CallbackInfo ci) {
+        if (LitematicaMixinMod.INVENTORY.getBooleanValue() && (LitematicaMixinMod.PRINT_SWITCH.getBooleanValue() || LitematicaMixinMod.PRINT.getKeybind().isPressed() || adding) && !qw) {
+            if (!client.player.currentScreenHandler.equals(client.player.playerScreenHandler)) {
+                handleItemsFromScreen(client.player.currentScreenHandler);
+            }
+        }
+    }
 
-	@Inject(at = @At("HEAD"), method = "closeScreen")
-	public void closeScreen(CallbackInfo ci) {
-		if(LitematicaMixinMod.INVENTORY.getBooleanValue() && (LitematicaMixinMod.PRINT_MODE.getBooleanValue() || LitematicaMixinMod.PRINT.getKeybind().isPressed() || adding) && !qw){
-			if(!client.player.currentScreenHandler.equals(client.player.playerScreenHandler)){
-				handleItemsFromScreen(client.player.currentScreenHandler);
-			}
-		}
-	}
-	@Inject(at = @At("TAIL"), method = "closeScreen")
-	public void close(CallbackInfo ci) {
-		openIng = false;
-	}
-	@Inject(at = @At("TAIL"), method = "tick")
-	public void tick(CallbackInfo ci) {
+    @Inject(at = @At("TAIL"), method = "closeScreen")
+    public void close(CallbackInfo ci) {
+        openIng = false;
+    }
+
+    @Inject(at = @At("TAIL"), method = "tick")
+    public void tick(CallbackInfo ci) {
 //		if (!didCheckForUpdates) {
 //			didCheckForUpdates = true;
 //
 //			checkForUpdates();
 //		}
 
-		if (Printer.getPrinter() == null) {
-			Printer.init(client);
-			return;
-		}
-		ZxyUtils.addInv();
-		if(num==1 || num == 3)ZxyUtils.syncInv();
-		ZxyUtils.tick();
+        if (Printer.getPrinter() == null) {
+            Printer.init(client);
+            return;
+        }
+        ZxyUtils.addInv();
+        if (num == 1 || num == 3) ZxyUtils.syncInv();
+        ZxyUtils.tick();
 
-		if(!(LitematicaMixinMod.PRINT_MODE.getBooleanValue() || LitematicaMixinMod.PRINT.getKeybind().isPressed())) return;
-		if(Printer.up){
-			checkForUpdates();
-			Printer.up = false;
-		}
-		Printer.getPrinter().tick();
-	}
-	public void checkForUpdates() {
+        if (!(LitematicaMixinMod.PRINT_SWITCH.getBooleanValue() || LitematicaMixinMod.PRINT.getKeybind().isPressed()))
+            return;
+        if (Printer.up) {
+            checkForUpdates();
+            Printer.up = false;
+        }
+        Printer.getPrinter().tick();
+    }
+
+    public void checkForUpdates() {
         new Thread(() -> {
             String version = UpdateChecker.version;
             String newVersion = UpdateChecker.getPrinterVersion();
 
             if (!version.equals(newVersion)) {
                 client.inGameHud.getChatHud().addMessage(
-						Text.literal("Printer: 此版本为宅闲鱼二改最初版BV号：BV1q44y1T7hE\n" +
-								"投影打印机原作 https://github.com/aleksilassila/litematica-printer/releases\n" +
-								"破基岩作者视频BV号: BV1q44y1T7hE"));
+                        Text.literal("Printer: 此版本为宅闲鱼二改最初版BV号：BV1q44y1T7hE\n" +
+                                "投影打印机原作 https://github.com/aleksilassila/litematica-printer/releases\n" +
+                                "破基岩作者视频BV号: BV1q44y1T7hE"));
             }
         }).start();
-	}
+    }
 }
