@@ -10,6 +10,7 @@ import fi.dy.masa.malilib.hotkeys.KeyCallbackToggleBooleanConfigWithMessage;
 import fi.dy.masa.malilib.hotkeys.KeybindSettings;
 import fi.dy.masa.malilib.util.restrictions.UsageRestriction;
 import me.aleksilassila.litematica.printer.printer.State;
+import me.aleksilassila.litematica.printer.printer.qwer.BlockBreakLimiterOption;
 import me.aleksilassila.litematica.printer.printer.zxy.Utils.HighlightBlockRenderer;
 import me.aleksilassila.litematica.printer.printer.zxy.inventory.OpenInventoryPacket;
 import net.fabricmc.api.ClientModInitializer;
@@ -69,8 +70,15 @@ public class LitematicaMixinMod implements ModInitializer, ClientModInitializer 
 	public static final ConfigBoolean PRINT_CHECK = new ConfigBoolean("有序存放", false, "在背包满时将从快捷盒子或打印机库存中取出的物品还原到之前位置，关闭后将会打乱打印机以及濳影盒");
 
 	public static final ConfigStringList INVENTORY_LIST = new ConfigStringList("库存白名单", ImmutableList.of("minecraft:chest"), "");
-	public static final ConfigOptionList EXCAVATE_LIMITER = new ConfigOptionList("挖掘模式限制器",State.ExcavateListMode.ME,"使用tw挖掘限制预设或自带的限制");
+	public static final ConfigOptionList EXCAVATE_LIMITER = new ConfigOptionList("挖掘模式限制器",State.ExcavateListMode.LITEMATICA_PRINTER,"使用tw挖掘限制预设或自带的限制");
 	public static final ConfigOptionList EXCAVATE_LIMIT = new ConfigOptionList("挖掘模式限制", UsageRestriction.ListType.NONE,"");
+	public static final ConfigOptionList EXCAVATE_LIMIT_OPTION = new ConfigOptionList("挖掘模式限制选项", BlockBreakLimiterOption.EQUAL_NAME, """
+			方块名称（包含）：方块名称必须包含指定字符串
+			方块ID（包含）：方块id中必须包含指定字符串
+			方块名称：方块名称必须与指定字符串匹配
+			方块标签或方块ID：方块id必须与指定字符串或指定方块标签完全匹配
+			正则表达式：方块名称或id必须与指定正则表达式完全匹配
+			""");
 	public static final ConfigStringList EXCAVATE_WHITELIST = new ConfigStringList("挖掘白名单", ImmutableList.of(""), "");
 	public static final ConfigStringList EXCAVATE_BLACKLIST = new ConfigStringList("挖掘黑名单", ImmutableList.of(""), "");
 	public static final ConfigStringList PUT_SKIP_LIST = new ConfigStringList("跳过放置名单", ImmutableList.of(), "");
@@ -86,9 +94,9 @@ public class LitematicaMixinMod implements ModInitializer, ClientModInitializer 
 		list.add(PRINT_INTERVAL);
 		list.add(COMPULSION_RANGE);
 		if(PRINTER_MODE.getOptionListValue().equals(State.ModeType.SINGLE)) list.add(PRINTER_MODE);
-		if(EXCAVATE_LIMITER.getOptionListValue().equals(State.ExcavateListMode.ME)) list.add(EXCAVATE_LIMIT);
-		if(EXCAVATE_LIMITER.getOptionListValue().equals(State.ExcavateListMode.ME)) list.add(EXCAVATE_WHITELIST);
-		if(EXCAVATE_LIMITER.getOptionListValue().equals(State.ExcavateListMode.ME)) list.add(EXCAVATE_BLACKLIST);
+		if(EXCAVATE_LIMITER.getOptionListValue().equals(State.ExcavateListMode.LITEMATICA_PRINTER)) list.add(EXCAVATE_LIMIT);
+		if(EXCAVATE_LIMITER.getOptionListValue().equals(State.ExcavateListMode.LITEMATICA_PRINTER)) list.add(EXCAVATE_WHITELIST);
+		if(EXCAVATE_LIMITER.getOptionListValue().equals(State.ExcavateListMode.LITEMATICA_PRINTER)) list.add(EXCAVATE_BLACKLIST);
 		list.add(PRINT_IN_AIR);
 		list.add(PRINT_WATER_LOGGED_BLOCK);
 		list.add(BREAK_ERROR_BLOCK);

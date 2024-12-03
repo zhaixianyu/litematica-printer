@@ -91,8 +91,8 @@ public enum State {
         }
     }
     public enum ExcavateListMode implements IConfigOptionListEntry {
-        TW("tw", "tw"),
-        ME("me", "自带");
+        TWEAKEROO("tw", "Tweakeroo"),
+        LITEMATICA_PRINTER("me", "打印机");
 
         private final String configString;
         private final String translationKey;
@@ -140,7 +140,7 @@ public enum State {
                 }
             }
 
-            return ExcavateListMode.ME;
+            return ExcavateListMode.LITEMATICA_PRINTER;
         }
     }
     public enum ModeType implements IConfigOptionListEntry {

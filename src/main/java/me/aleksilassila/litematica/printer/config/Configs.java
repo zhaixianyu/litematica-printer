@@ -7,6 +7,7 @@ import fi.dy.masa.malilib.config.*;
 import fi.dy.masa.malilib.config.options.ConfigHotkey;
 import fi.dy.masa.malilib.event.InputEventHandler;
 import fi.dy.masa.malilib.util.JsonUtils;
+import me.aleksilassila.litematica.printer.LitematicaMixinMod;
 import me.aleksilassila.litematica.printer.printer.State;
 import net.fabricmc.loader.api.FabricLoader;
 
@@ -70,10 +71,11 @@ public class Configs implements IConfigHandler {
         List<IConfigBase> list = new ArrayList<>();
         if(MODE_SWITCH.getOptionListValue().equals(State.ModeType.MULTI)) list.add(EXCAVATE);
         list.add(EXCAVATE_LIMITER);
-        if(EXCAVATE_LIMITER.getOptionListValue().equals(State.ExcavateListMode.ME)){
+        if(EXCAVATE_LIMITER.getOptionListValue().equals(State.ExcavateListMode.LITEMATICA_PRINTER)){
             list.add(EXCAVATE_LIMIT);
             list.add(EXCAVATE_WHITELIST);
             list.add(EXCAVATE_BLACKLIST);
+            list.add(EXCAVATE_LIMIT_OPTION);
         }
 
         return ImmutableList.copyOf(list);
