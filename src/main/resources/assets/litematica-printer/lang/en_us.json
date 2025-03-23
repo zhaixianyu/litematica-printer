@@ -1,0 +1,14 @@
+{
+  "bedrockminer": "",
+  "bedrockminer.toggle.on": "\n§7╔════════════════════════════════╗§r\n§7║§r                                                                        §7║§r\n§7║§r Bedrock Miner已启动！左键基岩即可自动破除基岩。                 §7║§r\n§7║§r                                                                        §7║§r\n§7╚════════  Author: LXYan  作者：LXYan  ════════╝§r\n",
+  "bedrockminer.toggle.off": "Bedrock Miner disabled.",
+  "bedrockminer.warn.multiplayer": "Using Bedrock Miner on a server? §r\n§7Ask other players or the owner first.§r",
+  "bedrockminer.fail.place.piston": "Failed to place piston!",
+  "bedrockminer.fail.place.redstonetorch": "Failed to place redstone torch!",
+  "bedrockminer.fail.missing.survival": "You are not in survival!",
+  "bedrockminer.fail.missing.piston": "Piston is insufficient!",
+  "bedrockminer.fail.missing.redstonetorch": "Torch is insufficient!",
+  "bedrockminer.fail.missing.slime": "Slime block is insufficient!",
+  "bedrockminer.fail.missing.instantmine": "Can't break piston instantly! Efficiency V and Haste II required!",
+  "": "Litematica Printer"
+}

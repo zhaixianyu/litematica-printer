@@ -136,8 +136,6 @@
   "chesttracker.config.dev": "开发者工具",
   "chesttracker.config.dev.showDevHud": "显示开发者 HUD",
   "chesttracker.config.dev.showDevHud.description": "显示开发者 HUD",
-  "chesttracker.config.rendering": "渲染",
-  "chesttracker.config.rendering.nameRenderRange": "名称渲染范围",
   "chesttracker.config.whereisit": "Where Is It 配置",
   "chesttracker.config.whereisit.description": "打开 Where Is It 的配置，这里你可以找到渲染的设置。",
 
