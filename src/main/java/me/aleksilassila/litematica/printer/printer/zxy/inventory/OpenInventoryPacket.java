@@ -68,7 +68,6 @@ public class OpenInventoryPacket {
     //#else
     //$$ private static final ChunkTicketType<ChunkPos> OPEN_TICKET = ChunkTicketType.create("openInv", Comparator.comparingLong(ChunkPos::toLong), 2);
     //#endif
-
     public static HashMap<ServerPlayerEntity, TickList> tickMap = new HashMap<>();
     public static boolean openIng = false;
     public static RegistryKey<World> key = null;
