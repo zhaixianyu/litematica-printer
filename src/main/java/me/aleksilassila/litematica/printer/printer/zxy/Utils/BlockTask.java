@@ -206,7 +206,7 @@ public class BlockTask {
                 blockTask.tick();
             }
             looking = false;
-            blockTaskList.removeIf(task -> task.done() || !task.pos.isWithinDistance(ZxyUtils.client.player.getPos(), getRage()));
+            blockTaskList.removeIf(task -> task.done() || !task.pos.isWithinDistance(ZxyUtils.client.player.getEyePos(), getRage()));
         }
 
         public static boolean addTask(BlockTask task) {

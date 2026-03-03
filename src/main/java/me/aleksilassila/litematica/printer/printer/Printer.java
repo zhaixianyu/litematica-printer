@@ -232,7 +232,6 @@ public class Printer extends PrinterUtils {
                 replacePos = null;
                 continue;
             }
-//            if (currentState.getFluidState().isOf(Fluids.LAVA) || currentState.getFluidState().isOf(Fluids.WATER)) {
             BlockPos finalPos = pos;
             AtomicReference<PlacementGuide.Action> action = new AtomicReference<>();
             final boolean[] skip = {false}; // 跳过方块名不符合的方块
@@ -309,7 +308,6 @@ public class Printer extends PrinterUtils {
     }
 
     BlockPos tempPos = null;
-
     void miningMode() {
         BlockPos pos;
         while ((pos = tempPos == null ? getBlockPos2() : tempPos) != null) {
@@ -320,7 +318,7 @@ public class Printer extends PrinterUtils {
             }
             if (client.world != null &&
                     xuanQuFanWeiNei_p(pos) &&
-                    breakRestriction(client.world.getBlockState(pos),pos) &&
+                    breakRestriction(client.world.getBlockState(pos).getBlock()) &&
                     PlayerAction.waJue(pos)) {
                 tempPos = pos;
                 return;
@@ -347,25 +345,25 @@ public class Printer extends PrinterUtils {
         ClientWorld world = client.world;
         BlockState currentState = world.getBlockState(pos);
         return !currentState.isAir() &&
-                !currentState.isOf(Blocks.AIR) &&
-                !currentState.isOf(Blocks.CAVE_AIR) &&
-                !currentState.isOf(Blocks.VOID_AIR) &&
+//                !currentState.isOf(Blocks.AIR) &&
+//                !currentState.isOf(Blocks.CAVE_AIR) &&
+//                !currentState.isOf(Blocks.VOID_AIR) &&
                 !(currentState.getBlock().getHardness() == -1) &&
                 !(currentState.getBlock() instanceof FluidBlock) &&
                 !client.player.isBlockBreakingRestricted(client.world, pos, client.interactionManager.getCurrentGameMode());
     }
 
-    static boolean breakRestriction(BlockState blockState,BlockPos pos) {
+    static boolean breakRestriction(Block block) {
         if(EXCAVATE_LIMITER.getOptionListValue().equals(State.ExcavateListMode.TW)){
             if (!FabricLoader.getInstance().isModLoaded("tweakeroo")) return true;
 //            return isPositionAllowedByBreakingRestriction(pos,Direction.UP);
             UsageRestriction.ListType listType = BLOCK_TYPE_BREAK_RESTRICTION.getListType();
             if (listType == UsageRestriction.ListType.BLACKLIST) {
                 return BLOCK_TYPE_BREAK_RESTRICTION_BLACKLIST.getStrings().stream()
-                        .noneMatch(string -> equalsBlockName(string,blockState,pos));
+                        .noneMatch(string -> equalsBlockName(string,block));
             } else if (listType == UsageRestriction.ListType.WHITELIST) {
                 return BLOCK_TYPE_BREAK_RESTRICTION_WHITELIST.getStrings().stream()
-                        .anyMatch(string -> equalsBlockName(string,blockState,pos));
+                        .anyMatch(string -> equalsBlockName(string,block));
             } else {
                 return true;
             }
@@ -373,10 +371,10 @@ public class Printer extends PrinterUtils {
             IConfigOptionListEntry optionListValue = EXCAVATE_LIMIT.getOptionListValue();
             if (optionListValue == UsageRestriction.ListType.BLACKLIST) {
                 return EXCAVATE_BLACKLIST.getStrings().stream()
-                        .noneMatch(string -> equalsBlockName(string,blockState,pos));
+                        .noneMatch(string -> equalsBlockName(string,block));
             } else if (optionListValue == UsageRestriction.ListType.WHITELIST) {
                 return EXCAVATE_WHITELIST.getStrings().stream()
-                        .anyMatch(string -> equalsBlockName(string,blockState,pos));
+                        .anyMatch(string -> equalsBlockName(string,block));
             } else {
                 return true;
             }

@@ -150,9 +150,9 @@ public class BreakingFlowController {
         //#endif
     }
 
-    private static boolean blockInPlayerRange(BlockPos blockPos, PlayerEntity player, float range) {
-        return blockPos.isWithinDistance(player.getPos(), range);
-    }
+//    private static boolean blockInPlayerRange(BlockPos blockPos, PlayerEntity player, float range) {
+//        return blockPos.isWithinDistance(player.getPos(), range);
+//    }
 
     public static WorkingMode getWorkingMode() {
         if (LitematicaMixinMod.EASY_MODE.getBooleanValue() && PlacementHandler.getEffectiveProtocolVersion() == EasyPlaceProtocol.V2) {

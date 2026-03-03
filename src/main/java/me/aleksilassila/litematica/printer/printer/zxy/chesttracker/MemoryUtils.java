@@ -7,8 +7,10 @@ import me.aleksilassila.litematica.printer.printer.zxy.inventory.OpenInventoryPa
 import me.aleksilassila.litematica.printer.printer.zxy.Utils.ZxyUtils;
 import net.fabricmc.fabric.api.client.networking.v1.ClientPlayConnectionEvents;
 import net.fabricmc.fabric.api.client.screen.v1.ScreenEvents;
+import net.fabricmc.fabric.api.client.screen.v1.ScreenKeyboardEvents;
 import net.minecraft.block.BlockState;
 import net.minecraft.client.gui.screen.ingame.HandledScreen;
+import net.minecraft.client.gui.widget.TextFieldWidget;
 import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.item.ItemStack;
 import net.minecraft.screen.ScreenHandler;
@@ -21,6 +23,7 @@ import red.jackf.chesttracker.api.memory.MemoryBank;
 import red.jackf.chesttracker.api.providers.MemoryBuilder;
 import red.jackf.chesttracker.api.providers.ProviderUtils;
 import red.jackf.chesttracker.impl.events.AfterPlayerDestroyBlock;
+import red.jackf.chesttracker.impl.gui.screen.ChestTrackerScreen;
 import red.jackf.chesttracker.impl.memory.MemoryBankAccessImpl;
 import red.jackf.chesttracker.impl.memory.MemoryBankImpl;
 import red.jackf.chesttracker.impl.memory.metadata.Metadata;
@@ -88,6 +91,17 @@ public class MemoryUtils {
         //保存打印机库存
         ClientPlayConnectionEvents.DISCONNECT.register((handler, client) -> {
             unLoad();
+        });
+
+        // 为箱子追踪增加按E关闭UI功能
+        ScreenEvents.AFTER_INIT.register((minecraftClient, screen, i, i1) -> {
+            if (screen instanceof ChestTrackerScreen chestTrackerScreen){
+                ScreenKeyboardEvents.afterKeyPress(chestTrackerScreen).register((currentScreen, keyCode) -> {
+                    if (minecraftClient.options.inventoryKey.matchesKey(keyCode) && !(chestTrackerScreen.getFocused() instanceof TextFieldWidget)){
+                        chestTrackerScreen.close();
+                    }
+                });
+            }
         });
     }
     public static void saveMemory(ScreenHandler sc){

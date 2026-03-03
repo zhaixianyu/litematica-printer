@@ -16,6 +16,7 @@ import net.minecraft.client.network.ClientPlayNetworkHandler;
 import net.minecraft.client.network.ClientPlayerEntity;
 import net.minecraft.enchantment.Enchantment;
 import net.minecraft.entity.player.PlayerInventory;
+import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
 import net.minecraft.network.packet.c2s.play.ClickSlotC2SPacket;
@@ -36,6 +37,7 @@ import org.lwjgl.glfw.GLFW;
 import it.unimi.dsi.fastutil.ints.Int2ObjectOpenHashMap;
 
 import java.util.*;
+import java.util.function.Consumer;
 
 //#if MC < 12101
 //$$ import net.minecraft.enchantment.EnchantmentHelper;
@@ -455,6 +457,18 @@ public class ZxyUtils {
         //#else
         //$$ return EnchantmentHelper.getLevel(enchantment,itemStack);
         //#endif
+    }
+
+    public static void eachBlock(Consumer<Block> consumer){
+        for (Block block : Registries.BLOCK) {
+            consumer.accept(block);
+        }
+    }
+
+    public static void eachItem(Consumer<Item> consumer){
+        for (Item item : Registries.ITEM) {
+            consumer.accept(item);
+        }
     }
 
     //右键单击

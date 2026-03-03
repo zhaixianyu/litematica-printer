@@ -1,8 +1,9 @@
 plugins {
     id("maven-publish")
-    id("fabric-loom").version("1.10-SNAPSHOT").apply(false)
+    id("fabric-loom").version("1.15-SNAPSHOT").apply(false)
+    id("net.fabricmc.fabric-loom-remap").version("1.15-SNAPSHOT").apply(false)
     id("org.ajoberstar.grgit").version("5.2.0")
-    id("com.replaymod.preprocess").version("0a04a5668b")
+    id("com.replaymod.preprocess").version("c5abb4fb12")
     id("com.github.breadmoirai.github-release").version('2.4.1')
 }
 
@@ -23,6 +24,7 @@ preprocess {
     def mc12104 = createNode("1.21.4", 1_21_04, "mojang")
     def mc12105 = createNode("1.21.5", 1_21_05, "mojang")
     def mc12106 = createNode("1.21.6", 1_21_06, "mojang")
+    def mc12109 = createNode("1.21.9", 1_21_09, "mojang")
 
 //    mc11404.link(mc11502, null)
 //    mc11502.link(mc11605, null)
@@ -40,6 +42,7 @@ preprocess {
     mc12101.link(mc12104, file("versions/mapping-1.21.1-1.21.4.txt"))
     mc12104.link(mc12105, file("versions/mapping-1.21.4-1.21.5.txt"))
     mc12105.link(mc12106, file("versions/mapping-1.21.5-1.21.6.txt"))
+    mc12106.link(mc12109, file("versions/mapping-1.21.6-1.21.9.txt"))
 }
 
 tasks.register("cleanPreprocessSources") {

@@ -3,7 +3,6 @@ package me.aleksilassila.litematica.printer.printer.zxy.inventory;
 import fi.dy.masa.malilib.util.StringUtils;
 import io.netty.buffer.Unpooled;
 import me.aleksilassila.litematica.printer.LitematicaMixinMod;
-import me.aleksilassila.litematica.printer.mixin.openinv.ChunkTicketTypeMixin;
 import me.aleksilassila.litematica.printer.printer.Printer;
 import me.aleksilassila.litematica.printer.printer.bedrockUtils.Messager;
 import me.aleksilassila.litematica.printer.printer.zxy.Utils.Statistics;
@@ -215,8 +214,8 @@ public class OpenInventoryPacket {
         //#if MC > 12004
         ServerPlayNetworking.registerGlobalReceiver(OPEN_INVENTORY_ID, (payload,context) -> {
             if (payload instanceof OpenPackage packetByteBuf) {
-                context.player().getServer().execute(() -> {
-                    openInv(context.player().getServer(), context.player(), packetByteBuf.pos, packetByteBuf.world);
+                context.server().execute(() -> {
+                    openInv(context.server(), context.player(), packetByteBuf.pos, packetByteBuf.world);
                 });
             }
         });
@@ -408,7 +407,7 @@ public class OpenInventoryPacket {
         if(remoteTime != 0 && !isRemote && remoteTime + 3000L < System.currentTimeMillis()){
             if(!clientTry) {
                 clientTryTime = System.currentTimeMillis();
-                sendOpenInventory(new BlockPos(0,-999,0), client.player.clientWorld.getRegistryKey());
+                sendOpenInventory(new BlockPos(0,-999,0), client.world.getRegistryKey());
             }
             clientTry = true;
             if(clientTryTime + 3000L < System.currentTimeMillis() && clientTry){

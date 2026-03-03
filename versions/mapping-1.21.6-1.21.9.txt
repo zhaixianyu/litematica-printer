@@ -1,0 +1,2 @@
+net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking.Context player().getServer() server()
+com.mojang.authlib.GameProfile getName() name()
