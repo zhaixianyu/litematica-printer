@@ -96,8 +96,18 @@ public class MemoryUtils {
         // 为箱子追踪增加按E关闭UI功能
         ScreenEvents.AFTER_INIT.register((minecraftClient, screen, i, i1) -> {
             if (screen instanceof ChestTrackerScreen chestTrackerScreen){
-                ScreenKeyboardEvents.afterKeyPress(chestTrackerScreen).register((currentScreen, keyCode) -> {
-                    if (minecraftClient.options.inventoryKey.matchesKey(keyCode) && !(chestTrackerScreen.getFocused() instanceof TextFieldWidget)){
+                ScreenKeyboardEvents.afterKeyRelease(chestTrackerScreen).register((currentScreen, keyCode
+                        //#if MC <= 12106
+                        //$$ ,scanCode ,modifiers
+                        //#endif
+                ) -> {
+                    boolean b1 = false;
+                    //#if MC > 12106
+                    b1 = minecraftClient.options.inventoryKey.matchesKey(keyCode);
+                    //#else
+                    //$$ b1 = minecraftClient.options.inventoryKey.matchesKey(keyCode,scanCode);
+                    //#endif
+                    if (b1 && !(chestTrackerScreen.getFocused() instanceof TextFieldWidget)){
                         chestTrackerScreen.close();
                     }
                 });

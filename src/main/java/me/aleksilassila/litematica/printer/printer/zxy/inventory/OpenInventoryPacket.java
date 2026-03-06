@@ -214,8 +214,14 @@ public class OpenInventoryPacket {
         //#if MC > 12004
         ServerPlayNetworking.registerGlobalReceiver(OPEN_INVENTORY_ID, (payload,context) -> {
             if (payload instanceof OpenPackage packetByteBuf) {
-                context.server().execute(() -> {
-                    openInv(context.server(), context.player(), packetByteBuf.pos, packetByteBuf.world);
+                MinecraftServer server;
+                //#if MC > 12106
+                server = context.server();
+                //#else
+                //$$ server = context.player().getServer();
+                //#endif
+                server.execute(() -> {
+                    openInv(server, context.player(), packetByteBuf.pos, packetByteBuf.world);
                 });
             }
         });

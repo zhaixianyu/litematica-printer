@@ -3,12 +3,9 @@ package me.aleksilassila.litematica.printer.mixin.jackf;
 //#if MC >= 12001
 import fi.dy.masa.malilib.util.InventoryUtils;
 import me.aleksilassila.litematica.printer.printer.zxy.chesttracker.MemoryUtils;
-import net.fabricmc.fabric.api.client.screen.v1.ScreenEvents;
-import net.fabricmc.fabric.api.client.screen.v1.ScreenKeyboardEvents;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.gui.widget.TextFieldWidget;
-import net.minecraft.client.input.KeyInput;
 import net.minecraft.item.ItemStack;
 import net.minecraft.text.Text;
 import net.minecraft.util.Identifier;
@@ -28,8 +25,8 @@ import red.jackf.chesttracker.impl.util.ItemStacks;
 
 import java.util.*;
 
-//#if MC > 12004
-
+//#if MC > 12106
+import net.minecraft.client.input.KeyInput;
 //#else
 //$$
 //#endif
@@ -80,10 +77,11 @@ public abstract class ChestTrackerScreenMixin extends Screen {
 //    @Inject(at = @At("HEAD"),method = "keyPressed", cancellable = true)
 //    //#if MC >= 12106
 //    public void keyPressed1(KeyInput event, CallbackInfoReturnable<Boolean> cir){
+//        if (MinecraftClient.getInstance().options.inventoryKey.matchesKey(event) && !(this.getFocused() instanceof TextFieldWidget) ) {
 //    //#else
 //    //$$ public void keyPressed1(int keyCode, int scanCode, int modifiers, CallbackInfoReturnable<Boolean> cir){
+//    //$$    if (MinecraftClient.getInstance().options.inventoryKey.matchesKey(keyCode, scanCode) && !(this.getFocused() instanceof TextFieldWidget) ) {
 //    //#endif
-//        if (MinecraftClient.getInstance().options.inventoryKey.matchesKey(keyCode, scanCode) && !(this.getFocused() instanceof TextFieldWidget) ) {
 //            this.close();
 //        cir.setReturnValue(true);
 //        }

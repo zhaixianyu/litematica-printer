@@ -29,6 +29,11 @@ public class PlayerAction {
     public static boolean isExistPlayer(){
         return client.player != null;
     }
+    public static void closeScreen(){
+        if (client.player != null) {
+            client.player.closeScreen();
+        }
+    }
     public static void interactBlock(Hand hand, Vec3d vec3d, Direction direction, BlockPos pos, boolean insideBlock, boolean useShift){
         if (useShift) setShift(client.player, true);
         client.interactionManager.interactBlock(client.player,
