@@ -108,6 +108,13 @@ repositories {
         }
     }
 
+    maven {
+        name = "Terraformers"
+        url = "https://maven.terraformersmc.com/"
+    }
+    maven { url 'https://maven.fallenbreath.me/releases' }
+    maven { url 'https://raw.githubusercontent.com/Aton-Kish/mcmod/maven' }
+
 //    maven { url = "https://maven.bawnorton.com/releases" }
 
     maven {
@@ -147,8 +154,8 @@ def mod_dependencies = [
         [(sakura ? "com.github.sakura-ryoko:tweakeroo" : "curse.maven:tweakeroo-297344"), "tweakeroo", 1],
         [(sakura ? "com.github.sakura-ryoko:litematica" : "curse.maven:litematica-308892"), "litematica", 1],
         [(mcVersion > 12004 ? "curse.maven:carpet-349239" : "maven.modrinth:carpet"), "carpet", 1],
-        [getQuiShulkerBox(), "quick_shulker", mcVersion > 12004 ? 5 : 1],
-        ["net.kyrptonaught:kyrptconfig", "kyrptconfig", 1],
+        [getQuiShulkerBox(), "quick_shulker", mcVersion == 12006 ? 5 : 1],
+        ["net.kyrptonaught:kyrptconfig", "kyrptconfig", mcVersion > 12004 ? 0 : 1],
         ["net.kyrptonaught:shulkerutils", "shulkerutils", mcVersion > 12004 ? 0 : 1],
         [getYacl(), "yacl", mcVersion >= 12001 ? 1 : 0],
         [(mcVersion >= 12106 ? "red.jackf:chesttracker" : "maven.modrinth:chest-tracker"), "chesttracker", 1],
@@ -169,12 +176,11 @@ String getYacl() {
 String getQuiShulkerBox() {
     String path = "curse.maven:quick-shulker-362669";
     if (mcVersion == 12006) { path = "build/libs/quickshulker-1.4.3-1.20.6.jar"
-    } else if (mcVersion == 12101) { path = "build/libs/quickshulker-1.4.5-1.21.jar"
-    } else if (mcVersion == 12104) { path = "build/libs/quickshulker-1.4.5-1.21.4.jar"
-//    } else if (mcVersion == 12105) { path = "build/libs/quickshulker-1.4.5-1.21.4.jar"
-    } else if (mcVersion == 12105) { path = "build/libs/quickshulker-1.7.0-1.21.5.jar"
-    } else if (mcVersion == 12106) { path = "build/libs/quickshulker-2.5.0-1.21.6.jar"
-    } else if (mcVersion == 12109) { path = "build/libs/quickshulker-2.8.2-1.21.9.jar"
+    } else if (mcVersion >= 12101) { path = "com.github.MoRanpcy:quickshulker"
+//    } else if (mcVersion == 12104) { path = "build/libs/quickshulker-1.4.5-1.21.4.jar"
+////    } else if (mcVersion == 12105) { path = "build/libs/quickshulker-1.4.5-1.21.4.jar"
+//    } else if (mcVersion == 12105) { path = "build/libs/quickshulker-1.7.0-1.21.5.jar"
+//    } else if (mcVersion == 12106) { path = "build/libs/quickshulker-2.5.0-1.21.6.jar"
     }
     return path;
 }
@@ -183,7 +189,7 @@ dependencies {
     //拼音
     implementation include("com.belerweb:pinyin4j:${project.pinyin_version}")
 
-    // To change the versions see the gradle1.properties file
+    // To change the versions see the gradle.properties file
     minecraft "com.mojang:minecraft:${project.minecraft_version}"
     mappings "net.fabricmc:yarn:${project.yarn_mappings}:v2"
 
@@ -217,6 +223,9 @@ dependencies {
 
     // Uncomment the following line to enable the deprecated Fabric API modules.
     // These are included in the Fabric API production distribution and allow you to update your mod to the latest modules at a later more convenient time.
+
+    // modImplementation "net.fabricmc.fabric-api:fabric-api-deprecated:${project.fabric_version}"
+
     runtimeOnly(project(path: ":fabricWrapper"))
 }
 def time = new Date().format("yyyyMMdd", TimeZone.getTimeZone("GMT+08:00"))

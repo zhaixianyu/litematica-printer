@@ -8,6 +8,8 @@ plugins {
 }
 
 preprocess {
+    strictExtraMappings = false
+
 //    def mc11404 = createNode("1.14.4", 1_14_04, "mojang")
 //    def mc11502 = createNode("1.15.2", 1_15_02, "mojang")
 //    def mc11605 = createNode("1.16.5", 1_16_05, "mojang")

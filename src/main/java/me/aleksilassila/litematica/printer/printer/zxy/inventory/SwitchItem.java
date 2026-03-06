@@ -38,6 +38,7 @@ public class SwitchItem {
         if(shulkerBox != -1) itemStacks.put(itemStack,new ItemStatistics(key,pos,slot,shulkerBox));
     }
     public static void openInv(ItemStack itemStack){
+        if(client.player == null) return;
         if(!client.player.currentScreenHandler.equals(client.player.playerScreenHandler) || Statistics.closeScreen > 0){
             return;
         }
@@ -59,9 +60,10 @@ public class SwitchItem {
 //                DefaultedList<ItemStack> storedItems = InventoryUtils.getStoredItems(sc.slots.get(itemStatistics.shulkerBoxSlot).getStack(), -1);
 //                if(storedItems.get(itemStatistics.slot).isEmpty()){
                     try {
-                        Class quickShulker = Class.forName("net.kyrptonaught.quickshulker.client.ClientUtil");
-                        Method checkAndSend = quickShulker.getDeclaredMethod("CheckAndSend",ItemStack.class,int.class);
-                        checkAndSend.invoke(checkAndSend,sc.slots.get(itemStatistics.shulkerBoxSlot).getStack(),itemStatistics.shulkerBoxSlot);
+//                        Class quickShulker = Class.forName("net.kyrptonaught.quickshulker.client.ClientUtil");
+//                        Method checkAndSend = quickShulker.getDeclaredMethod("CheckAndSend",ItemStack.class,int.class);
+//                        checkAndSend.invoke(checkAndSend,sc.slots.get(itemStatistics.shulkerBoxSlot).getStack(),itemStatistics.shulkerBoxSlot);
+                        client.player.currentScreenHandler.onSlotClick(itemStatistics.shulkerBoxSlot,1,SlotActionType.PICKUP,client.player);
                         Statistics.closeScreen++;
                     } catch (Exception ignored){
                         removeItem(reSwitchItem);
