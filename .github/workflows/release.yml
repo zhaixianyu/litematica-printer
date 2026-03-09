@@ -18,6 +18,10 @@ jobs:
     # 在最新的 Ubuntu 虚拟环境中运行
     runs-on: ubuntu-latest
     steps:
+      - env:
+          GIT_TOKEN: ${{ secrets.GIT_TOKEN }}
+          GIT_USERNAME: ${{ secrets.GIT_USERNAME }}
+        uses: init
       # 步骤1：检出你的仓库代码
       - name: litematica-printer
         uses: actions/checkout@v4
