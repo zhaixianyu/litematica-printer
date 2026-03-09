@@ -79,4 +79,4 @@ jobs:
           # 如果你希望标记为预发布，可以取消下一行的注释
           # prerelease: true
         env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GIT_TOKEN: ${{ secrets.GIT_TOKEN }}

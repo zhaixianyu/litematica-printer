@@ -31,8 +31,8 @@ repositories {
         name = "jackfredReleases"
         url = mcVersion >= 12106 ? "https://maven.pkg.github.com/ponuing/JackFredLib": "https://maven.jackf.red/releases"
         credentials {
-            username = System.getenv("GITHUB_USERNAME")
-            password = System.getenv("GITHUB_TOKEN")
+            username = System.getenv("GIT_USERNAME")
+            password = System.getenv("GIT_TOKEN")
         }
         content {
             includeGroupAndSubgroups("red.jackf.jackfredlib")
@@ -44,8 +44,8 @@ repositories {
         name = "WhereIsIt-GitHub"
         url = uri("https://maven.pkg.github.com/ponuing/WhereIsIt")
         credentials {
-            username = System.getenv("GITHUB_USERNAME")
-            password = System.getenv("GITHUB_TOKEN")
+            username = System.getenv("GIT_USERNAME")
+            password = System.getenv("GIT_TOKEN")
         }
         content {
             includeGroupAndSubgroups("red.jackf")
@@ -57,8 +57,8 @@ repositories {
         name = "ChestTracker-GitHub"
         url = uri("https://maven.pkg.github.com/ponuing/ChestTracker")
         credentials {
-            username = System.getenv("GITHUB_USERNAME")
-            password = System.getenv("GITHUB_TOKEN")
+            username = System.getenv("GIT_USERNAME")
+            password = System.getenv("GIT_TOKEN")
         }
         content {
             includeGroupAndSubgroups("red.jackf")
@@ -414,8 +414,8 @@ publishing {
             name = "GitHubPackages"
             url = "https://maven.pkg.github.com/zhaixianyu/litematica-printer" // 替换为你的仓库地址
             credentials {
-                username = System.getenv("GITHUB_USERNAME") // GitHub 用户名
-                password = System.getenv("GITHUB_TOKEN")     // GitHub Personal Access Token (PAT)
+                username = System.getenv("GIT_USERNAME") // GitHub 用户名
+                password = System.getenv("GIT_TOKEN")     // GitHub Personal Access Token (PAT)
             }
         }
     }
