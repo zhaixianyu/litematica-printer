@@ -12,6 +12,8 @@ preprocess {
 }
 
 repositories {
+    var github_username  = System.getenv("GIT_USERNAME")
+    var github_token = System.getenv("GIT_TOKEN")
 
     maven { url = 'https://masa.dy.fi/maven' }
     maven { url = "https://www.cursemaven.com" }
@@ -31,8 +33,8 @@ repositories {
         name = "jackfredReleases"
         url = mcVersion >= 12106 ? "https://maven.pkg.github.com/ponuing/JackFredLib": "https://maven.jackf.red/releases"
         credentials {
-            username = System.getenv("GIT_USERNAME")
-            password = System.getenv("GIT_TOKEN")
+            username = github_username
+            password = github_token
         }
         content {
             includeGroupAndSubgroups("red.jackf.jackfredlib")
@@ -44,8 +46,8 @@ repositories {
         name = "WhereIsIt-GitHub"
         url = uri("https://maven.pkg.github.com/ponuing/WhereIsIt")
         credentials {
-            username = System.getenv("GIT_USERNAME")
-            password = System.getenv("GIT_TOKEN")
+            username = github_username
+            password = github_token
         }
         content {
             includeGroupAndSubgroups("red.jackf")
@@ -57,8 +59,8 @@ repositories {
         name = "ChestTracker-GitHub"
         url = uri("https://maven.pkg.github.com/ponuing/ChestTracker")
         credentials {
-            username = System.getenv("GIT_USERNAME")
-            password = System.getenv("GIT_TOKEN")
+            username = github_username
+            password = github_token
         }
         content {
             includeGroupAndSubgroups("red.jackf")
@@ -149,10 +151,10 @@ configurations {
 def sakura = mcVersion > 12006
 //  1 = modImplementation 2 = modImplementation include 	3 = modApi	4 = modCompileOnly  5 = modImplementation file
 def mod_dependencies = [
-        [(sakura ? "com.github.sakura-ryoko:malilib" : "fi.dy.masa.malilib"), "malilib", 1],
-        [(sakura ? "com.github.sakura-ryoko:itemscroller" : "curse.maven:item-scroller-242064"), "item_scrolle", 1],
-        [(sakura ? "com.github.sakura-ryoko:tweakeroo" : "curse.maven:tweakeroo-297344"), "tweakeroo", 1],
-        [(sakura ? "com.github.sakura-ryoko:litematica" : "curse.maven:litematica-308892"), "litematica", 1],
+        [(sakura ? "maven.modrinth:malilib" : "fi.dy.masa.malilib"), "malilib", 1],
+        [(sakura ? "maven.modrinth:itemscroller" : "curse.maven:item-scroller-242064"), "item_scrolle", 1],
+        [(sakura ? "maven.modrinth:tweakeroo" : "curse.maven:tweakeroo-297344"), "tweakeroo", 1],
+        [(sakura ? "maven.modrinth:litematica" : "curse.maven:litematica-308892"), "litematica", 1],
         [(mcVersion > 12004 ? "curse.maven:carpet-349239" : "maven.modrinth:carpet"), "carpet", 1],
         [getQuiShulkerBox(), "quick_shulker", mcVersion == 12006 ? 5 : 1],
         ["net.kyrptonaught:kyrptconfig", "kyrptconfig", mcVersion > 12004 ? 0 : 1],
