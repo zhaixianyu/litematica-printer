@@ -1,0 +1,82 @@
+name: Build Mod and Create Release
+
+# 触发工作流的时机
+on:
+  # 1. 当你推送一个版本标签（例如 v1.0.0, v2.1.5）时触发
+  push:
+    tags:
+      - 'v*' # 匹配所有以 'v' 开头的标签
+  # 2. 也允许你通过 GitHub 界面手动触发工作流（方便测试）
+  workflow_dispatch:
+
+# 工作流权限设置
+permissions:
+  contents: write # 允许创建工作流写入内容（创建 Release 和上传文件需要）
+
+jobs:
+  build:
+    # 在最新的 Ubuntu 虚拟环境中运行
+    runs-on: ubuntu-latest
+    steps:
+      # 步骤1：检出你的仓库代码
+      - name: litematica-printer
+        uses: actions/checkout@v4
+
+      # 步骤2：设置 Java 环境
+      # Fabric 开发通常需要 Java 17 或 21，根据你的项目实际情况调整
+      - name: Setup Java
+        uses: actions/setup-java@v4
+        with:
+          distribution: 'temurin' # 使用 Eclipse Temurin 发行版
+          java-version: '21'      # 根据你项目使用的 Java 版本修改
+          cache: 'gradle'          # 缓存 Gradle 依赖，加快构建速度
+
+      # 步骤3：赋予 Gradle 包装器执行权限
+      - name: Make gradlew executable
+        run: chmod +x ./gradlew
+
+      # 步骤4：使用 Gradle 构建 Mod (运行 build 任务)
+      # 注意：这里不再执行你之前遇到的 preprocessCode 等所有任务
+      # 请确保你的项目在干净环境中能成功执行 './gradlew clean build'
+      - name: Build with Gradle
+        run: ./gradlew clean :fabricWrapper:build
+
+      # 步骤5：定位构建生成的 JAR 文件
+      # Fabric 的 build 任务通常会在各个子模块的 build/libs 目录生成 JAR
+      # 你需要根据项目的具体输出路径调整这个查找逻辑
+      # 这个步骤将找到的 JAR 文件路径保存到环境变量中，供下一步使用
+      - name: Find built JAR
+        id: find_jar
+        run: |
+          # 常见路径: ./build/libs/ 或 ./fabric/build/libs/
+          # 这里假设 JAR 生成在根项目的 build/libs 中，你可以根据需要修改路径
+          JAR_PATH=$(ls ./fabricWrapper/build/libs/*.jar | grep -v sources | head -n 1)
+          # 如果 JAR 在其他模块，可以尝试其他路径：
+          # JAR_PATH=$(ls ./1.21.5/build/libs/*.jar | grep -v sources | head -n 1)
+          
+          # 检查文件是否存在
+          if [ -z "$JAR_PATH" ]; then
+            echo "::error::JAR file not found! Please check the build output path in the workflow."
+            exit 1
+          fi
+          
+          echo "Found JAR: $JAR_PATH"
+          echo "jar_path=$JAR_PATH" >> $GITHUB_ENV
+          echo "jar_name=$(basename $JAR_PATH)" >> $GITHUB_ENV
+
+      # 步骤6：创建 GitHub Release 并上传 JAR 文件
+      - name: Create Release and Upload Asset
+        uses: softprops/action-gh-release@v2
+        with:
+          # 从推送的 Tag 名称生成 Release 标题
+          name: Release ${{ github.ref_name }}
+          # 可以为 Release 添加一些说明，这里留空，后续可以手动编辑
+          body: |
+            Automated release for version ${{ github.ref_name }}.
+            Please download the mod JAR file below.
+          # 指定要上传的文件
+          files: ${{ env.jar_path }}
+          # 如果你希望标记为预发布，可以取消下一行的注释
+          # prerelease: true
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
