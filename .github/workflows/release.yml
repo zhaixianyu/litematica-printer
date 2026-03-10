@@ -18,8 +18,8 @@ jobs:
     # 在最新的 Ubuntu 虚拟环境中运行
     runs-on: ubuntu-latest
     env:
-      GIT_TOKEN: ${{ secrets.GIT_TOKEN }}
-      GIT_USERNAME: ${{ secrets.GIT_USERNAME }}
+      GITHUB_TOKEN: ${{ secrets.GIT_TOKEN }}
+      GITHUB_USERNAME: ${{ secrets.GIT_USERNAME }}
     steps:
       # 步骤1：检出你的仓库代码
       - name: litematica-printer
@@ -82,4 +82,4 @@ jobs:
           # 如果你希望标记为预发布，可以取消下一行的注释
           # prerelease: true
         env:
-          GIT_TOKEN: ${{ secrets.GIT_TOKEN }}
+          GITHUB_TOKEN: ${{ secrets.GIT_TOKEN }}

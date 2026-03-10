@@ -12,8 +12,8 @@ preprocess {
 }
 
 repositories {
-    var github_username  = System.getenv("GIT_USERNAME")
-    var github_token = System.getenv("GIT_TOKEN")
+    var github_username  = System.getenv("GITHUB_USERNAME")
+    var github_token = System.getenv("GITHUB_TOKEN")
 
     maven { url = 'https://masa.dy.fi/maven' }
     maven { url = "https://www.cursemaven.com" }
@@ -416,8 +416,8 @@ publishing {
             name = "GitHubPackages"
             url = "https://maven.pkg.github.com/zhaixianyu/litematica-printer" // 替换为你的仓库地址
             credentials {
-                username = System.getenv("GIT_USERNAME") // GitHub 用户名
-                password = System.getenv("GIT_TOKEN")     // GitHub Personal Access Token (PAT)
+                username = System.getenv("GITHUB_USERNAME") // GitHub 用户名
+                password = System.getenv("GITHUB_TOKEN")     // GitHub Personal Access Token (PAT)
             }
         }
     }
