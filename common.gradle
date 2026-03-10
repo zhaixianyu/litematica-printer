@@ -16,13 +16,7 @@ repositories {
 
     maven { url = 'https://masa.dy.fi/maven' }
     maven { url = "https://www.cursemaven.com" }
-    maven {
-        name = "CottonMC"
-        url = "https://server.bbkr.space/artifactory/libs-release"
-        content {
-            includeGroupAndSubgroups("io.github.cottonmc")
-        }
-    }
+
     maven { url = 'https://maven.fabricmc.net' }
     maven { url = "https://maven.kyrptonaught.dev" }
     maven { url = "https://maven.terraformersmc.com/releases" }
@@ -124,6 +118,14 @@ repositories {
     maven {
         //这个一定要放在末尾！！！ 不然构建时会重新下载一些依赖
         url 'https://jitpack.io'
+    }
+
+    maven {
+        name = "CottonMC"
+        url = "https://server.bbkr.space/artifactory/libs-release"
+        content {
+            includeGroupAndSubgroups("io.github.cottonmc")
+        }
     }
 
 //	maven { url = "https://mvnrepository.com/artifact/com.github.open-android/pinyin4j " }
