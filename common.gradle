@@ -19,6 +19,9 @@ repositories {
     maven {
         name = "CottonMC"
         url = "https://server.bbkr.space/artifactory/libs-release"
+        content {
+            includeGroupAndSubgroups("io.github.cottonmc")
+        }
     }
     maven { url = 'https://maven.fabricmc.net' }
     maven { url = "https://maven.kyrptonaught.dev" }
