@@ -175,14 +175,8 @@ String getYacl() {
 }
 
 String getQuiShulkerBox() {
-    String path = "curse.maven:quick-shulker-362669";
-    if (mcVersion == 12006) { path = "build/libs/quickshulker-1.4.3-1.20.6.jar"
-    } else if (mcVersion >= 12101) { path = "com.github.MoRanpcy:quickshulker"
-//    } else if (mcVersion == 12104) { path = "build/libs/quickshulker-1.4.5-1.21.4.jar"
-////    } else if (mcVersion == 12105) { path = "build/libs/quickshulker-1.4.5-1.21.4.jar"
-//    } else if (mcVersion == 12105) { path = "build/libs/quickshulker-1.7.0-1.21.5.jar"
-//    } else if (mcVersion == 12106) { path = "build/libs/quickshulker-2.5.0-1.21.6.jar"
-    }
+    String path = mcVersion >= 12101 ? "com.github.MoRanpcy:quickshulker" : "curse.maven:quick-shulker-362669"
+    if (mcVersion == 12006) { path = "build/libs/quickshulker-1.4.3-1.20.6.jar"}
     return path;
 }
 
