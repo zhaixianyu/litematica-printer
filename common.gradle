@@ -151,10 +151,10 @@ configurations {
 def sakura = mcVersion > 12006
 //  1 = modImplementation 2 = modImplementation include 	3 = modApi	4 = modCompileOnly  5 = modImplementation file
 def mod_dependencies = [
-        [(sakura ? "maven.modrinth:malilib" : "fi.dy.masa.malilib"), "malilib", 1],
-        [(sakura ? "maven.modrinth:itemscroller" : "curse.maven:item-scroller-242064"), "item_scrolle", 1],
-        [(sakura ? "maven.modrinth:tweakeroo" : "curse.maven:tweakeroo-297344"), "tweakeroo", 1],
-        [(sakura ? "maven.modrinth:litematica" : "curse.maven:litematica-308892"), "litematica", 1],
+        ["maven.modrinth:malilib", "malilib", 1],
+        ["maven.modrinth:item-scroller", "item_scrolle", 1],
+        ["maven.modrinth:tweakeroo", "tweakeroo", 1],
+        ["maven.modrinth:litematica", "litematica", 1],
         [(mcVersion > 12004 ? "curse.maven:carpet-349239" : "maven.modrinth:carpet"), "carpet", 1],
         [getQuiShulkerBox(), "quick_shulker", mcVersion == 12006 ? 5 : 1],
         ["net.kyrptonaught:kyrptconfig", "kyrptconfig", mcVersion > 12004 ? 0 : 1],
