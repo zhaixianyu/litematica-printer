@@ -155,7 +155,7 @@ def mod_dependencies = [
         ["maven.modrinth:tweakeroo", "tweakeroo", 1],
         ["maven.modrinth:litematica", "litematica", 1],
         [(mcVersion > 12004 ? "curse.maven:carpet-349239" : "maven.modrinth:carpet"), "carpet", 1],
-        [getQuiShulkerBox(), "quick_shulker", mcVersion == 12006 ? 5 : 1],
+        [getQuiShulkerBox(), "quick_shulker", mcVersion == 12006 ? 4 : 1],
         ["net.kyrptonaught:kyrptconfig", "kyrptconfig", mcVersion > 12004 ? 0 : 1],
         ["net.kyrptonaught:shulkerutils", "shulkerutils", mcVersion > 12004 ? 0 : 1],
         [getYacl(), "yacl", mcVersion >= 12001 ? 1 : 0],
@@ -176,7 +176,7 @@ String getYacl() {
 
 String getQuiShulkerBox() {
     String path = mcVersion >= 12101 ? "com.github.MoRanpcy:quickshulker" : "curse.maven:quick-shulker-362669"
-    if (mcVersion == 12006) { path = "build/libs/quickshulker-1.4.3-1.20.6.jar"}
+//    if (mcVersion == 12006) { path = "build/libs/quickshulker-1.4.3-1.20.6.jar"}
     return path;
 }
 
