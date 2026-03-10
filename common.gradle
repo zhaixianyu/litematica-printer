@@ -1,4 +1,3 @@
-
 apply(plugin: "fabric-loom")
 apply(plugin: "maven-publish")
 apply(plugin: "com.replaymod.preprocess")
