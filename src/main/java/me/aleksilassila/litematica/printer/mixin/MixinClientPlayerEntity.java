@@ -35,8 +35,8 @@ public class MixinClientPlayerEntity {
 	@Inject(at = @At("HEAD"), method = "closeHandledScreen")
 	public void close(CallbackInfo ci) {
 		//#if MC >= 12001
- 		if(Statistics.loadChestTracker) MemoryUtils.saveMemory(((ClientPlayerEntity)(Object)this).currentScreenHandler);
- 		OpenInventoryPacket.reSet();
+			if(Statistics.loadChestTracker) MemoryUtils.saveMemory(((ClientPlayerEntity)(Object)this).currentScreenHandler);
+			OpenInventoryPacket.reSet();
 		//#endif
 	}
 	@Inject(at = @At("TAIL"), method = "tick")

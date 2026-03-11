@@ -1,7 +1,7 @@
 plugins {
     id("maven-publish")
     id("fabric-loom").version("1.15-SNAPSHOT").apply(false)
-//    id("net.fabricmc.fabric-loom-remap").version("1.15-SNAPSHOT").apply(false)
+    id("net.fabricmc.fabric-loom-remap").version("1.15-SNAPSHOT").apply(false)
     id("org.ajoberstar.grgit").version("5.2.0")
     id("com.replaymod.preprocess").version("c5abb4fb12")
     id("com.github.breadmoirai.github-release").version('2.4.1')

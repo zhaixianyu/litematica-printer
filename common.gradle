@@ -153,14 +153,14 @@ configurations {
 //    register("productionRuntimeMods")
 }
 def sakura = mcVersion > 12006
-//  1 = modImplementation 2 = modImplementation include 	3 = modApi	4 = modCompileOnly  5 = modImplementation file
+//  1 = modImplementation 2 = modImplementation include 	3 = modApi	4 = modCompileOnly  5 = modImplementation file 6 = githubDownload
 def mod_dependencies = [
         ["maven.modrinth:malilib", "malilib", 1],
         ["maven.modrinth:item-scroller", "item_scrolle", 1],
         ["maven.modrinth:tweakeroo", "tweakeroo", 1],
         ["maven.modrinth:litematica", "litematica", 1],
         [(mcVersion > 12004 ? "curse.maven:carpet-349239" : "maven.modrinth:carpet"), "carpet", 1],
-        [getQuiShulkerBox(), "quick_shulker", mcVersion == 12006 ? 4 : 1],
+        [getQuiShulkerBox(), "quick_shulker", mcVersion == 12006 ? 6 : 1],
         ["net.kyrptonaught:kyrptconfig", "kyrptconfig", mcVersion > 12004 ? 0 : 1],
         ["net.kyrptonaught:shulkerutils", "shulkerutils", mcVersion > 12004 ? 0 : 1],
         [getYacl(), "yacl", mcVersion >= 12001 ? 1 : 0],
@@ -171,7 +171,8 @@ def mod_dependencies = [
         ["maven.modrinth:modmenu", "modmenu", 1],
         ["maven.modrinth:cloth-config", "cloth_config", mcVersion < 12001 ? 1 : 0],
         ["me.shedaniel.cloth.api:cloth-api", "cloth_api", mcVersion < 11904 ? 1 : 0],
-        ["io.github.cottonmc:LibGui", "LibGui", mcVersion < 12001 ? 1 : 0],
+//        ["io.github.cottonmc:LibGui", "LibGui", mcVersion < 12001 ? 1 : 0],  // cottonmc的仓库喜欢跑路!!!!
+        ["cottonmc/LibGui", "LibGui", mcVersion < 12001 ? 6 : 0],
 ]
 
 String getYacl() {
@@ -181,7 +182,7 @@ String getYacl() {
 
 String getQuiShulkerBox() {
     String path = mcVersion >= 12101 ? "com.github.MoRanpcy:quickshulker" : "curse.maven:quick-shulker-362669"
-//    if (mcVersion == 12006) { path = "build/libs/quickshulker-1.4.3-1.20.6.jar"}
+    if (mcVersion == 12006) { path = "Haocen2004/quickshulker"}
     return path;
 }
 
@@ -216,6 +217,9 @@ dependencies {
             modCompileOnly files(dependencyNotation)
         } else if (mode == 5) {
             modImplementation files(dependencyNotation)
+        } else if (mode == 6){
+            def file = downloadMod(dependencyNotation, "${project.property("${id}")}")
+            modImplementation files(file)
         }
     }
 //	modImplementation "maven.modrinth:jei:${project.jei}"
@@ -228,6 +232,60 @@ dependencies {
 
     runtimeOnly(project(path: ":fabricWrapper"))
 }
+
+def downloadMod(String repo, String version) {
+    def libsDir = file('build/libs')
+    libsDir.mkdirs()
+
+    def apiUrl = "https://api.github.com/repos/${repo}/releases/tags/${version}"
+    def conn = new URL(apiUrl).openConnection() as HttpURLConnection
+    conn.setRequestProperty("Accept", "application/vnd.github.v3+json")
+    conn.setRequestProperty("User-Agent", "Gradle")
+
+    println(apiUrl)
+    def minecraftVersion = "${project.minecraft_version}"
+    if (conn.responseCode != 200) {
+        throw new GradleException("Failed to fetch release: ${conn.responseCode}")
+    }
+
+    def json = new groovy.json.JsonSlurper().parse(conn.inputStream)
+    def assets = json.assets
+    // 优先选择文件名包含当前 MC 版本的 jar
+    def jarAsset = assets.find {
+        it.name.endsWith('.jar') &&
+                !it.name.contains('-sources') &&
+                it.name.contains(minecraftVersion)
+    }
+
+    // 如果找不到匹配版本的，可改为抛出异常或使用第一个非源码 jar
+    if (!jarAsset) {
+        println "警告：未找到包含 MC 版本" +minecraftVersion+ "的 jar，将使用第一个非源码 jar"
+        jarAsset = assets.find { it.name.endsWith('.jar') && !it.name.contains('-sources') }
+    }
+
+    if (!jarAsset) throw new GradleException("No jar found")
+
+    def outputFile = new File(libsDir, jarAsset.name)
+    if (outputFile.exists()) {
+        println "File already exists: ${outputFile.name}, skipping."
+        return outputFile
+    }
+
+    println "Downloading ${jarAsset.name}..."
+    def downloadUrl = jarAsset.browser_download_url
+    def downloadConn = new URL(downloadUrl).openConnection() as HttpURLConnection
+    downloadConn.setRequestProperty("User-Agent", "Gradle")
+    downloadConn.instanceFollowRedirects = true // 自动处理重定向
+
+    downloadConn.inputStream.withStream { input ->
+        outputFile.withOutputStream { out ->
+            out << input
+        }
+    }
+    println "Downloaded to ${outputFile.absolutePath}"
+    return outputFile
+}
+
 def time = new Date().format("yyyyMMdd", TimeZone.getTimeZone("GMT+08:00"))
 version = project.mod_version + "+" + time
 group = project.mod_maven_group
