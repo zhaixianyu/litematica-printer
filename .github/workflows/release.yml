@@ -20,6 +20,7 @@ jobs:
     env:
       GITHUB_TOKEN: ${{ secrets.GIT_TOKEN }}
       GITHUB_USERNAME: ${{ secrets.GIT_USERNAME }}
+      GITHUB_RELEASES_TOKEN: ${{ secrets.GIT_USERNAME }}
     steps:
       # 步骤1：检出你的仓库代码
       - name: litematica-printer
