@@ -7,22 +7,32 @@ plugins {
     id("com.github.breadmoirai.github-release").version('2.4.1')
 }
 
-def getGitShortHash() {
+def time = new Date().format("yyyyMMdd", TimeZone.getTimeZone("GMT+08:00"))
+
+def getBuildNumber() {
     try {
         def stdout = new ByteArrayOutputStream()
-        exec {
-            commandLine 'git', 'rev-parse', '--short', 'HEAD'
+        def stderr = new ByteArrayOutputStream()  // 捕获错误输出
+        def result = project.exec {
+            commandLine 'git', 'rev-list', 'count', 'HEAD'  // 故意写错来测试
             standardOutput = stdout
+            errorOutput = stderr
+            ignoreExitValue true
         }
-        return stdout.toString().trim()
+        println "退出值: ${result.exitValue}"
+        println "stdout: '${stdout.toString().trim()}'"
+        println "stderr: '${stderr.toString().trim()}'"
+
+        def count = stdout.toString().trim()
+        if (count) return count
     } catch (Exception e) {
-        return "unknown"
+        println "捕获异常: ${e.message}"
     }
+    throw new GradleException("无法获取 Git 提交计数，请确保项目在 Git 仓库中且有至少一个提交")
 }
 
-def time = new Date().format("yyyyMMdd", TimeZone.getTimeZone("GMT+08:00"))
-def hash = getGitShortHash()
-version = "${project.mod_version}+${time}.${hash}"
+def buildNumber = getBuildNumber()
+version = "${project.mod_version}+${time}.${buildNumber}"
 
 tasks.register('printVersion') {
     doLast {
