@@ -41,6 +41,7 @@ def time = new Date().format("yyyyMMdd", TimeZone.getTimeZone("GMT+08:00"))
 def buildNumber = getDailyBuildNumber()
 version = "${project.mod_version}+${time}.${buildNumber}"
 
+
 tasks.register('printVersion') {
     doLast {
         println version
