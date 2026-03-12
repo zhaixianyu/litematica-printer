@@ -1,6 +1,6 @@
 import groovy.json.JsonBuilder
 import groovy.json.JsonSlurper
-import java.nio.charset.StandardCharsets
+import java.nio.file.Files
 
 plugins {
     id("java-library")
@@ -10,51 +10,36 @@ plugins {
 
 
 
-def getGitCommitCount() {
-    try {
-        // 使用 ProcessBuilder 执行 git rev-list --count HEAD
-        Process process = new ProcessBuilder('git', 'rev-list', '--count', 'HEAD')
-                .directory(project.rootDir)  // 设置工作目录为项目根目录
-                .redirectErrorStream(true)   // 合并错误输出到标准输出
-                .start()
 
-        // 读取命令输出
-        def output = new ByteArrayOutputStream()
-        process.inputStream.withStream { input ->
-            byte[] buffer = new byte[1024]
-            int len
-            while ((len = input.read(buffer)) != -1) {
-                output.write(buffer, 0, len)
-            }
+def getDailyBuildNumber() {
+    def propsFile = project.rootDir.toPath().resolve('fabricWrapper/build-counter.properties')
+    Properties props = new Properties()
+    def today = new Date().format("yyyyMMdd", TimeZone.getTimeZone("GMT+08:00"))
+    int count = 1
+
+    if (Files.exists(propsFile)) {
+        props.load(propsFile.toFile().newInputStream())
+        def lastDate = props.getProperty('date')
+        if (lastDate == today) {
+            // 同一天，计数+1
+            count = props.getProperty('count').toInteger() + 1
+        } else {
+            // 新的一天，重置计数
+            count = 1
         }
-
-        int exitCode = process.waitFor()
-        if (exitCode == 0) {
-            def count = output.toString(StandardCharsets.UTF_8.name()).trim()
-            println count+"  ???????????????"
-            if (count) return count
-        }
-
-        // 如果命令失败（例如空仓库），返回 "0"
-        println "警告：Git 命令执行失败（退出码 $exitCode），使用 '0' 作为构建号"
-        return "0"
-    } catch (Exception e) {
-        // Git 未安装或其他异常
-        println "警告：无法执行 Git 命令 (${e.message})，使用 'local' 作为构建号"
-        return "local"
     }
+
+    // 更新属性文件
+    props.setProperty('date', today)
+    props.setProperty('count', count.toString())
+    props.store(propsFile.toFile().newOutputStream(), "Daily build counter")
+
+    return count.toString()
 }
 
 def time = new Date().format("yyyyMMdd", TimeZone.getTimeZone("GMT+08:00"))
-def buildNumber = getGitCommitCount()
+def buildNumber = getDailyBuildNumber()
 version = "${project.mod_version}+${time}.${buildNumber}"
-
-tasks.register('printVersion1') {
-    doLast {
-        println "=============================="
-        println version.toString()
-    }
-}
 
 tasks.register('printVersion') {
     doLast {
