@@ -216,6 +216,7 @@ dependencies {
             modImplementation files(dependencyNotation)
         } else if (mode == 6){
             def file = downloadMod(dependencyNotation, "${project.property("${id}")}")
+            if (file == null) return;
             modImplementation files(file)
         }
     }
@@ -242,7 +243,7 @@ def downloadMod(String repo, String version) {
     println(apiUrl)
     def minecraftVersion = "${project.minecraft_version}"
     if (conn.responseCode != 200) {
-        throw new GradleException("Failed to fetch release: ${conn.responseCode}")
+        return null
     }
 
     def json = new groovy.json.JsonSlurper().parse(conn.inputStream)
