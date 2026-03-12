@@ -136,22 +136,19 @@ repositories {
     // for more information about repositories.
 }
 
-configurations {
-    register("productionRuntimeClient") { configuration ->
-        configurations.findAll {
-            it.name in [
-                    "minecraftLibraries",
-                    "loaderLibraries",
-                    "minecraftRuntimeLibraries"
-            ]
-        }.forEach { Configuration superConfigurations ->
-            configuration.extendsFrom(superConfigurations)
-        }
-    }
-
-//    register("productionRuntimeServer")
-//    register("productionRuntimeMods")
-}
+//configurations {
+//    register("productionRuntimeClient") { configuration ->
+//        configurations.findAll {
+//            it.name in [
+//                    "minecraftLibraries",
+//                    "loaderLibraries",
+//                    "minecraftRuntimeLibraries"
+//            ]
+//        }.forEach { Configuration superConfigurations ->
+//            configuration.extendsFrom(superConfigurations)
+//        }
+//    }
+//}
 def sakura = mcVersion > 12006
 //  1 = modImplementation 2 = modImplementation include 	3 = modApi	4 = modCompileOnly  5 = modImplementation file 6 = githubDownload
 def mod_dependencies = [
