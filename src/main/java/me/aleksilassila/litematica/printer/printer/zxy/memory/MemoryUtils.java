@@ -61,7 +61,6 @@ package me.aleksilassila.litematica.printer.printer.zxy.memory;
 //$$     public static <T extends ScreenHandler> void handleItemsFromScreen(@NotNull ScreenHandler screen) {
 //$$         MinecraftClient mc = MinecraftClient.getInstance();
 //$$         {
-//$$ //            System.out.println("===============================2");
 //$$         MemoryDatabase database = MemoryDatabase.getCurrent();
 //$$         BlockPos latestPos = MemoryUtils.getLatestPos();
 //$$         if (key == null) key = mc.world.getRegistryKey();
