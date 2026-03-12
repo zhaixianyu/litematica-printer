@@ -7,9 +7,15 @@ plugins {
     id("com.github.breadmoirai.github-release").version('2.4.1')
 }
 def time = new Date().format("yyyyMMdd", TimeZone.getTimeZone("GMT+08:00"))
+version(project.mod_version+"+"+time)
+
+tasks.register('printVersion') {
+    doLast {
+        println version
+    }
+}
 
 group(project.mod_maven_group)
-version(project.mod_version+"+"+time)
 
 base {
     archivesName.set("${project.mod_archives_base_name}-all")

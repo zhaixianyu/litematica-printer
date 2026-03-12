@@ -65,3 +65,18 @@ for (String version : versions) {
 }
 
 include(":fabricWrapper")
+
+// 自动设置 Git 钩子路径为 .githooks（仅在未配置时执行）
+def hookPath = ".githooks"
+try {
+    def proc = "git config --local core.hooksPath".execute(null, rootDir)
+    proc.waitFor()
+    def current = proc.text.trim()
+    if (current != hookPath) {
+        println "配置 Git 钩子路径为 $hookPath"
+        "git config --local core.hooksPath $hookPath".execute(null, rootDir).waitFor()
+    }
+} catch (Exception e) {
+    // 忽略错误（可能不在 Git 仓库中或 Git 未安装）
+    println "无法自动配置 Git 钩子，请手动执行：git config core.hooksPath .githooks"
+}

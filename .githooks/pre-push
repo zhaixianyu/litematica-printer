@@ -1,0 +1,30 @@
+#!/bin/sh
+# .githooks/pre-push
+# 该钩子在 git push 时自动执行，基于 Gradle 动态版本创建 tag
+
+# 检查 gradlew 是否存在且可执行
+if [ ! -f "./gradlew" ]; then
+    echo "错误：未找到 gradlew，请确保项目根目录下有 Gradle 包装器"
+    exit 1
+fi
+
+# 通过 Gradle 获取当前版本（由 printVersion 任务输出）
+VERSION=$(./gradlew -q printVersion | tail -n 1)
+
+if [ -z "$VERSION" ]; then
+    echo "错误：无法从 Gradle 获取版本号，请检查 printVersion 任务"
+    exit 1
+fi
+
+TAG_NAME="v$VERSION"
+
+# 检查本地是否已存在该 tag，不存在则创建
+if git rev-parse "$TAG_NAME" >/dev/null 2>&1; then
+    echo "Tag $TAG_NAME 已存在，跳过创建"
+else
+    echo "创建本地 tag: $TAG_NAME"
+    git tag "$TAG_NAME"
+fi
+
+# 注意：tag 的推送依赖于你在 push 时是否包含了 tags（见后续说明）
+exit 0
