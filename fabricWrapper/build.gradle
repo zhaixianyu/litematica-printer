@@ -7,23 +7,22 @@ plugins {
     id("com.github.breadmoirai.github-release").version('2.4.1')
 }
 
-def getGitCommitCount() {
+def getGitShortHash() {
     try {
         def stdout = new ByteArrayOutputStream()
         exec {
-            commandLine 'git', 'rev-list', '--count', 'HEAD'
+            commandLine 'git', 'rev-parse', '--short', 'HEAD'
             standardOutput = stdout
         }
         return stdout.toString().trim()
     } catch (Exception e) {
-        // 如果不在 Git 仓库中或 Git 未安装，返回 0 或时间戳
-        return new Date().format("HHmmss")  // 备用方案
+        return "unknown"
     }
 }
 
 def time = new Date().format("yyyyMMdd", TimeZone.getTimeZone("GMT+08:00"))
-def commitCount = getGitCommitCount()
-version = "${project.mod_version}+${time}.${commitCount}"
+def hash = getGitShortHash()
+version = "${project.mod_version}+${time}.${hash}"
 
 tasks.register('printVersion') {
     doLast {
