@@ -1,6 +1,6 @@
 #!/bin/sh
 # .githooks/pre-push
-# 该钩子在 git push 时自动执行，基于 Gradle 动态版本创建 tag
+# 该钩子在 git push 时自动执行，基于 Gradle 动态版本创建 tag 并推送
 
 # 检查 gradlew 是否存在且可执行
 if [ ! -f "./gradlew" ]; then
@@ -26,5 +26,13 @@ else
     git tag "$TAG_NAME"
 fi
 
-# 注意：tag 的推送依赖于你在 push 时是否包含了 tags（见后续说明）
+# 检查远程是否已存在该 tag（可选，防止重复推送）
+if git ls-remote --tags origin | grep -q "refs/tags/$TAG_NAME$"; then
+    echo "远程 tag $TAG_NAME 已存在，跳过推送"
+else
+    echo "推送 tag $TAG_NAME 到远程仓库..."
+    # 使用 --no-verify 跳过 pre-push 钩子，避免递归
+    git push --no-verify origin "$TAG_NAME"
+fi
+
 exit 0
