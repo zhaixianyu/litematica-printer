@@ -25,9 +25,4 @@ public class UpdateChecker {
                             .append(bv2));
 //        }).start();
     }
-
-    public static void init() {
-
-    }
-
 }

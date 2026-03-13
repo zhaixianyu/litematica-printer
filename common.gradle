@@ -166,7 +166,8 @@ boolean isRepositoryAvailable(String url, int timeout = 5000) {
 boolean LibGuiStatus = isRepositoryAvailable("https://server.bbkr.space/artifactory/libs-release")
 
 def sakura = mcVersion > 12006
-//  1 = modImplementation 2 = modImplementation include 	3 = modApi	4 = modCompileOnly  5 = modImplementation file 6 = githubDownload
+//  1 = modImplementation       2 = modImplementation include     3 = modApi      4 = modCompileOnly      5 = modImplementation file
+//  6 = githubDownload
 def mod_dependencies = [
         ["maven.modrinth:malilib", "malilib", 1],
         ["maven.modrinth:item-scroller", "item_scrolle", 1],

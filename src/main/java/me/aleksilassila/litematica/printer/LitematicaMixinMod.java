@@ -131,7 +131,6 @@ public class LitematicaMixinMod implements ModInitializer, ClientModInitializer 
 	@Override
 	public void onInitialize() {
 		reSetConfig();
-		UpdateChecker.init();
 		OpenInventoryPacket.init();
 		OpenInventoryPacket.registerReceivePacket();
 		OpenInventoryPacket.registerClientReceivePacket();
