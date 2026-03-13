@@ -48,8 +48,6 @@ tasks.register('printVersion') {
     }
 }
 
-
-
 group(project.mod_maven_group)
 
 base {
