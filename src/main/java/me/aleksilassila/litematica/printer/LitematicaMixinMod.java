@@ -10,6 +10,7 @@ import fi.dy.masa.malilib.hotkeys.KeyAction;
 import fi.dy.masa.malilib.hotkeys.KeybindSettings;
 import fi.dy.masa.malilib.util.restrictions.UsageRestriction;
 import me.aleksilassila.litematica.printer.printer.State;
+import me.aleksilassila.litematica.printer.printer.UpdateChecker;
 import me.aleksilassila.litematica.printer.printer.zxy.Utils.HighlightBlockRenderer;
 import me.aleksilassila.litematica.printer.printer.zxy.inventory.OpenInventoryPacket;
 import net.fabricmc.api.ClientModInitializer;
@@ -130,6 +131,7 @@ public class LitematicaMixinMod implements ModInitializer, ClientModInitializer 
 	@Override
 	public void onInitialize() {
 		reSetConfig();
+		UpdateChecker.init();
 		OpenInventoryPacket.init();
 		OpenInventoryPacket.registerReceivePacket();
 		OpenInventoryPacket.registerClientReceivePacket();

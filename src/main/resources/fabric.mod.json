@@ -38,7 +38,9 @@
   },
   "custom": {
     "modmenu": {
-      "parent": "${mod_id}"
+      "parent": {
+        "id":"${mod_id}-all"
+      }
     }
   }
 }

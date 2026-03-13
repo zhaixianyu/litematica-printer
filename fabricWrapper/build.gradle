@@ -7,41 +7,7 @@ plugins {
     id("maven-publish")
     id("com.github.breadmoirai.github-release").version('2.4.1')
 }
-
-
-
-
-def getDailyBuildNumber() {
-    def propsFile = project.rootDir.toPath().resolve('fabricWrapper/build-counter.properties')
-    Properties props = new Properties()
-    def today = new Date().format("yyyyMMdd", TimeZone.getTimeZone("GMT+08:00"))
-    int count = 1
-
-    if (Files.exists(propsFile)) {
-        props.load(propsFile.toFile().newInputStream())
-        def lastDate = props.getProperty('date')
-        if (lastDate == today) {
-            // 同一天，计数+1
-            count = props.getProperty('count').toInteger() + 1
-        } else {
-            // 新的一天，重置计数
-            count = 1
-        }
-    }
-
-    // 更新属性文件
-    props.setProperty('date', today)
-    props.setProperty('count', count.toString())
-    props.store(propsFile.toFile().newOutputStream(), "Daily build counter")
-
-    return count.toString()
-}
-
-def time = new Date().format("yyyyMMdd", TimeZone.getTimeZone("GMT+08:00"))
-def buildNumber = getDailyBuildNumber()
-version = "${project.mod_version}+${time}.${buildNumber}"
-
-
+version = gradle.modVersion
 tasks.register('printVersion') {
     doLast {
         println version
@@ -93,7 +59,7 @@ processResources {
     outputs.upToDateWhen { false }
 
     from("${rootDir}/icon.png") {
-        into("assets/${project.mod_id}")
+        into("assets/${project.mod_id}-all")
     }
 
     filesMatching("fabric.mod.json") {
@@ -155,24 +121,3 @@ publishing {
 
 
 }
-
-githubRelease {
-    token = System.getenv("GITHUB_RELEASES_TOKEN")                          // GitHub PATk
-    owner = "zhaixianyu"                                                    // GitHub 用户名或组织名
-    repo = project.mod_id                                                   // 仓库名称
-    tagName = project.version                                               // 使用 Mod 版本作为 Git 标签
-    targetCommitish = "litematica-printer2.4-Revision-1.0"                  // 目标分支
-    releaseName = "v${project.version}"                                     // 发布名称
-    body = ""                                                               // 发布说明
-    draft = false                                                           // 是否存为草稿
-    prerelease = false                                                      // 是否为预发布版
-
-    def buildLibsDir = project.layout.buildDirectory.dir("libs").get().asFile
-    def jarFile = buildLibsDir.listFiles().find { file ->
-        file.name.endsWith(".jar") && file.name.contains(time)
-    }
-    releaseAssets = [
-            jarFile
-    ]
-}
-

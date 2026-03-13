@@ -136,19 +136,35 @@ repositories {
     // for more information about repositories.
 }
 
-//configurations {
-//    register("productionRuntimeClient") { configuration ->
-//        configurations.findAll {
-//            it.name in [
-//                    "minecraftLibraries",
-//                    "loaderLibraries",
-//                    "minecraftRuntimeLibraries"
-//            ]
-//        }.forEach { Configuration superConfigurations ->
-//            configuration.extendsFrom(superConfigurations)
-//        }
-//    }
-//}
+//跑路测试
+/**
+ * 检测给定的 Maven 仓库 URL 是否有效（可访问）
+ * @param url 仓库基础 URL，例如 'https://maven.fabricmc.net/'
+ * @param timeout 连接超时和读取超时（毫秒），默认 5000
+ * @return true 如果仓库可访问（HTTP 状态码在 200~399 之间）
+ */
+boolean isRepositoryAvailable(String url, int timeout = 5000) {
+    try {
+        URL checkUrl = new URL(url)
+        HttpURLConnection connection = (HttpURLConnection) checkUrl.openConnection()
+        connection.setRequestMethod("HEAD")  // 只获取头信息，节省流量
+        connection.setConnectTimeout(timeout)
+        connection.setReadTimeout(timeout)
+        connection.setInstanceFollowRedirects(true) // 自动跟随重定向
+
+        int responseCode = connection.getResponseCode()
+        // 2xx 或 3xx 状态码通常表示可用
+        return responseCode >= 200 && responseCode < 400
+    } catch (Exception e) {
+        // 连接失败或超时等异常视为不可用
+        println "嘻嘻 我跑路了哦 $url - ${e.message}"
+        return false
+    }
+}
+
+
+boolean LibGuiStatus = isRepositoryAvailable("https://server.bbkr.space/artifactory/libs-release")
+
 def sakura = mcVersion > 12006
 //  1 = modImplementation 2 = modImplementation include 	3 = modApi	4 = modCompileOnly  5 = modImplementation file 6 = githubDownload
 def mod_dependencies = [
@@ -168,8 +184,8 @@ def mod_dependencies = [
         ["maven.modrinth:modmenu", "modmenu", 1],
         ["maven.modrinth:cloth-config", "cloth_config", mcVersion < 12001 ? 1 : 0],
         ["me.shedaniel.cloth.api:cloth-api", "cloth_api", mcVersion < 11904 ? 1 : 0],
-//        ["io.github.cottonmc:LibGui", "LibGui", mcVersion < 12001 ? 1 : 0],  // cottonmc的仓库喜欢跑路!!!!
-        ["cottonmc/LibGui", "LibGui", mcVersion < 12001 ? 6 : 0],
+        [LibGuiStatus ? "io.github.cottonmc:LibGui" : "cottonmc/LibGui", "LibGui", mcVersion < 12001 ? (LibGuiStatus ? 1 : 6) : 0],  // cottonmc的仓库喜欢跑路!!!!
+//        ["cottonmc/LibGui", "LibGui", mcVersion < 12001 ? 6 : 0],
 ]
 
 String getYacl() {
@@ -283,9 +299,7 @@ def downloadMod(String repo, String version) {
     println "Downloaded to ${outputFile.absolutePath}"
     return outputFile
 }
-
-def time = new Date().format("yyyyMMdd", TimeZone.getTimeZone("GMT+08:00"))
-version = project.mod_version + "+" + time
+version = gradle.modVersion
 group = project.mod_maven_group
 
 base {
