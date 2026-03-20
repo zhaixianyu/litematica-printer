@@ -619,7 +619,8 @@ public class Printer extends PrinterUtils {
                     BlockPos offset = pos.offset(lookDir);
                     if (isSchematicBlock(offset)) {
                         BlockState state1 = world.getBlockState(offset);
-                        State state = State.get(state1, requiredState);
+                        BlockState state2 = worldSchematic.getBlockState(offset);
+                        State state = State.get(state1, state2);
                         if (state != State.CORRECT) continue;
                     }
                 }

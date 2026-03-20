@@ -150,6 +150,7 @@ public class MyBox implements Iterable<BlockPos> {
             }
             public int getZNode(int y){
                 if (!sphereMode) return minZ;
+                y = y - center.getY();
                 int i = (range * range - y * y);
                 int node = (int) Math.sqrt(i);
                 sphereMinZ = center.getZ() - node;
@@ -163,8 +164,8 @@ public class MyBox implements Iterable<BlockPos> {
             }
 
             public void setSphereXRange(int z, int y) {
-                z = Math.abs(z - center.getZ());
-                y = Math.abs(y - center.getY());
+                z = z - center.getZ();
+                y = y - center.getY();
                 int x = center.getX();
                 int sqrt = (int) Math.sqrt(range * range - z * z - y * y);
                 sphereMinX = x - sqrt;
