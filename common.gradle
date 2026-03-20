@@ -121,8 +121,8 @@ repositories {
     }
 
     maven {
-        name = "CottonMC"
-        url = "https://server.bbkr.space/artifactory/libs-release"
+        name = "AlexIIL"
+        url = "https://staging.alexiil.uk/maven/"
         content {
             includeGroupAndSubgroups("io.github.cottonmc")
         }
@@ -163,7 +163,7 @@ boolean isRepositoryAvailable(String url, int timeout = 5000) {
 }
 
 
-boolean LibGuiStatus = isRepositoryAvailable("https://server.bbkr.space/artifactory/libs-release")
+boolean LibGuiStatus = isRepositoryAvailable("https://staging.alexiil.uk/maven/")
 
 def sakura = mcVersion > 12006
 //  1 = modImplementation       2 = modImplementation include     3 = modApi      4 = modCompileOnly      5 = modImplementation file
@@ -251,6 +251,21 @@ dependencies {
 def downloadMod(String repo, String version) {
     def libsDir = file('build/libs')
     libsDir.mkdirs()
+
+    // 1. 构造缓存文件名
+    def FileName = "${repo.split('/')[1]}"
+    // 1. 检查 libs 目录下是否有文件名包含 FileName 的文件
+    def existingFile = libsDir.listFiles().find { file ->
+        // 不讲武德的mod可能出现大小写不统一的情况
+        file.isFile() && file.name.toLowerCase().contains(FileName.toLowerCase())
+    }
+
+    // 2. 检查缓存文件是否已存在
+    if (existingFile != null) {
+        println "缓存命中：${FileName}，跳过下载"
+        return existingFile
+    }
+
 
     def apiUrl = "https://api.github.com/repos/${repo}/releases/tags/${version}"
     def conn = new URL(apiUrl).openConnection() as HttpURLConnection

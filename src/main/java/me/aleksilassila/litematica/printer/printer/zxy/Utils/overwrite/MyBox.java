@@ -1,17 +1,32 @@
 package me.aleksilassila.litematica.printer.printer.zxy.Utils.overwrite;
 
 import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.Box;
 import net.minecraft.util.math.Vec3d;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Iterator;
 
-public class MyBox extends Box implements Iterable<BlockPos> {
+public class MyBox implements Iterable<BlockPos> {
     public boolean yIncrement = true;
+    public boolean sphereMode = false;
     public Iterator<BlockPos> iterator;
-    public MyBox(double x1, double y1, double z1, double x2, double y2, double z2) {
-        super(x1, y1, z1, x2, y2, z2);
+    public BlockPos center;
+    public int range;
+
+    public int minX;
+    public int minY;
+    public int minZ;
+    public int maxX;
+    public int maxY;
+    public int maxZ;
+
+    public MyBox(int x1, int y1, int z1, int x2, int y2, int z2) {
+        minX = x1;
+        minY = y1;
+        minZ = z1;
+        maxX = x2;
+        maxY = y2;
+        maxZ = z2;
     }
 
     public MyBox(fi.dy.masa.litematica.selection.Box box) {
@@ -20,48 +35,79 @@ public class MyBox extends Box implements Iterable<BlockPos> {
 
     public MyBox(BlockPos pos) {
         this(
-                (double) pos.getX(),
-                (double) pos.getY(),
-                (double) pos.getZ(),
-                (double) pos.getX(),
-                (double) pos.getY(),
-                (double) pos.getZ()
+                pos.getX(),
+                pos.getY(),
+                pos.getZ(),
+                pos.getX(),
+                pos.getY(),
+                pos.getZ()
         );
+        center = pos;
+    }
+
+    public MyBox(BlockPos pos, int range) {
+        this(pos);
+        this.range = range;
+        this.expand(range);
     }
 
     public MyBox(Vec3d pos1, Vec3d pos2) {
-        this(pos1.x, pos1.y, pos1.z, pos2.x, pos2.y, pos2.z);
+        this((int) pos1.x, (int) pos1.y, (int) pos1.z, (int) pos2.x, (int) pos2.y, (int) pos2.z);
     }
 
     //因原方法最大值比较时使用的是 < 而不是 <= 因此 最小边界能被覆盖 而最大边界不能
-    @Override
+    public boolean contains(Vec3d vec) {
+        return this.contains(vec.x, vec.y, vec.z);
+    }
+
     public boolean contains(double x, double y, double z) {
         return x >= this.minX && x <= this.maxX && y >= this.minY && y <= this.maxY && z >= this.minZ && z <= this.maxZ;
     }
-    @Override
-    public MyBox expand(double x, double y, double z) {
-        double d = this.minX - x;
-        double e = this.minY - y;
-        double f = this.minZ - z;
-        double g = this.maxX + x;
-        double h = this.maxY + y;
-        double i = this.maxZ + z;
-        return new MyBox(d, e, f, g, h, i);
+
+    public MyBox expand(int x, int y, int z) {
+        this.minX -= x;
+        this.minY -= y;
+        this.minZ -= z;
+        this.maxX += x;
+        this.maxY += y;
+        this.maxZ += z;
+        return this;
     }
-    @Override
-    public MyBox expand(double value) {
+
+    public MyBox expand(int value) {
         return this.expand(value, value, value);
     }
-    public void initIterator(){
-        if (this.iterator == null) this.iterator = iterator();
+
+    public MyBox setSphereMode(boolean sphereMode) {
+        this.sphereMode = sphereMode;
+        return this;
     }
-    public void resetIterator(){
+
+    public MyBox setYIncrement(boolean yIncrement) {
+        this.yIncrement = yIncrement;
+        return this;
+    }
+
+    public Iterator<BlockPos> initIterator() {
+        if (this.iterator == null) this.iterator = iterator();
+        return this.iterator;
+    }
+
+    public void resetIterator() {
         this.iterator = iterator();
     }
+
     @Override
     public @NotNull Iterator<BlockPos> iterator() {
         return new Iterator<BlockPos>() {
             public BlockPos currPos;
+            public int sphereMinX, sphereMaxX;
+            public int sphereMinZ, sphereMaxZ;
+
+            {
+                initCurrPos();
+            }
+
             @Override
             public boolean hasNext() {
                 if (currPos == null) return true;
@@ -73,29 +119,65 @@ public class MyBox extends Box implements Iterable<BlockPos> {
                 return b;
             }
 
+            //TODO 改造迭代器使其支持球体迭代
+            //思路，理解为将球体切片，再分成条，根据当前y计算xz的有效范围
             @Override
             public BlockPos next() {
                 if (currPos == null) {
-                    currPos = new BlockPos((int) minX, (int) (yIncrement ? minY : maxY), (int) minZ);
+                    initCurrPos();
                     return currPos;
                 }
                 int x = currPos.getX();
                 int y = currPos.getY();
                 int z = currPos.getZ();
                 x++;
-                if (x > maxX) {
-                    x = (int) minX;
+                if ((sphereMode && x > sphereMaxX) || x > maxX) {
                     z++;
-                    if (z > maxZ) {
-                        z = (int) minZ;
+                    x = checkAndSettingX(z, y);
+                    if ((sphereMode && z > sphereMaxZ) || z > maxZ) {
                         y = yIncrement ? y + 1 : y - 1;
+                        z = getZNode(y);
+                        x = checkAndSettingX(z, y);
                         if (yIncrement ? y > maxY : y < minY) {
-                            y = (int) (yIncrement ? minY : maxY);
+                            y = (yIncrement ? minY : maxY);
+                            z = getZNode(y);
+                            x = checkAndSettingX(z, y);
                         }
                     }
                 }
                 currPos = new BlockPos(x, y, z);
                 return currPos;
+            }
+            public int getZNode(int y){
+                if (!sphereMode) return minZ;
+                int i = (range * range - y * y);
+                int node = (int) Math.sqrt(i);
+                sphereMinZ = center.getZ() - node;
+                sphereMaxZ = center.getZ() + node;
+                return sphereMinZ;
+            }
+            public int checkAndSettingX(int z, int y) {
+                if (!sphereMode) return minX;
+                setSphereXRange(z, y);
+                return sphereMinX;
+            }
+
+            public void setSphereXRange(int z, int y) {
+                z = Math.abs(z - center.getZ());
+                y = Math.abs(y - center.getY());
+                int x = center.getX();
+                int sqrt = (int) Math.sqrt(range * range - z * z - y * y);
+                sphereMinX = x - sqrt;
+                sphereMaxX = x + sqrt;
+            }
+
+            public void initCurrPos() {
+                currPos = new BlockPos(minX, (yIncrement ? minY : maxY), minZ);
+                if (sphereMode) {
+                    int z = getZNode(minY);
+                    int x = checkAndSettingX(z, currPos.getY());
+                    currPos = new BlockPos(x, currPos.getY(), z);
+                }
             }
         };
     }

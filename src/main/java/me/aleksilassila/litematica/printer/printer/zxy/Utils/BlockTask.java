@@ -15,7 +15,7 @@ import java.util.Map;
 import java.util.function.Predicate;
 
 import static me.aleksilassila.litematica.printer.interfaces.Implementation.sendLookPacket;
-import static me.aleksilassila.litematica.printer.printer.zxy.Utils.BlockTask.BlockTaskManager.looking;
+import static me.aleksilassila.litematica.printer.printer.zxy.Utils.BlockTask.BlockTaskManager.facingBlock;
 import static me.aleksilassila.litematica.printer.printer.zxy.Utils.PlayerAction.excavateBlock;
 import static me.aleksilassila.litematica.printer.printer.zxy.Utils.ZxyUtils.*;
 
@@ -184,8 +184,8 @@ public class BlockTask {
         public boolean runTask() {
             if (done()) return false;
             Vec3d vec3d = Printer.getPrinter().usePrecisionPlacement(pos, state);
-            if (!looking && vec3d == null && direction1 != null && taskState == BlockTaskState.INITIAL) {
-                looking = true; // TODO 应该有个静态变量记录direction1 和 direction2 改变朝向包时使其达到预想效果
+            if (facingBlock != null && vec3d == null && direction1 != null && taskState == BlockTaskState.INITIAL) {
+                // TODO 应该有个静态变量记录direction1 和 direction2 改变朝向包时使其达到预想效果
                 sendLookPacket(ZxyUtils.client.player, direction1, direction2);
                 taskState = BlockTaskState.WAIT;
                 return false;
@@ -199,19 +199,50 @@ public class BlockTask {
 
     public static class BlockTaskManager {
         public static LinkedList<BlockTask> blockTaskList = new LinkedList<>();
-        public static boolean looking = false;
+        public static FacingBlock facingBlock = null;
         public static void tick() {
             for (BlockTask blockTask : blockTaskList) {
                 if (blockTask.done()) continue;
                 blockTask.tick();
             }
-            looking = false;
             blockTaskList.removeIf(task -> task.done() || !task.pos.isWithinDistance(ZxyUtils.client.player.getEyePos(), getRage()));
         }
 
         public static boolean addTask(BlockTask task) {
             if (blockTaskList.size() >= 256) return false;
             return blockTaskList.add(task);
+        }
+
+        public static class FacingBlock{
+            public Direction direction1;
+            public Direction direction2;
+
+            public FacingBlock(Direction direction1) {
+                this.direction1 = direction1;
+            }
+
+            public FacingBlock(Direction direction1, Direction direction2) {
+                this.direction1 = direction1;
+                this.direction2 = direction2;
+            }
+
+            public Direction getDirection1() {
+                return direction1;
+            }
+
+            public FacingBlock setDirection1(Direction direction1) {
+                this.direction1 = direction1;
+                return this;
+            }
+
+            public Direction getDirection2() {
+                return direction2;
+            }
+
+            public FacingBlock setDirection2(Direction direction2) {
+                this.direction2 = direction2;
+                return this;
+            }
         }
 
     }

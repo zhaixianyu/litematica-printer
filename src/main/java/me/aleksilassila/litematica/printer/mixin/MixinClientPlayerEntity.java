@@ -44,7 +44,7 @@ public class MixinClientPlayerEntity {
 		printer.myTick();
 		if(!(isEnablePrinter())){
 			PlacementGuide.posMap = new HashMap<>();
-			printer.basePos = null;
+			printer.myBox = null;
 			printer.replaceTaskMap = new HashMap<>();
 			return;
 		}

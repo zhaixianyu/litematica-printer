@@ -16,6 +16,7 @@ import me.aleksilassila.litematica.printer.interfaces.IClientPlayerInteractionMa
 import me.aleksilassila.litematica.printer.interfaces.Implementation;
 import me.aleksilassila.litematica.printer.mixin.masa.WorldUtilsAccessor;
 import me.aleksilassila.litematica.printer.printer.bedrockUtils.BreakingFlowController;
+import me.aleksilassila.litematica.printer.printer.zxy.Utils.HighlightBlockRenderer;
 import me.aleksilassila.litematica.printer.printer.zxy.Utils.PlayerAction;
 import me.aleksilassila.litematica.printer.printer.zxy.inventory.SwitchItem;
 import me.aleksilassila.litematica.printer.printer.zxy.Utils.Verify;
@@ -54,6 +55,7 @@ import static me.aleksilassila.litematica.printer.printer.State.PrintModeType.*;
 import static me.aleksilassila.litematica.printer.printer.bedrockUtils.BreakingFlowController.cachedTargetBlockList;
 import static me.aleksilassila.litematica.printer.printer.zxy.Utils.Filters.equalsBlockName;
 import static me.aleksilassila.litematica.printer.printer.zxy.Utils.Filters.equalsItemName;
+import static me.aleksilassila.litematica.printer.printer.zxy.Utils.HighlightBlockRenderer.getHighlightBlockPosList;
 import static me.aleksilassila.litematica.printer.printer.zxy.Utils.PlayerAction.excavateBlock;
 import static me.aleksilassila.litematica.printer.printer.zxy.inventory.InventoryUtils.*;
 import static me.aleksilassila.litematica.printer.printer.zxy.Utils.ZxyUtils.*;
@@ -113,7 +115,7 @@ public class Printer extends PrinterUtils {
 
         static boolean comparePos(Box box, BlockPos pos,int p) {
             if(box == null || box.getPos1() == null || box.getPos2() == null || pos == null) return false;
-            net.minecraft.util.math.Box box1 = new MyBox(box);
+            MyBox box1 = new MyBox(box);
             box1 = box1.expand(p);
             //因为麻将的Box.contains方法内部用的 x >= this.minX && x < this.maxX ... 最小边界能被覆盖，但是最大边界不行
             //因此 重写了该方法
@@ -150,36 +152,43 @@ public class Printer extends PrinterUtils {
 
     int range1;
     boolean yDegression = false;
-    public BlockPos basePos = null;
     public MyBox myBox;
     BlockPos getBlockPos2() {
         if (timedOut()) return null;
         ClientPlayerEntity player = client.player;
         if (player == null) return null;
-        if (basePos == null) {
-            BlockPos blockPos = player.getBlockPos();
-            basePos = blockPos;
-            myBox = new MyBox(blockPos).expand(range1);
+        if (myBox == null) {
+            resetBlockIterator();
         }
         //离中心点一段距离后会触发，频繁重置pos会浪费性能
         double num = range1 * 0.7;
-        if (!basePos.isWithinDistance(player.getBlockPos(), num)) {
-            basePos = null;
-            return null;
+        if (!myBox.center.isWithinDistance(player.getBlockPos(), num)) {
+            resetBlockIterator();
         }
-        myBox.yIncrement = !yDegression;
-        myBox.initIterator();
-        Iterator<BlockPos> iterator = myBox.iterator;
         IConfigOptionListEntry optionListValue = RANGE_MODE.getOptionListValue();
+        myBox.setSphereMode(optionListValue == State.ListType.SPHERE);
+        myBox.setYIncrement(!yDegression);
+        Iterator<BlockPos> iterator = myBox.initIterator();
+        int num1 = 0;
         while (!timedOut() && iterator.hasNext()) {
+            //矩形范围迭代，体积较大时会浪费八个角落的区域会浪费较多性能
             BlockPos pos = iterator.next();
-            if (optionListValue == State.ListType.SPHERE && !basePos.isWithinDistance(pos,range1)) {
+
+            if (optionListValue == State.ListType.SPHERE && !myBox.center.isWithinDistance(pos,range1)) {
+                num1++;
                 continue;
             }
             return pos;
         }
-        basePos = null;
+        //附近方块迭代完成之后是否应该重新开始？而不是直接结束，浪费1tick
+        //迭代完成之后通常是已经放置完成，除非是铺铁砧这类情况。直接重新开始会导致占用一直处于满负荷
+        if(!iterator.hasNext()) myBox = null;
         return null;
+    }
+
+    void resetBlockIterator() {
+        BlockPos blockPos = client.player.getBlockPos();
+        myBox = new MyBox(blockPos,range1);
     }
 
     //根据当前毫秒值判断是否超时了
@@ -468,7 +477,7 @@ public class Printer extends PrinterUtils {
         for (BlockPos blockPos : deletePosList) {
             skipPosMap.remove(blockPos);
         }
-        if (PlacementGuide.createPortalTick != 1) {
+        if (PlacementGuide.createPortalTick != 1) { //TODO创建传送门可以尝试使用放置任务
             PlacementGuide.createPortalTick = 1;
         }
 
@@ -484,6 +493,7 @@ public class Printer extends PrinterUtils {
         currentAction = null;
     }
 
+    //TODO 多放方块 错误方块概率较高。。。
     public void tick() {
         if (!verify()) return;
         WorldSchematic worldSchematic = SchematicWorldHandler.getSchematicWorld();
