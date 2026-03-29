@@ -2,6 +2,9 @@ package me.aleksilassila.litematica.printer.mixin.masa.litematicaSetConfig;
 
 
 import fi.dy.masa.litematica.gui.GuiConfigs;
+import me.aleksilassila.litematica.printer.LitematicaMixinMod;
+import net.fabricmc.loader.api.FabricLoader;
+import net.fabricmc.loader.api.Version;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
@@ -15,8 +18,7 @@ public class ConfigGuiTabMixin {
         GuiConfigs.ConfigGuiTab[] returnValue = cir.getReturnValue();
         GuiConfigs.ConfigGuiTab[] arr = new GuiConfigs.ConfigGuiTab[returnValue.length + 1];
         System.arraycopy(returnValue, 0, arr, 0, returnValue.length);
-        GuiConfigs.ConfigGuiTab myTabKey = ConfigGuiTabAccessor.init("PRINTER_TAB_KEY", arr.length, "投影打印机");
-        arr[arr.length - 1] = myTabKey;
+        arr[arr.length - 1] = LitematicaMixinMod.PRINTER_TAB_KEY;
         cir.setReturnValue(arr);
     }
 }

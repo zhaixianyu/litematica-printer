@@ -115,10 +115,7 @@ repositories {
 
 //    maven { url = "https://maven.bawnorton.com/releases" }
 
-    maven {
-        //这个一定要放在末尾！！！ 不然构建时会重新下载一些依赖
-        url 'https://jitpack.io'
-    }
+
 
     maven {
         name = "AlexIIL"
@@ -128,6 +125,10 @@ repositories {
         }
     }
 
+    maven {
+        //这个一定要放在末尾！！！ 不然构建时会重新下载一些依赖
+        url 'https://jitpack.io'
+    }
 //	maven { url = "https://mvnrepository.com/artifact/com.github.open-android/pinyin4j " }
     // Add repositories to retrieve artifacts from in here.
     // You should only use this when depending on other mods because

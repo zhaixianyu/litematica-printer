@@ -110,38 +110,36 @@ public class MyBox implements Iterable<BlockPos> {
 
             @Override
             public boolean hasNext() {
-                if (currPos == null) return true;
                 int x = currPos.getX();
                 int y = currPos.getY();
                 int z = currPos.getZ();
-                boolean b = !(x == maxX && (yIncrement ? y == maxY : y == minY) && z == maxZ);
-                if (!b) currPos = null;
-                return b;
+                boolean b = (yIncrement ? y == maxY : y == minY) && x == (sphereMode ? sphereMaxX : maxX) && z == (sphereMode ? sphereMaxZ : maxZ);
+                if (b) currPos = null;
+                return !b;
             }
 
-            //TODO 改造迭代器使其支持球体迭代
             //思路，理解为将球体切片，再分成条，根据当前y计算xz的有效范围
             @Override
             public BlockPos next() {
-                if (currPos == null) {
-                    initCurrPos();
-                    return currPos;
-                }
+//                if (currPos == null) {
+//                    initCurrPos();
+//                    return currPos;
+//                }
                 int x = currPos.getX();
                 int y = currPos.getY();
                 int z = currPos.getZ();
                 x++;
                 if ((sphereMode && x > sphereMaxX) || x > maxX) {
                     z++;
-                    x = checkAndSettingX(z, y);
+                    x = getXNode(z, y);
                     if ((sphereMode && z > sphereMaxZ) || z > maxZ) {
                         y = yIncrement ? y + 1 : y - 1;
                         z = getZNode(y);
-                        x = checkAndSettingX(z, y);
+                        x = getXNode(z, y);
                         if (yIncrement ? y > maxY : y < minY) {
                             y = (yIncrement ? minY : maxY);
                             z = getZNode(y);
-                            x = checkAndSettingX(z, y);
+                            x = getXNode(z, y);
                         }
                     }
                 }
@@ -157,26 +155,21 @@ public class MyBox implements Iterable<BlockPos> {
                 sphereMaxZ = center.getZ() + node;
                 return sphereMinZ;
             }
-            public int checkAndSettingX(int z, int y) {
+            public int getXNode(int z, int y) {
                 if (!sphereMode) return minX;
-                setSphereXRange(z, y);
-                return sphereMinX;
-            }
-
-            public void setSphereXRange(int z, int y) {
                 z = z - center.getZ();
                 y = y - center.getY();
                 int x = center.getX();
                 int sqrt = (int) Math.sqrt(range * range - z * z - y * y);
                 sphereMinX = x - sqrt;
                 sphereMaxX = x + sqrt;
+                return sphereMinX;
             }
-
             public void initCurrPos() {
                 currPos = new BlockPos(minX, (yIncrement ? minY : maxY), minZ);
                 if (sphereMode) {
                     int z = getZNode(minY);
-                    int x = checkAndSettingX(z, currPos.getY());
+                    int x = getXNode(z, currPos.getY());
                     currPos = new BlockPos(x, currPos.getY(), z);
                 }
             }

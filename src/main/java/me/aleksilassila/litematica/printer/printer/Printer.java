@@ -162,32 +162,28 @@ public class Printer extends PrinterUtils {
         }
         //离中心点一段距离后会触发，频繁重置pos会浪费性能
         double num = range1 * 0.7;
-        if (!myBox.center.isWithinDistance(player.getBlockPos(), num)) {
+        if (!myBox.center.isWithinDistance(player.getBlockPos().up(), num)) {
             resetBlockIterator();
         }
         IConfigOptionListEntry optionListValue = RANGE_MODE.getOptionListValue();
         myBox.setSphereMode(optionListValue == State.ListType.SPHERE);
         myBox.setYIncrement(!yDegression);
         Iterator<BlockPos> iterator = myBox.initIterator();
-        int num1 = 0;
-        while (!timedOut() && iterator.hasNext()) {
-            //矩形范围迭代，体积较大时会浪费八个角落的区域会浪费较多性能
-            BlockPos pos = iterator.next();
 
-            if (optionListValue == State.ListType.SPHERE && !myBox.center.isWithinDistance(pos,range1)) {
-                num1++;
-                continue;
+        if (!timedOut()) {
+            if (!iterator.hasNext()) {
+                myBox = null;
+                return null;
             }
-            return pos;
+            return iterator.next();
         }
         //附近方块迭代完成之后是否应该重新开始？而不是直接结束，浪费1tick
         //迭代完成之后通常是已经放置完成，除非是铺铁砧这类情况。直接重新开始会导致占用一直处于满负荷
-        if(!iterator.hasNext()) myBox = null;
         return null;
     }
 
     void resetBlockIterator() {
-        BlockPos blockPos = client.player.getBlockPos();
+        BlockPos blockPos = client.player.getBlockPos().up();
         myBox = new MyBox(blockPos,range1);
     }
 

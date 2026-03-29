@@ -9,6 +9,7 @@ import fi.dy.masa.malilib.config.options.*;
 import fi.dy.masa.malilib.hotkeys.KeyAction;
 import fi.dy.masa.malilib.hotkeys.KeybindSettings;
 import fi.dy.masa.malilib.util.restrictions.UsageRestriction;
+import me.aleksilassila.litematica.printer.mixin.masa.litematicaSetConfig.ConfigGuiTabAccessor;
 import me.aleksilassila.litematica.printer.printer.State;
 import me.aleksilassila.litematica.printer.printer.UpdateChecker;
 import me.aleksilassila.litematica.printer.printer.zxy.Utils.HighlightBlockRenderer;
@@ -25,7 +26,7 @@ import static me.aleksilassila.litematica.printer.printer.zxy.Utils.Statistics.l
 
 public class LitematicaMixinMod implements ModInitializer, ClientModInitializer {
 	public static final String MOD_ID = "litematica-printer";
-	public static final GuiConfigs.ConfigGuiTab PRINTER_TAB_KEY = GuiConfigs.ConfigGuiTab.values()[GuiConfigs.ConfigGuiTab.values().length -1];
+	public static final GuiConfigs.ConfigGuiTab PRINTER_TAB_KEY = ConfigGuiTabAccessor.init("PRINTER_TAB_KEY", GuiConfigs.ConfigGuiTab.values().length, "投影打印机");
 	private static final KeybindSettings GUI_NO_ORDER = KeybindSettings.create(KeybindSettings.Context.GUI, KeyAction.PRESS, false, false, false, true);
 	// Config settings
 	public static final ConfigInteger PRINT_TIMEOUT = new ConfigInteger( "打印机占用时间", 3,   1, 30, "每个游戏刻打印机工作的占用毫秒值。左拉帧数高 右拉效率高");

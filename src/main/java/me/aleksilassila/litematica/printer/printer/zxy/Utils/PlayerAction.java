@@ -41,6 +41,11 @@ public class PlayerAction {
                 //$$ client.world,
                 //#endif
                 hand, new BlockHitResult(vec3d, direction, pos, insideBlock));
+        client.interactionManager.interactItem(client.player,
+                //#if MC < 11902
+                //$$ client.world,
+                //#endif
+                hand);
         if (useShift) setShift(client.player, false);
     }
 
