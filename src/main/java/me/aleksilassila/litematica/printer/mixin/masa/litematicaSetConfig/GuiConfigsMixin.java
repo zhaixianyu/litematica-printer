@@ -40,13 +40,13 @@ public abstract class GuiConfigsMixin {
         FabricLoader.getInstance().getModContainer("litematica").ifPresent(modContainer -> {
             Version version = modContainer.getMetadata().getVersion();
                     try {
-                        versionResult[0] = Version.parse("0.26.2").compareTo(version);
+                        versionResult[0] = Version.parse("0.26.0").compareTo(version);
                     } catch (VersionParsingException ignored) {
                     }
                 }
         );
         // 与0.26.2进行比较 结果1 版本小于     0 版本相同      -1 版本大于
-        if (versionResult[0] >= 0) {
+        if (versionResult[0] <= 0) {
             return call;
         }
         if (tab != GuiConfigs.ConfigGuiTab.RENDER_LAYERS || tab == LitematicaMixinMod.PRINTER_TAB_KEY) {

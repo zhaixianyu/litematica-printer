@@ -1,7 +1,9 @@
 package me.aleksilassila.litematica.printer.printer.zxy.Utils.overwrite;
 
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.math.Box;
 import net.minecraft.util.math.Vec3d;
+import net.minecraft.util.math.Vec3i;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Iterator;
@@ -21,12 +23,12 @@ public class MyBox implements Iterable<BlockPos> {
     public int maxZ;
 
     public MyBox(int x1, int y1, int z1, int x2, int y2, int z2) {
-        minX = x1;
-        minY = y1;
-        minZ = z1;
-        maxX = x2;
-        maxY = y2;
-        maxZ = z2;
+        minX = Math.min(x1, x2);
+        minY = Math.min(y1, y2);
+        minZ = Math.min(z1, z2);
+        maxX = Math.max(x1, x2);
+        maxY = Math.max(y1, y2);
+        maxZ = Math.max(z1, z2);
     }
 
     public MyBox(fi.dy.masa.litematica.selection.Box box) {
@@ -56,11 +58,11 @@ public class MyBox implements Iterable<BlockPos> {
     }
 
     //因原方法最大值比较时使用的是 < 而不是 <= 因此 最小边界能被覆盖 而最大边界不能
-    public boolean contains(Vec3d vec) {
-        return this.contains(vec.x, vec.y, vec.z);
+    public boolean contains(Vec3i vec) {
+        return this.contains(vec.getX(), vec.getY(), vec.getZ());
     }
 
-    public boolean contains(double x, double y, double z) {
+    public boolean contains(int x, int y, int z) {
         return x >= this.minX && x <= this.maxX && y >= this.minY && y <= this.maxY && z >= this.minZ && z <= this.maxZ;
     }
 
