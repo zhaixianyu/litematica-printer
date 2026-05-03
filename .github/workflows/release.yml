@@ -76,8 +76,7 @@ jobs:
           name: Release ${{ github.ref_name }}
           # 可以为 Release 添加一些说明，这里留空，后续可以手动编辑
           body: |
-            Automated release for version ${{ github.ref_name }}.
-            Please download the mod JAR file below.
+            ${{ github.event.head_commit.message || 'Manual release triggered via workflow_dispatch' }}
           # 指定要上传的文件
           files: ${{ env.jar_path }}
           # 如果你希望标记为预发布，可以取消下一行的注释

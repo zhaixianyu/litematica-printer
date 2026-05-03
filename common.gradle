@@ -1,14 +1,11 @@
-apply(plugin: "fabric-loom")
+int mcVersion = project.mcVersion
+boolean useMappings = mcVersion < 26_00_00
+
+apply(plugin: useMappings ? "net.fabricmc.fabric-loom-remap" : "net.fabricmc.fabric-loom")
 apply(plugin: "maven-publish")
 apply(plugin: "com.replaymod.preprocess")
 apply(plugin: "com.github.breadmoirai.github-release")
 
-
-int mcVersion = 1
-
-preprocess {
-    mcVersion = vars.get().get("MC")
-}
 
 repositories {
     var github_username  = System.getenv("GITHUB_USERNAME")
@@ -34,32 +31,6 @@ repositories {
         }
         content {
             includeGroupAndSubgroups("red.jackf.jackfredlib")
-        }
-    }
-
-    // Where Is It
-    maven {
-        name = "WhereIsIt-GitHub"
-        url = uri("https://maven.pkg.github.com/ponuing/WhereIsIt")
-        credentials {
-            username = github_username
-            password = github_token
-        }
-        content {
-            includeGroupAndSubgroups("red.jackf")
-        }
-    }
-
-    // ChestTracker
-    maven {
-        name = "ChestTracker-GitHub"
-        url = uri("https://maven.pkg.github.com/ponuing/ChestTracker")
-        credentials {
-            username = github_username
-            password = github_token
-        }
-        content {
-            includeGroupAndSubgroups("red.jackf")
         }
     }
 
@@ -128,6 +99,9 @@ repositories {
     maven {
         //这个一定要放在末尾！！！ 不然构建时会重新下载一些依赖
         url 'https://jitpack.io'
+        content {
+            includeGroupAndSubgroups("com.github")
+        }
     }
 //	maven { url = "https://mvnrepository.com/artifact/com.github.open-android/pinyin4j " }
     // Add repositories to retrieve artifacts from in here.
@@ -166,7 +140,6 @@ boolean isRepositoryAvailable(String url, int timeout = 5000) {
 
 boolean LibGuiStatus = isRepositoryAvailable("https://staging.alexiil.uk/maven/")
 
-def sakura = mcVersion > 12006
 //  1 = modImplementation       2 = modImplementation include     3 = modApi      4 = modCompileOnly      5 = modImplementation file
 //  6 = githubDownload
 def mod_dependencies = [
@@ -175,12 +148,13 @@ def mod_dependencies = [
         ["maven.modrinth:tweakeroo", "tweakeroo", 1],
         ["maven.modrinth:litematica", "litematica", 1],
         [(mcVersion > 12004 ? "curse.maven:carpet-349239" : "maven.modrinth:carpet"), "carpet", 1],
-        [getQuiShulkerBox(), "quick_shulker", mcVersion == 12006 ? 6 : 1],
+        [getQuiShulkerBox(), "quick_shulker", mcVersion == 12006 ? 6 : 10,"*"],
         ["net.kyrptonaught:kyrptconfig", "kyrptconfig", mcVersion > 12004 ? 0 : 1],
         ["net.kyrptonaught:shulkerutils", "shulkerutils", mcVersion > 12004 ? 0 : 1],
         [getYacl(), "yacl", mcVersion >= 12001 ? 1 : 0],
-        [(mcVersion >= 12106 ? "red.jackf:chesttracker" : "maven.modrinth:chest-tracker"), "chesttracker", 1],
-        [(mcVersion >= 12106 ? "red.jackf:whereisit" : "maven.modrinth:where-is-it"), "whereisit", 1],
+        ["maven.modrinth:chest-tracker" + (mcVersion >= 12106 ? "-port" : ""), "chesttracker", 1],
+        ["maven.modrinth:where-is-it" + (mcVersion >= 12106 ? "-port" : ""), "whereisit", 1],
+//        [(mcVersion >= 12106 ? "red.jackf:whereisit" : "maven.modrinth:where-is-it"), "whereisit", 1],
         ["red.jackf.jackfredlib:jackfredlib", "jackfredlib", mcVersion >= 12001 ? 1 : 0],
         ["com.blamejared.searchables", "searchables", mcVersion >= 12001 ? 1 : 0],
         ["maven.modrinth:modmenu", "modmenu", 1],
@@ -202,17 +176,17 @@ String getQuiShulkerBox() {
 }
 
 dependencies {
+    def autoImplementation = { Object... args -> useMappings ? modImplementation(*args) : implementation(*args) }
+    def autoCompileOnly = { Object... args -> useMappings ? modCompileOnly(*args) : compileOnly(*args) }
     //拼音
     implementation include("com.belerweb:pinyin4j:${project.pinyin_version}")
 
     // To change the versions see the gradle.properties file
     minecraft "com.mojang:minecraft:${project.minecraft_version}"
-    mappings "net.fabricmc:yarn:${project.yarn_mappings}:v2"
+    if (mcVersion <= 12111) mappings "net.fabricmc:yarn:${project.yarn_mappings}:v2"
 
-    modImplementation "net.fabricmc:fabric-loader:${project.loader_version}"
-    modImplementation "net.fabricmc.fabric-api:fabric-api:${project.fabric_api_version}"
-
-//	modImplementation "com.zxy:litematica_printer:1.20.2-2.4+20240218"
+    autoImplementation "net.fabricmc:fabric-loader:${project.loader_version}"
+    autoImplementation "net.fabricmc.fabric-api:fabric-api:${project.fabric_api_version}"
 
     mod_dependencies.forEach { item ->
         def dependencyNotation = item[0]
@@ -221,26 +195,25 @@ dependencies {
         if (mode == 0) return;
         def idFix = mode != 5 ? "${dependencyNotation}:${project.property("${id}")}" : ""
         if (mode == 1) {
-            modImplementation idFix
+            autoImplementation idFix
+        } else if (mode == 10) {
+            autoImplementation(idFix) { exclude group: item[3] }
         } else if (mode == 3) {
             modApi idFix
         } else if (mode == 2) {
-            modImplementation include(idFix)
+            autoImplementation include(idFix)
         } else if (mode == 4) {
-            modCompileOnly idFix
+            autoCompileOnly idFix
         } else if (mode == 45) {
-            modCompileOnly files(dependencyNotation)
+            autoCompileOnly files(dependencyNotation)
         } else if (mode == 5) {
-            modImplementation files(dependencyNotation)
+            autoImplementation files(dependencyNotation)
         } else if (mode == 6){
             def file = downloadMod(dependencyNotation, "${project.property("${id}")}")
             if (file == null) return;
-            modImplementation files(file)
+            autoImplementation files(file)
         }
     }
-//	modImplementation "maven.modrinth:jei:${project.jei}"
-//	modImplementation "maven.modrinth:carpet-tis-addition:${project.carpet_tis_addition}"
-
     // Uncomment the following line to enable the deprecated Fabric API modules.
     // These are included in the Fabric API production distribution and allow you to update your mod to the latest modules at a later more convenient time.
 
@@ -404,13 +377,12 @@ tasks.withType(JavaCompile).configureEach {
     options.encoding("UTF-8")
 }
 
-remapJar {
-//    remapperIsolation.set(true)
-}
 
 def MIXIN_CONFIG_PATHS = ['litematica-printer.mixins.json']
 JavaVersion JAVA_COMPATIBILITY
-if (mcVersion >= 12005) {
+if (mcVersion >= 260100) {
+    JAVA_COMPATIBILITY = JavaVersion.VERSION_21
+} else if (mcVersion >= 12005) {
     JAVA_COMPATIBILITY = JavaVersion.VERSION_21
 } else if (mcVersion >= 11800) {
     JAVA_COMPATIBILITY = JavaVersion.VERSION_17
@@ -422,7 +394,9 @@ if (mcVersion >= 12005) {
 JavaVersion MIXIN_COMPATIBILITY_LEVEL = JAVA_COMPATIBILITY
 
 tasks.withType(JavaCompile).configureEach {
-    if (mcVersion >= 12005) {
+    if (mcVersion >= 260100) {
+        it.options.release = 25
+    } else if (mcVersion >= 12005) {
         it.options.release = 21
     } else if (mcVersion >= 11800) {
         it.options.release = 17

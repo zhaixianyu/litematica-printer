@@ -24,17 +24,17 @@ def fabric_subprojects = project.parent.subprojects.findAll({
     it.name != "fabricWrapper"
 })
 
-fabric_subprojects.collect {
-    evaluationDependsOn(":${it.name}")
-}
+//fabric_subprojects.collect {
+//    evaluationDependsOn(":${it.name}")
+//}
 
 jar {
     // disable cache
     outputs.upToDateWhen { false }
 
-    dependsOn(fabric_subprojects.collect {
-        it.tasks.remapJar
-    })
+//    dependsOn(fabric_subprojects.collect {
+//        it.tasks.remapJar
+//    })
 
     doFirst {
         delete fileTree("build/tmp/submods/META-INF/jars")

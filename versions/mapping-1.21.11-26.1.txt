@@ -1,0 +1,12 @@
+net.fabricmc.fabric.api.client.command.v2.ClientCommandManager net.fabricmc.fabric.api.client.command.v2.ClientCommands
+net.fabricmc.fabric.api.client.command.v2.FabricClientCommandSource getWorld() getLevel()
+
+net.minecraft.client.GuiMessage net.minecraft.client.multiplayer.chat.GuiMessage
+net.minecraft.client.gui.GuiGraphics drawString() net.minecraft.client.gui.GuiGraphicsExtractor text()
+net.minecraft.client.gui.GuiGraphics net.minecraft.client.gui.GuiGraphicsExtractor
+net.minecraft.client.gui.GuiGraphics renderItem() net.minecraft.client.gui.GuiGraphicsExtractor item()
+net.minecraft.client.gui.render.state.GuiRenderState net.minecraft.client.renderer.state.gui.GuiRenderState
+net.minecraft.client.renderer.block.model.ItemTransform net.minecraft.client.resources.model.cuboid.ItemTransform
+net.minecraft.client.renderer.state.CameraRenderState net.minecraft.client.renderer.state.level.CameraRenderState
+net.minecraft.world.inventory.ClickType net.minecraft.world.inventory.ContainerInput
+net.minecraft.world.item.ItemStack getItemHolder() typeHolder()
