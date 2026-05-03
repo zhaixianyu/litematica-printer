@@ -1,9 +1,9 @@
 package me.aleksilassila.litematica.printer.printer.zxy.inventory;
 
 import net.minecraft.block.Block;
-import net.minecraft.block.BlockState;
+import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.server.world.ServerWorld;
-import net.minecraft.util.math.BlockPos;
+import net.minecraft.core.BlockPos;
 
 public class TickList {
     public Block block;

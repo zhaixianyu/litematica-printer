@@ -1,18 +1,18 @@
 package me.aleksilassila.litematica.printer.printer;
 
 import me.aleksilassila.litematica.printer.interfaces.Implementation;
-import net.minecraft.block.BlockState;
+import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.block.SlabBlock;
 import net.minecraft.block.enums.BlockHalf;
 import net.minecraft.block.enums.SlabType;
-import net.minecraft.client.network.ClientPlayerEntity;
+import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.client.world.ClientWorld;
 import net.minecraft.inventory.Inventory;
 import net.minecraft.item.Item;
 import net.minecraft.state.property.Property;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.Direction;
-import net.minecraft.util.math.Vec3d;
+import net.minecraft.core.BlockPos;
+import net.minecraft.core.Direction;
+import net.minecraft.world.phys.Vec3;
 import net.minecraft.util.shape.VoxelShape;
 import net.minecraft.util.shape.VoxelShapes;
 import net.minecraft.world.World;
@@ -27,11 +27,11 @@ public class PrinterUtils {
 
 	public static Direction[] horizontalDirections = new Direction[]{Direction.NORTH, Direction.EAST, Direction.SOUTH, Direction.WEST};
 
-	public static boolean playerHasAccessToItem(ClientPlayerEntity playerEntity, Item item) {
+	public static boolean playerHasAccessToItem(LocalPlayer playerEntity, Item item) {
 		return playerHasAccessToItems(playerEntity, new Item[]{item});
 	}
 
-	public static boolean playerHasAccessToItems(ClientPlayerEntity playerEntity, Item[] items) {
+	public static boolean playerHasAccessToItems(LocalPlayer playerEntity, Item[] items) {
 		if (items == null || items.length == 0) return true;
 		if (Implementation.getAbilities(playerEntity).creativeMode) return true;
 		else {
@@ -86,15 +86,15 @@ public class PrinterUtils {
         return world.getBlockState(pos).getOutlineShape(world, pos);
     }
 
-    public static Map<Direction, Vec3d> getSlabSides(World world, BlockPos pos, SlabType requiredHalf) {
+    public static Map<Direction, Vec3> getSlabSides(World world, BlockPos pos, SlabType requiredHalf) {
         if (requiredHalf == SlabType.DOUBLE) requiredHalf = SlabType.BOTTOM;
         Direction requiredDir = requiredHalf == SlabType.TOP ? Direction.UP : Direction.DOWN;
 
-        Map<Direction, Vec3d> sides = new HashMap<>();
-        sides.put(requiredDir, new Vec3d(0, 0, 0));
+        Map<Direction, Vec3> sides = new HashMap<>();
+        sides.put(requiredDir, new Vec3(0, 0, 0));
 
         if (world.getBlockState(pos).contains(SlabBlock.TYPE)) {
-            sides.put(requiredDir.getOpposite(), Vec3d.of(requiredDir.getVector()).multiply(0.5));
+            sides.put(requiredDir.getOpposite(), Vec3.of(requiredDir.getVector()).multiply(0.5));
         }
 
         for (Direction side : horizontalDirections) {
@@ -106,7 +106,7 @@ public class PrinterUtils {
                 }
             }
 
-            sides.put(side, Vec3d.of(requiredDir.getVector()).multiply(0.25));
+            sides.put(side, Vec3.of(requiredDir.getVector()).multiply(0.25));
         }
 
         return sides;

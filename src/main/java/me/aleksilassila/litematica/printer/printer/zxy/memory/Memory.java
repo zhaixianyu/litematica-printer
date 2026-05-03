@@ -3,10 +3,10 @@ package me.aleksilassila.litematica.printer.printer.zxy.memory;
 //#if MC < 12001
 //$$ import net.fabricmc.api.EnvType;
 //$$ import net.fabricmc.api.Environment;
-//$$ import net.minecraft.item.ItemStack;
-//$$ import net.minecraft.text.Text;
-//$$ import net.minecraft.util.math.BlockPos;
-//$$ import net.minecraft.util.math.Vec3d;
+//$$ import net.minecraft.world.item.ItemStack;
+//$$ import net.minecraft.network.chat.Component;
+//$$ import net.minecraft.core.BlockPos;
+//$$ import net.minecraft.world.phys.Vec3;
 //$$ import org.jetbrains.annotations.Nullable;
 //$$
 //$$ import java.util.List;

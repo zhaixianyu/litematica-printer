@@ -10,16 +10,16 @@ import com.llamalad7.mixinextras.injector.wrapoperation.WrapOperation;
 import me.aleksilassila.litematica.printer.printer.Printer;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
-import net.minecraft.client.MinecraftClient;
-import net.minecraft.client.gui.screen.Screen;
-import net.minecraft.client.gui.screen.ingame.HandledScreen;
-import net.minecraft.client.network.ClientPlayerEntity;
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.screens.Screen;
+import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
+import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.client.network.ClientPlayerInteractionManager;
 import net.minecraft.client.world.ClientWorld;
-import net.minecraft.entity.player.PlayerInventory;
+import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.item.Item;
-import net.minecraft.item.ItemStack;
-import net.minecraft.util.math.BlockPos;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.core.BlockPos;
 import org.jetbrains.annotations.Nullable;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
@@ -33,10 +33,10 @@ import static me.aleksilassila.litematica.printer.printer.zxy.Utils.Statistics.c
 import static me.aleksilassila.litematica.printer.printer.zxy.inventory.InventoryUtils.*;
 
 @Environment(EnvType.CLIENT)
-@Mixin({MinecraftClient.class})
-public abstract class MixinMinecraftClient {
+@Mixin({Minecraft.class})
+public abstract class MixinMinecraft {
     @Shadow
-    public ClientPlayerEntity player;
+    public LocalPlayer player;
 
     @Shadow
     @Nullable
@@ -44,7 +44,7 @@ public abstract class MixinMinecraftClient {
 
     @Inject(method = {"setScreen"}, at = {@At(value = "HEAD")}, cancellable = true)
     public void setScreen(@Nullable Screen screen, CallbackInfo ci) {
-        if(closeScreen > 0 && /*screen != null &&*/ screen instanceof HandledScreen<?>){
+        if(closeScreen > 0 && /*screen != null &&*/ screen instanceof AbstractContainerScreen<?>){
             closeScreen--;
             ci.cancel();
         }

@@ -10,11 +10,11 @@ import me.aleksilassila.litematica.printer.printer.zxy.inventory.SwitchItem;
 import net.fabricmc.fabric.mixin.content.registry.AxeItemAccessor;
 import net.minecraft.block.*;
 import net.minecraft.block.enums.*;
-import net.minecraft.client.MinecraftClient;
-import net.minecraft.client.network.ClientPlayerEntity;
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.client.world.ClientWorld;
 import net.minecraft.item.Item;
-import net.minecraft.item.ItemStack;
+import net.minecraft.world.item.ItemStack;
 import net.minecraft.item.Items;
 //#if MC < 12104
 //#else
@@ -26,9 +26,9 @@ import net.minecraft.state.property.Properties;
 import net.minecraft.state.property.Property;
 import net.minecraft.util.Hand;
 import net.minecraft.util.Pair;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.Direction;
-import net.minecraft.util.math.Vec3d;
+import net.minecraft.core.BlockPos;
+import net.minecraft.core.Direction;
+import net.minecraft.world.phys.Vec3;
 import net.minecraft.world.World;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -44,10 +44,10 @@ import static net.minecraft.block.enums.BlockFace.WALL;
 
 public class PlacementGuide extends PrinterUtils {
     @NotNull
-    protected final MinecraftClient client;
+    protected final Minecraft client;
     public static long createPortalTick = 1;
 
-    public PlacementGuide(@NotNull MinecraftClient client) {
+    public PlacementGuide(@NotNull Minecraft client) {
         this.client = client;
     }
 
@@ -73,7 +73,7 @@ public class PlacementGuide extends PrinterUtils {
         return ClassHook.DEFAULT;
     }
 
-//    public static Placement getPlacement(BlockState requiredState, MinecraftClient client) {
+//    public static Placement getPlacement(BlockState requiredState, Minecraft client) {
 //        Placement placement = _getPlacement(requiredState, client);
 //        return placement.setItem(placement.item == null ? requiredState.getBlock().asItem() : placement.item);
 //    }
@@ -89,7 +89,7 @@ public class PlacementGuide extends PrinterUtils {
                 Set<Map.Entry<BlockPos, Integer>> entries = posMap.entrySet();
                 ArrayList<BlockPos> removeList = new ArrayList<>();
                 entries.forEach(v -> {
-                    if (client.player.getEyePos().squaredDistanceTo(Vec3d.ofCenter(v.getKey())) < 6 * 6) removeList.add(v.getKey());
+                    if (client.player.getEyePos().squaredDistanceTo(Vec3.ofCenter(v.getKey())) < 6 * 6) removeList.add(v.getKey());
                 });
                 removeList.forEach(v -> posMap.remove(v));
             }
@@ -187,12 +187,12 @@ public class PlacementGuide extends PrinterUtils {
                 case STAIR: {
                     Direction half = getHalf(requiredState.get(StairsBlock.HALF));
 
-                    Map<Direction, Vec3d> sides = new HashMap<>();
+                    Map<Direction, Vec3> sides = new HashMap<>();
                     for (Direction direction : horizontalDirections) {
-                        sides.put(direction, Vec3d.of(half.getVector()).multiply(0.25));
+                        sides.put(direction, Vec3.of(half.getVector()).multiply(0.25));
                     }
 
-                    sides.put(half, new Vec3d(0, 0, 0));
+                    sides.put(half, new Vec3(0, 0, 0));
 
                     return new Action()
                         .setSides(sides)
@@ -201,10 +201,10 @@ public class PlacementGuide extends PrinterUtils {
                 case TRAPDOOR: {
                     Direction half = getHalf(requiredState.get(TrapdoorBlock.HALF));
 
-                    Map<Direction, Vec3d> sides = new HashMap<>(){{
+                    Map<Direction, Vec3> sides = new HashMap<>(){{
                         put(half,
-                            Vec3d.of(half.getVector()).multiply(0.25));
-                        put(half, new Vec3d(0, 0, 0));
+                            Vec3.of(half.getVector()).multiply(0.25));
+                        put(half, new Vec3(0, 0, 0));
                     }};
 
                     return new Action()
@@ -273,8 +273,8 @@ public class PlacementGuide extends PrinterUtils {
                     Direction look = getPropertyByName(requiredState, "FACE") == WALL ?
                             null : (Direction) getPropertyByName(requiredState, "FACING");
 
-                    Map<Direction,Vec3d> sides = new HashMap<>();
-                    sides.put(Direction.DOWN,Vec3d.of(side.getVector()).multiply(0.5));
+                    Map<Direction,Vec3> sides = new HashMap<>();
+                    sides.put(Direction.DOWN,Vec3.of(side.getVector()).multiply(0.5));
 
                     return new Action().setSides(sides).setLookDirection(look);
                 }
@@ -315,12 +315,12 @@ public class PlacementGuide extends PrinterUtils {
                     return new Action().setSides(side).setLookDirection(look);
                 }
                 case DOOR: {
-                    Map<Direction, Vec3d> sides = new HashMap<>();
+                    Map<Direction, Vec3> sides = new HashMap<>();
 
                     Direction facing, hinge;
                     facing = hinge = requiredState.get(DoorBlock.FACING);
 
-                    Vec3d hingeVec = new Vec3d(
+                    Vec3 hingeVec = new Vec3(
                             0.25 , 0, 0.25);
 
                     if (requiredState.get(DoorBlock.HINGE) == DoorHinge.RIGHT) {
@@ -413,8 +413,8 @@ public class PlacementGuide extends PrinterUtils {
                 case SNOW: {
                     int layers = currentState.get(SnowBlock.LAYERS);
                     if (layers < requiredState.get(SnowBlock.LAYERS)) {
-                        Map<Direction, Vec3d> sides = new HashMap<>(){{
-                            put(Direction.UP, new Vec3d(0,  (layers / 8d) - 1, 0));
+                        Map<Direction, Vec3> sides = new HashMap<>(){{
+                            put(Direction.UP, new Vec3(0,  (layers / 8d) - 1, 0));
                         }};
                         return new ClickAction().setItem(Items.SNOW).setSides(sides);
                     }
@@ -550,8 +550,8 @@ public class PlacementGuide extends PrinterUtils {
     }
 
     public static class Action {
-        public Map<Direction, Vec3d> sides;
-        public Vec3d hitModifier;
+        public Map<Direction, Vec3> sides;
+        public Vec3 hitModifier;
         public BlockPos target;
 
         public Direction side;
@@ -569,18 +569,18 @@ public class PlacementGuide extends PrinterUtils {
         public Action() {
             this.sides = new HashMap<>();
             for (Direction direction : Direction.values()) {
-                sides.put(direction, new Vec3d(0, 0, 0));
+                sides.put(direction, new Vec3(0, 0, 0));
             }
         }
 
         public Action(Direction side) {
-            this(side, new Vec3d(0, 0, 0));
+            this(side, new Vec3(0, 0, 0));
         }
 
         /**
-         * {@link Action#Action(Direction, Vec3d)}
+         * {@link Action#Action(Direction, Vec3)}
          */
-        public Action(Map<Direction, Vec3d> sides) {
+        public Action(Map<Direction, Vec3> sides) {
             this.sides = sides;
         }
 
@@ -596,18 +596,18 @@ public class PlacementGuide extends PrinterUtils {
          *                 vertical side. Therefore, z should only be used when
          *                 clicking horizontal surface.
          */
-        public Action(Direction side, Vec3d modifier) {
+        public Action(Direction side, Vec3 modifier) {
             this.sides = new HashMap<>();
             this.sides.put(side, modifier);
         }
 
         /**
-         * {@link Action#Action(Direction, Vec3d)}
+         * {@link Action#Action(Direction, Vec3)}
          */
         @SafeVarargs
-        public Action(Pair<Direction, Vec3d>... sides) {
+        public Action(Pair<Direction, Vec3>... sides) {
             this.sides = new HashMap<>();
-            for (Pair<Direction, Vec3d> side : sides) {
+            for (Pair<Direction, Vec3> side : sides) {
                 this.sides.put(side.getLeft(), side.getRight());
             }
         }
@@ -617,7 +617,7 @@ public class PlacementGuide extends PrinterUtils {
 
             for (Direction d : Direction.values()) {
                 if (d.getAxis() == axis) {
-                    sides.put(d, new Vec3d(0, 0, 0));
+                    sides.put(d, new Vec3(0, 0, 0));
                 }
             }
         }
@@ -630,11 +630,11 @@ public class PlacementGuide extends PrinterUtils {
             return clickItems == null ? new Item[]{backup.asItem()} : clickItems;
         }
 
-        public @NotNull Map<Direction, Vec3d> getSides() {
+        public @NotNull Map<Direction, Vec3> getSides() {
             if (this.sides == null) {
                 this.sides = new HashMap<>();
                 for (Direction d : Direction.values()) {
-                    this.sides.put(d, new Vec3d(0, 0, 0));
+                    this.sides.put(d, new Vec3(0, 0, 0));
                 }
             }
 
@@ -642,7 +642,7 @@ public class PlacementGuide extends PrinterUtils {
         }
 
         public @Nullable Direction getValidSide(ClientWorld world, BlockPos pos) {
-            Map<Direction, Vec3d> sides = getSides();
+            Map<Direction, Vec3> sides = getSides();
 
             List<Direction> validSides = new ArrayList<>();
 
@@ -684,12 +684,12 @@ public class PlacementGuide extends PrinterUtils {
         }
 
         public Action setSides(Direction.Axis... axis) {
-            Map<Direction, Vec3d> sides = new HashMap<>();
+            Map<Direction, Vec3> sides = new HashMap<>();
 
             for (Direction.Axis a : axis) {
                 for (Direction d : Direction.values()) {
                     if (d.getAxis() == a) {
-                        sides.put(d, new Vec3d(0, 0, 0));
+                        sides.put(d, new Vec3(0, 0, 0));
                     }
                 }
             }
@@ -715,16 +715,16 @@ public class PlacementGuide extends PrinterUtils {
             return this;
         }
 
-        public Action setSides(Map<Direction, Vec3d> sides) {
+        public Action setSides(Map<Direction, Vec3> sides) {
             this.sides = sides;
             return this;
         }
 
         public Action setSides(Direction... directions) {
-            Map<Direction, Vec3d> sides = new HashMap<>();
+            Map<Direction, Vec3> sides = new HashMap<>();
 
             for (Direction d : directions) {
-                sides.put(d, new Vec3d(0, 0, 0));
+                sides.put(d, new Vec3(0, 0, 0));
             }
 
             this.sides = sides;
@@ -768,12 +768,12 @@ public class PlacementGuide extends PrinterUtils {
             }
 
         }
-        public void sendPlacementPreparation(ClientPlayerEntity player){
+        public void sendPlacementPreparation(LocalPlayer player){
             switchToItems(player, clickItems);
             Implementation.sendLookPacket(player, lookDirection, lookDirection2);
         }
 
-        public void sendQueue(ClientPlayerEntity player) {
+        public void sendQueue(LocalPlayer player) {
             if (target == null || hitModifier == null) return;
 
             boolean wasSneaking = player.isSneaking();
@@ -782,12 +782,12 @@ public class PlacementGuide extends PrinterUtils {
                     ((lookDirection == null || !lookDirection.getAxis().isHorizontal())
                             ? Direction.NORTH : lookDirection) : side;
 
-//            hitModifier = new Vec3d(hitModifier.x, hitModifier.y, hitModifier.z);
-            Vec3d hitVec = hitModifier;
+//            hitModifier = new Vec3(hitModifier.x, hitModifier.y, hitModifier.z);
+            Vec3 hitVec = hitModifier;
             if(!usePrecisionPlacement){
                 hitModifier = hitModifier.rotateY((direction.getPositiveHorizontalDegrees() + 90) % 360);
-                hitVec = Vec3d.ofCenter(target)
-                        .add(Vec3d.of(side.getVector()).multiply(0.5))
+                hitVec = Vec3.ofCenter(target)
+                        .add(Vec3.of(side.getVector()).multiply(0.5))
                         .add(hitModifier.multiply(0.5));
             }
 

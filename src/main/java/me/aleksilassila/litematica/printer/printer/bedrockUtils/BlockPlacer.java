@@ -2,24 +2,24 @@ package me.aleksilassila.litematica.printer.printer.bedrockUtils;
 
 import me.aleksilassila.litematica.printer.printer.zxy.Utils.PlayerAction;
 import me.aleksilassila.litematica.printer.printer.zxy.Utils.ZxyUtils;
-import net.minecraft.block.Blocks;
-import net.minecraft.client.MinecraftClient;
-import net.minecraft.client.network.ClientPlayerEntity;
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.item.ItemConvertible;
-import net.minecraft.item.ItemStack;
-import net.minecraft.item.ItemUsageContext;
-import net.minecraft.network.packet.c2s.play.PlayerMoveC2SPacket;
-import net.minecraft.util.Hand;
-import net.minecraft.util.hit.BlockHitResult;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.Direction;
-import net.minecraft.util.math.Vec3d;
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.player.LocalPlayer;
+import net.minecraft.core.BlockPos;
+import net.minecraft.core.Direction;
+import net.minecraft.network.protocol.game.ServerboundMovePlayerPacket;
+import net.minecraft.world.InteractionHand;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.context.UseOnContext;
+import net.minecraft.world.level.ItemLike;
+import net.minecraft.world.level.block.Blocks;
+import net.minecraft.world.phys.BlockHitResult;
+import net.minecraft.world.phys.Vec3;
 
 public class BlockPlacer {
-    public static void simpleBlockPlacement(TargetBlock tar, BlockPos pos, ItemConvertible item) {
+    public static void simpleBlockPlacement(TargetBlock tar, BlockPos pos, ItemLike item) {
 
-        MinecraftClient minecraftClient = MinecraftClient.getInstance();
+        Minecraft minecraft = Minecraft.getInstance();
 
         InventoryManager.switchToItem(item);
 //        if(item.equals(Blocks.REDSTONE_TORCH) && minecraftClient.world.getBlockState(pos.down()).isAir()){
@@ -27,8 +27,8 @@ public class BlockPlacer {
 //            return;
 //        }
         tar.temppos.add(pos);
-        BlockHitResult hitResult = new BlockHitResult(new Vec3d(pos.getX(), pos.getY(), pos.getZ()), Direction.UP, pos, false);
-        placeBlockWithoutInteractingBlock(minecraftClient, hitResult);
+        BlockHitResult hitResult = new BlockHitResult(new Vec3(pos.getX(), pos.getY(), pos.getZ()), Direction.UP, pos, false);
+        placeBlockWithoutInteractingBlock(minecraft, hitResult);
     }
 
 
@@ -38,25 +38,25 @@ public class BlockPlacer {
         sendLookPacket(yaw,pitch);
     }
     private static void sendLookPacket(float yaw,float pitch){
-        ClientPlayerEntity player = ZxyUtils.client.player;
+        LocalPlayer player = ZxyUtils.client.player;
         if(player == null) return;
         //#if MC > 12101
-        MinecraftClient.getInstance().getNetworkHandler().sendPacket(new PlayerMoveC2SPacket.LookAndOnGround(yaw, pitch, player.isOnGround(),player.horizontalCollision));
+        Minecraft.getInstance().getConnection().send(new ServerboundMovePlayerPacket.Rot(yaw, pitch, player.onGround(),player.horizontalCollision));
         //#else
         //$$ MinecraftClient.getInstance().getNetworkHandler().sendPacket(new PlayerMoveC2SPacket.LookAndOnGround(yaw, pitch, player.isOnGround()));
         //#endif
     }
 
     public static void pistonPlacement(BlockPos pos, Direction direction) {
-        MinecraftClient minecraftClient = MinecraftClient.getInstance();
+        Minecraft minecraftClient = Minecraft.getInstance();
         double x = pos.getX();
 
         switch (BreakingFlowController.getWorkingMode()) {
             case CARPET_EXTRA://carpet accurateBlockPlacement支持
-                x = x + 2 + direction.getIndex() * 2;
+                x = x + 2 + direction.get3DDataValue() * 2;
                 break;
             case VANILLA://直接发包，改变服务端玩家实体视角
-                PlayerEntity player = minecraftClient.player;
+                Player player = minecraftClient.player;
                 float pitch;
                 switch (direction) {
                     case UP:
@@ -69,13 +69,14 @@ public class BlockPlacer {
                         pitch = 90f;
                         break;
                 }
-                yaw = player.getYaw();
-                BlockPlacer.pitch = player.getPitch();
-                sendLookPacket(player.getYaw(1.0f), pitch);
+                yaw = player.getYRot();
+                BlockPlacer.pitch = player.getXRot();
+                BlockPlacer.pitch = player.getVoicePitch();
+                sendLookPacket(player.getYRot(1.0f), pitch);
                 break;
         }
 
-        Vec3d vec3d = new Vec3d(x, pos.getY(), pos.getZ());
+        Vec3 vec3d = new Vec3(x, pos.getY(), pos.getZ());
 
         InventoryManager.switchToItem(Blocks.PISTON);
         BlockHitResult hitResult = new BlockHitResult(vec3d, Direction.UP, pos, false);
@@ -84,21 +85,20 @@ public class BlockPlacer {
         resetLook();
     }
 
-    private static void placeBlockWithoutInteractingBlock(MinecraftClient minecraftClient, BlockHitResult hitResult) {
-        ClientPlayerEntity player = minecraftClient.player;
-        ItemStack itemStack = player.getStackInHand(Hand.OFF_HAND);
+    private static void placeBlockWithoutInteractingBlock(Minecraft minecraftClient, BlockHitResult hitResult) {
+        LocalPlayer player = minecraftClient.player;
+        ItemStack itemStack = player.getItemInHand(InteractionHand.OFF_HAND);
 
-        PlayerAction.interactBlock(Hand.OFF_HAND,hitResult.getPos(),hitResult.getSide(),hitResult.getBlockPos(),hitResult.isInsideBlock(),false);
-
-        if (!itemStack.isEmpty() && !player.getItemCooldownManager().isCoolingDown(
+        PlayerAction.interactBlock(InteractionHand.OFF_HAND,hitResult.getBlockPos().getCenter(),hitResult.getDirection(),hitResult.getBlockPos(),hitResult.isInside(),false);
+        if (!itemStack.isEmpty() && !player.getCooldowns().isOnCooldown(
                 //#if MC > 12101
                 itemStack
                 //#else
                 //$$ itemStack.getItem()
                 //#endif
         )) {
-            ItemUsageContext itemUsageContext = new ItemUsageContext(player, Hand.OFF_HAND, hitResult);
-            itemStack.useOnBlock(itemUsageContext);
+            UseOnContext itemUsageContext = new UseOnContext(player, InteractionHand.OFF_HAND, hitResult);
+            itemStack.useOn(itemUsageContext);
 
         }
     }

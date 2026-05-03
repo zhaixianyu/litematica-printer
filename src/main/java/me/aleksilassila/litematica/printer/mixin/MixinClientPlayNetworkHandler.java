@@ -1,11 +1,10 @@
 package me.aleksilassila.litematica.printer.mixin;
 
-import me.aleksilassila.litematica.printer.printer.Printer;
 import me.aleksilassila.litematica.printer.printer.zxy.inventory.SwitchItem;
 import me.aleksilassila.litematica.printer.printer.zxy.Utils.ZxyUtils;
-import net.minecraft.client.MinecraftClient;
-import net.minecraft.client.network.ClientPlayNetworkHandler;
-import net.minecraft.network.packet.s2c.play.InventoryS2CPacket;
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.multiplayer.ClientPacketListener;
+import net.minecraft.network.protocol.game.ClientboundContainerSetContentPacket;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
@@ -15,12 +14,12 @@ import static me.aleksilassila.litematica.printer.printer.zxy.inventory.Inventor
 import static me.aleksilassila.litematica.printer.printer.zxy.inventory.SwitchItem.reSwitchItem;
 import static me.aleksilassila.litematica.printer.printer.zxy.Utils.ZxyUtils.*;
 
-@Mixin(ClientPlayNetworkHandler.class)
+@Mixin(ClientPacketListener.class)
 public abstract class MixinClientPlayNetworkHandler {
 
-    @Inject(at = @At("TAIL"),method = "onInventory")
-    public void onInventory(InventoryS2CPacket packet, CallbackInfo ci){
-         MinecraftClient mc = MinecraftClient.getInstance();
+    @Inject(at = @At("TAIL"),method = "handleContainerContent")
+    public void onInventory(ClientboundContainerSetContentPacket packet, CallbackInfo ci){
+         Minecraft mc = Minecraft.getInstance();
         if(isOpenHandler){
             switchInv();
         }
@@ -29,7 +28,7 @@ public abstract class MixinClientPlayNetworkHandler {
         }
 
         if (client.player != null && printerMemoryAdding) {
-            client.player.closeHandledScreen();
+            client.player.closeContainer();
         }
 //        if(QuickShulkerUtils.waitForTheItemToBeSwitched != null) QuickShulkerUtils.switchItem(QuickShulkerUtils.targetSlot);
         if(num == 1 || num == 3)ZxyUtils.syncInv();

@@ -6,8 +6,8 @@ import me.aleksilassila.litematica.printer.printer.zxy.Utils.BlockTask;
 import me.aleksilassila.litematica.printer.printer.zxy.inventory.OpenInventoryPacket;
 import me.aleksilassila.litematica.printer.printer.zxy.Utils.Statistics;
 import me.aleksilassila.litematica.printer.printer.zxy.Utils.ZxyUtils;
-import net.minecraft.client.MinecraftClient;
-import net.minecraft.client.network.ClientPlayerEntity;
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.player.LocalPlayer;
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
@@ -24,16 +24,16 @@ import me.aleksilassila.litematica.printer.printer.zxy.chesttracker.MemoryUtils;
 import static me.aleksilassila.litematica.printer.printer.Printer.isEnablePrinter;
 import static me.aleksilassila.litematica.printer.printer.UpdateChecker.checkForUpdates;
 
-@Mixin(ClientPlayerEntity.class)
+@Mixin(LocalPlayer.class)
 public class MixinClientPlayerEntity {
     @Final
 	@Shadow
-	protected MinecraftClient client;
+	protected Minecraft minecraft;
 
-	@Inject(at = @At("HEAD"), method = "closeHandledScreen")
+	@Inject(at = @At("HEAD"), method = "closeContainer")
 	public void close(CallbackInfo ci) {
 		//#if MC >= 12001
-			if(Statistics.loadChestTracker) MemoryUtils.saveMemory(((ClientPlayerEntity)(Object)this).currentScreenHandler);
+			if(Statistics.loadChestTracker) MemoryUtils.saveMemory(((LocalPlayer)(Object)this).containerMenu);
 			OpenInventoryPacket.reSet();
 		//#endif
 	}

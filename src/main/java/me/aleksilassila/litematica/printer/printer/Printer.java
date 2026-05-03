@@ -24,18 +24,19 @@ import me.aleksilassila.litematica.printer.printer.zxy.Utils.ZxyUtils;
 import me.aleksilassila.litematica.printer.printer.zxy.Utils.overwrite.MyBox;
 import net.fabricmc.loader.api.FabricLoader;
 import net.minecraft.block.*;
-import net.minecraft.client.MinecraftClient;
-import net.minecraft.client.network.ClientPlayerEntity;
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.client.world.ClientWorld;
-import net.minecraft.entity.player.PlayerInventory;
+import net.minecraft.core.BlockPos;
+import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.item.Item;
-import net.minecraft.item.ItemStack;
+import net.minecraft.world.item.ItemStack;
 import net.minecraft.item.Items;
 import net.minecraft.network.packet.c2s.play.PlayerInputC2SPacket;
 import net.minecraft.util.Hand;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.Direction;
-import net.minecraft.util.math.Vec3d;
+import net.minecraft.core.BlockPos;
+import net.minecraft.core.Direction;
+import net.minecraft.world.phys.Vec3;
 import net.minecraft.network.packet.c2s.play.ClientCommandC2SPacket;
 import org.jetbrains.annotations.NotNull;
 
@@ -128,7 +129,7 @@ public class Printer extends PrinterUtils {
 
     private static Printer INSTANCE = null;
     @NotNull
-    public final MinecraftClient client;
+    public final Minecraft client;
     public final PlacementGuide guide;
     public static PlacementGuide.Action currentAction;
 
@@ -141,7 +142,7 @@ public class Printer extends PrinterUtils {
         return INSTANCE;
     }
 
-    private Printer(@NotNull MinecraftClient client) {
+    private Printer(@NotNull Minecraft client) {
         this.client = client;
 
         this.guide = new PlacementGuide(client);
@@ -155,7 +156,7 @@ public class Printer extends PrinterUtils {
     public MyBox myBox;
     BlockPos getBlockPos2() {
         if (timedOut()) return null;
-        ClientPlayerEntity player = client.player;
+        LocalPlayer player = client.player;
         if (player == null) return null;
         if (myBox == null) {
             resetBlockIterator();
@@ -275,7 +276,7 @@ public class Printer extends PrinterUtils {
                                         action.get().queueAction(finalPos, false);
                                         action.get().sendQueue(client.player);
                                     } else if (action.get() == null) {
-                                        ((IClientPlayerInteractionManager) client.interactionManager).rightClickBlock(finalPos, Direction.UP, Vec3d.ofCenter(finalPos));
+                                        ((IClientPlayerInteractionManager) client.interactionManager).rightClickBlock(finalPos, Direction.UP, Vec3.ofCenter(finalPos));
                                     }
                                     return false;
                                 }
@@ -333,7 +334,7 @@ public class Printer extends PrinterUtils {
     }
 
     public static boolean waJue(BlockPos pos) {
-        MinecraftClient client = MinecraftClient.getInstance();
+        Minecraft client = Minecraft.getInstance();
         ClientWorld world = client.world;
         BlockState currentState = world.getBlockState(pos);
         Block block = currentState.getBlock();
@@ -346,7 +347,7 @@ public class Printer extends PrinterUtils {
     }
 
     public static boolean canBreakBlock(BlockPos pos) {
-        MinecraftClient client = ZxyUtils.client;
+        Minecraft client = ZxyUtils.client;
         ClientWorld world = client.world;
         BlockState currentState = world.getBlockState(pos);
         return !currentState.isAir() &&
@@ -385,7 +386,7 @@ public class Printer extends PrinterUtils {
             }
         }
     }
-    public static Vec3d itemPos = null;
+    public static Vec3 itemPos = null;
     //此模式依赖bug运行 请勿随意修改
     public void bedrockMode() {
 
@@ -407,7 +408,7 @@ public class Printer extends PrinterUtils {
             } else if (currentState.isOf(Blocks.PISTON_HEAD)) {
                 switchToItems(client.player, new Item[]{Items.AIR, Items.DIAMOND_PICKAXE});
                 ((IClientPlayerInteractionManager) client.interactionManager)
-                        .rightClickBlock(pos, Direction.UP, Vec3d.ofCenter(pos));
+                        .rightClickBlock(pos, Direction.UP, Vec3.ofCenter(pos));
             }
 
 //                    if (TempData.xuanQuFanWeiNei_p(pos) && currentState.isOf(Blocks.BEDROCK)  && ZxyUtils.canInteracted(pos,range-1.5) && !client.world.getBlockState(pos.up()).isOf(Blocks.BEDROCK)) {
@@ -493,7 +494,7 @@ public class Printer extends PrinterUtils {
     public void tick() {
         if (!verify()) return;
         WorldSchematic worldSchematic = SchematicWorldHandler.getSchematicWorld();
-        ClientPlayerEntity pEntity = client.player;
+        LocalPlayer pEntity = client.player;
         ClientWorld world = client.world;
 
         range1 = PRINTER_RANGE.getIntegerValue();
@@ -625,7 +626,7 @@ public class Printer extends PrinterUtils {
                 action.sendPlacementPreparation(pEntity);
                 action.queueAction(pos, useShift);
 
-                Vec3d hitModifier = usePrecisionPlacement(pos, requiredState);
+                Vec3 hitModifier = usePrecisionPlacement(pos, requiredState);
                 if(hitModifier != null) {
                     action.hitModifier = hitModifier;
                     action.usePrecisionPlacement = true;
@@ -675,10 +676,10 @@ public class Printer extends PrinterUtils {
         return false;
     }
 
-    public Vec3d usePrecisionPlacement(BlockPos pos,BlockState stateSchematic){
+    public Vec3 usePrecisionPlacement(BlockPos pos,BlockState stateSchematic){
         if (EASY_MODE.getBooleanValue() && stateSchematic != null && pos != null) {
             EasyPlaceProtocol protocol = PlacementHandler.getEffectiveProtocolVersion();
-            Vec3d hitPos = Vec3d.of(pos);
+            Vec3 hitPos = Vec3.of(pos);
             if (protocol == EasyPlaceProtocol.V3)
             {
                 return applyPlacementProtocolV3(pos, stateSchematic, hitPos);
@@ -717,7 +718,7 @@ public class Printer extends PrinterUtils {
 
     public static ItemStack yxcfItem; //有序存放临时存储
 
-    public void swapHandWithSlot(ClientPlayerEntity player, int slot) {
+    public void swapHandWithSlot(LocalPlayer player, int slot) {
         ItemStack stack = Implementation.getInventory(player).getStack(slot);
         InventoryUtils.setPickedItemToHand(stack, client);
     }

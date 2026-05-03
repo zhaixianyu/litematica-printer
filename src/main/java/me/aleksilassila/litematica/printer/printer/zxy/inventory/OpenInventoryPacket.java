@@ -8,12 +8,13 @@ import me.aleksilassila.litematica.printer.printer.bedrockUtils.Messager;
 import me.aleksilassila.litematica.printer.printer.zxy.Utils.Statistics;
 import net.fabricmc.fabric.api.client.networking.v1.ClientPlayNetworking;
 import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking;
-import net.minecraft.block.BlockState;
+import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.block.Block;
 import net.minecraft.block.entity.BlockEntity;
 import net.minecraft.block.entity.BlockEntityType;
 import net.minecraft.block.entity.ShulkerBoxBlockEntity;
-import net.minecraft.client.MinecraftClient;
+import net.minecraft.client.Minecraft;
+import net.minecraft.core.BlockPos;
 import net.minecraft.entity.mob.ShulkerEntity;
 import net.minecraft.inventory.Inventory;
 import net.minecraft.network.PacketByteBuf;
@@ -23,11 +24,11 @@ import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.server.world.ChunkTicketType;
 import net.minecraft.server.world.ServerWorld;
-import net.minecraft.text.Text;
+import net.minecraft.network.chat.Component;
 import net.minecraft.util.ActionResult;
 import net.minecraft.util.Hand;
-import net.minecraft.util.Identifier;
-import net.minecraft.util.hit.BlockHitResult;
+import net.minecraft.resources.Identifier;
+import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.util.math.*;
 import net.minecraft.world.World;
 
@@ -69,7 +70,7 @@ public class OpenInventoryPacket {
     //#endif
     public static HashMap<ServerPlayerEntity, TickList> tickMap = new HashMap<>();
     public static boolean openIng = false;
-    public static RegistryKey<World> key = null;
+    public static ResourceKey<World> key = null;
     public static BlockPos pos = null;
     public static boolean isRemote = false;
     public static boolean clientTry = false;
@@ -104,7 +105,7 @@ public class OpenInventoryPacket {
                return openPackage;
            }
        };
-       RegistryKey<World> world = null;
+       ResourceKey<World> world = null;
        BlockPos pos = null;
        public OpenPackage() {
        }
@@ -229,9 +230,9 @@ public class OpenInventoryPacket {
         //$$ ServerPlayNetworking.registerGlobalReceiver(OPEN_INVENTORY, (server, player, serverPlayNetworkHandler, packetByteBuf, packetSender) -> {
         //$$     BlockPos pos = packetByteBuf.readBlockPos();
             //#if MC < 11904
-            //$$ RegistryKey<World> key = RegistryKey.of(Registry.WORLD_KEY, packetByteBuf.readIdentifier());
+            //$$ ResourceKey<World> key = ResourceKey.of(Registry.WORLD_KEY, packetByteBuf.readIdentifier());
             //#else
-            //$$ RegistryKey<World> key = RegistryKey.of(RegistryKeys.WORLD, packetByteBuf.readIdentifier());
+            //$$ ResourceKey<World> key = ResourceKey.of(RegistryKeys.WORLD, packetByteBuf.readIdentifier());
             //#endif
         //$$     server.execute(() -> openInv(server, player, pos, key));
         //$$ });
@@ -357,14 +358,14 @@ public class OpenInventoryPacket {
                 //#if MC < 11904
                 //$$ String translationKey = key.getValue().toString();
                 //$$ String translate = StringUtils.translate(translationKey);
-                //$$ if (client.player != null) client.player.sendMessage(Text.of("打开容器失败 \n位于"+ translate+"  "+pos.toString()),false);
+                //$$ if (client.player != null) client.player.sendMessage((Component.of("打开容器失败 \n位于"+ translate+"  "+pos.toString()),false);
                 //#else
                 String translationKey = key.getValue().toTranslationKey();
                 String translate = StringUtils.translate(translationKey);
                     //#if MC > 12101
-                    if (client.player != null) client.player.sendMessage(Text.of("打开容器失败 \n位于"+ translate+"  "+pos.toCenterPos().toString()),false);
+                    if (client.player != null) client.player.sendMessage((Component.of("打开容器失败 \n位于"+ translate+"  "+pos.toCenterPos().toString()),false);
                     //#else
-                    //$$ if (client.player != null) client.player.sendMessage(Text.of("打开容器失败 \n位于"+ translate+"  "+pos.toCenterPos().toString()));
+                    //$$ if (client.player != null) client.player.sendMessage((Component.of("打开容器失败 \n位于"+ translate+"  "+pos.toCenterPos().toString()));
                     //#endif
                 //#endif
 

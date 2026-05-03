@@ -1,8 +1,8 @@
 package me.aleksilassila.litematica.printer.printer.zxy.Utils.overwrite;
 
-import net.minecraft.util.math.BlockPos;
+import net.minecraft.core.BlockPos;
 import net.minecraft.util.math.Box;
-import net.minecraft.util.math.Vec3d;
+import net.minecraft.world.phys.Vec3;
 import net.minecraft.util.math.Vec3i;
 import org.jetbrains.annotations.NotNull;
 

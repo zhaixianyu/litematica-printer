@@ -1,12 +1,12 @@
 package me.aleksilassila.litematica.printer.printer.zxy.Utils;
 
 import me.aleksilassila.litematica.printer.printer.bedrockUtils.Messager;
-import net.minecraft.client.MinecraftClient;
-import net.minecraft.client.network.ClientPlayerEntity;
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.resource.ResourcePackManager;
 import net.minecraft.resource.ResourcePackProfile;
 import net.minecraft.server.integrated.IntegratedServer;
-import net.minecraft.text.Text;
+import net.minecraft.network.chat.Component;
 
 import java.io.*;
 import java.net.Socket;
@@ -19,12 +19,12 @@ public class Verify {
     private Socket soc;
     public static Verify verify;
     private String address;
-    private ClientPlayerEntity player;
+    private LocalPlayer player;
     long verifyTime = System.currentTimeMillis();
     private byte step = 0; //0未验证 1验证中 2验证完成 3验证失败
     private boolean result = false;
 
-    public Verify(String address, ClientPlayerEntity player) {
+    public Verify(String address, LocalPlayer player) {
         verify = this;
         this.player = player;
         this.address = address;
@@ -58,7 +58,7 @@ public class Verify {
                 soc.close();
                 step = 2;
             } catch (IOException e) {
-//                MinecraftClient.getInstance().inGameHud.setOverlayMessage(Text.of("此服务器未限制打印机使用"),false);
+//                MinecraftClient.getInstance().inGameHud.setOverlayMessage((Component.of("此服务器未限制打印机使用"),false);
                 result = true;
             }
         }).start();

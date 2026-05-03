@@ -7,25 +7,25 @@ import me.aleksilassila.litematica.printer.mixin.masa.Litematica_InventoryUtilsM
 import me.aleksilassila.litematica.printer.printer.Printer;
 import me.aleksilassila.litematica.printer.printer.zxy.Utils.ZxyUtils;
 import net.minecraft.block.Block;
-import net.minecraft.block.BlockState;
+import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.block.entity.BlockEntity;
 import net.minecraft.block.entity.ShulkerBoxBlockEntity;
-import net.minecraft.client.MinecraftClient;
-import net.minecraft.client.network.ClientPlayerEntity;
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.entity.mob.ShulkerEntity;
-import net.minecraft.entity.player.PlayerInventory;
+import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.item.Item;
-import net.minecraft.item.ItemStack;
+import net.minecraft.world.item.ItemStack;
 import net.minecraft.registry.Registries;
 import net.minecraft.screen.ScreenHandler;
-import net.minecraft.screen.slot.Slot;
-import net.minecraft.screen.slot.SlotActionType;
-import net.minecraft.text.Text;
+import net.minecraft.world.inventory.Slot;
+import net.minecraft.world.inventory.SlotActionType;
+import net.minecraft.network.chat.Component;
 import net.minecraft.util.Hand;
 import net.minecraft.util.collection.DefaultedList;
-import net.minecraft.util.math.BlockPos;
+import net.minecraft.core.BlockPos;
 import net.minecraft.world.World;
-import net.minecraft.util.Identifier;
+import net.minecraft.resources.Identifier;
 import net.minecraft.registry.RegistryKey;
 
 //#if MC > 11904
@@ -102,7 +102,7 @@ public class InventoryUtils {
 
     public static boolean switchItem() {
         if (!remoteItem.isEmpty() && !isOpenHandler && !openIng && OpenInventoryPacket.key == null) {
-            ClientPlayerEntity player = client.player;
+            LocalPlayer player = client.player;
             ScreenHandler sc = player.currentScreenHandler;
             if (!player.currentScreenHandler.equals(player.playerScreenHandler)) return false;
             //排除合成栏 装备栏 副手
@@ -161,7 +161,7 @@ public class InventoryUtils {
     public static void switchInv() {
 //        if(true) return;
 
-        ClientPlayerEntity player = MinecraftClient.getInstance().player;
+        LocalPlayer player = Minecraft.getInstance().player;
         ScreenHandler sc = player.currentScreenHandler;
         if (sc.equals(player.playerScreenHandler)) {
             return;
@@ -179,7 +179,7 @@ public class InventoryUtils {
                             int c = Integer.parseInt(s) - 1;
                             if (Registries.ITEM.getId(player.getInventory().getStack(c).getItem()).toString().contains("shulker_box") &&
                                     LitematicaMixinMod.QUICKSHULKER.getBooleanValue()) {
-                                MinecraftClient.getInstance().inGameHud.setOverlayMessage(Text.of("濳影盒占用了预选栏"), false);
+                                Minecraft.getInstance().inGameHud.setOverlayMessage((Component.of("濳影盒占用了预选栏"), false);
                                 continue;
                             }
 
@@ -252,7 +252,7 @@ public class InventoryUtils {
         }else return DefaultedList.of();
     }
 
-    public static boolean switchToItems(ClientPlayerEntity player, Item[] items) {
+    public static boolean switchToItems(LocalPlayer player, Item[] items) {
         if (items == null) return false;
         PlayerInventory inv = Implementation.getInventory(player);
         //inv.getMainHandStack()  信息滞后 如果服务器有延迟这个获取的信息可能是错误的
@@ -294,7 +294,7 @@ public class InventoryUtils {
 
     static boolean openShulker(HashSet<Item> items) {
         for (Item item : items) {
-            ScreenHandler sc = MinecraftClient.getInstance().player.playerScreenHandler;
+            ScreenHandler sc = Minecraft.getInstance().player.playerScreenHandler;
             for (int i = 9; i < sc.slots.size(); i++) {
                 ItemStack stack = sc.slots.get(i).getStack();
                 String itemid = Registries.ITEM.getId(stack.getItem()).toString();

@@ -183,7 +183,9 @@ dependencies {
 
     // To change the versions see the gradle.properties file
     minecraft "com.mojang:minecraft:${project.minecraft_version}"
-    if (mcVersion <= 12111) mappings "net.fabricmc:yarn:${project.yarn_mappings}:v2"
+    if(useMappings){
+        mappings loom.officialMojangMappings()
+    }
 
     autoImplementation "net.fabricmc:fabric-loader:${project.loader_version}"
     autoImplementation "net.fabricmc.fabric-api:fabric-api:${project.fabric_api_version}"

@@ -3,12 +3,12 @@ package me.aleksilassila.litematica.printer.mixin.jackf;
 //#if MC >= 12001
 import fi.dy.masa.malilib.util.InventoryUtils;
 import me.aleksilassila.litematica.printer.printer.zxy.chesttracker.MemoryUtils;
-import net.minecraft.client.MinecraftClient;
-import net.minecraft.client.gui.screen.Screen;
-import net.minecraft.client.gui.widget.TextFieldWidget;
-import net.minecraft.item.ItemStack;
-import net.minecraft.text.Text;
-import net.minecraft.util.Identifier;
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.components.EditBox;
+import net.minecraft.client.gui.screens.Screen;
+import net.minecraft.network.chat.Component;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.resources.Identifier;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Overwrite;
 import org.spongepowered.asm.mixin.Shadow;
@@ -26,7 +26,7 @@ import red.jackf.chesttracker.impl.util.ItemStacks;
 import java.util.*;
 
 //#if MC > 12106
-import net.minecraft.client.input.KeyInput;
+import net.minecraft.client.input.KeyEvent;
 //#else
 //$$
 //#endif
@@ -39,7 +39,7 @@ public abstract class ChestTrackerScreenMixin extends Screen {
     @Shadow(remap = false) private VerticalScrollWidget scroll;
     @Shadow(remap = false) private List<ItemStack> items = Collections.emptyList();
 
-    protected ChestTrackerScreenMixin(Text title) {
+    protected ChestTrackerScreenMixin(Component title) {
         super(title);
     }
 
@@ -72,15 +72,15 @@ public abstract class ChestTrackerScreenMixin extends Screen {
         MemoryUtils.currentMemoryKey = currentMemoryKey;
     }
 
-    @Shadow public abstract void close();
+    @Shadow public abstract void onClose();
 
 //    @Inject(at = @At("HEAD"),method = "keyPressed", cancellable = true)
 //    //#if MC >= 12106
-//    public void keyPressed1(KeyInput event, CallbackInfoReturnable<Boolean> cir){
-//        if (MinecraftClient.getInstance().options.inventoryKey.matchesKey(event) && !(this.getFocused() instanceof TextFieldWidget) ) {
+//    public void keyPressed1(KeyEvent event, CallbackInfoReturnable<Boolean> cir){
+//        if (Minecraft.getInstance().options.inventoryKey.matchesKey(event) && !(this.getFocused() instanceof TextFieldWidget) ) {
 //    //#else
 //    //$$ public void keyPressed1(int keyCode, int scanCode, int modifiers, CallbackInfoReturnable<Boolean> cir){
-//    //$$    if (MinecraftClient.getInstance().options.inventoryKey.matchesKey(keyCode, scanCode) && !(this.getFocused() instanceof TextFieldWidget) ) {
+//    //$$    if (Minecraft.getInstance().options.inventoryKey.matchesKey(keyCode, scanCode) && !(this.getFocused() instanceof TextFieldWidget) ) {
 //    //#endif
 //            this.close();
 //        cir.setReturnValue(true);

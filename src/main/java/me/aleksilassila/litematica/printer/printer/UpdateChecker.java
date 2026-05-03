@@ -2,7 +2,7 @@ package me.aleksilassila.litematica.printer.printer;
 
 import me.aleksilassila.litematica.printer.printer.bedrockUtils.Messager;
 import net.minecraft.text.MutableText;
-import net.minecraft.text.Text;
+import net.minecraft.network.chat.Component;
 
 import static me.aleksilassila.litematica.printer.printer.zxy.Utils.ZxyUtils.client;
 

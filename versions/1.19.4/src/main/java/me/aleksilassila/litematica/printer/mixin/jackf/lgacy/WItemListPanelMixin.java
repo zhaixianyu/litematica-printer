@@ -1,7 +1,7 @@
 package me.aleksilassila.litematica.printer.mixin.jackf.lgacy;
 
 import me.aleksilassila.litematica.printer.printer.zxy.Utils.PinYinSearch;
-import net.minecraft.item.ItemStack;
+import net.minecraft.world.item.ItemStack;
 import org.jetbrains.annotations.Nullable;
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;

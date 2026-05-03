@@ -50,7 +50,7 @@
     "masa.litematicaSetConfig.ConfigsMixin",
     "masa.litematicaSetConfig.GuiConfigsMixin",
     "masa.litematicaSetConfig.InputHandlerMixin",
-    "openinv.MixinMinecraftClient",
+    "openinv.MixinMinecraft",
     "verify.MixinClientConnection"
   ],
   "injectors": {

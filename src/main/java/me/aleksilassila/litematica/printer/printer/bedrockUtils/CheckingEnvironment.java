@@ -2,8 +2,8 @@ package me.aleksilassila.litematica.printer.printer.bedrockUtils;
 
 import net.minecraft.block.Blocks;
 import net.minecraft.client.world.ClientWorld;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.Direction;
+import net.minecraft.core.BlockPos;
+import net.minecraft.core.Direction;
 
 import java.util.ArrayList;
 

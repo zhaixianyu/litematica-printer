@@ -1,6 +1,6 @@
 package me.aleksilassila.litematica.printer.mixin;
 
-import net.minecraft.network.packet.c2s.play.PlayerMoveC2SPacket;
+import net.minecraft.network.protocol.game.ServerboundMovePlayerPacket;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.gen.Accessor;
 
@@ -16,7 +16,7 @@ public interface PlayerMoveC2SPacketAccessor {
     public double getZ();
 
     @Accessor("yaw")
-    public float getYaw();
+    public float getYRot();
 
     @Accessor("onGround")
     public boolean getOnGround();

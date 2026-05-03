@@ -1,7 +1,7 @@
 package me.aleksilassila.litematica.printer.printer.zxy.inventory;
 
 import net.minecraft.block.Block;
-import net.minecraft.block.BlockState;
+import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.network.PacketByteBuf;
 
 public class MyPacket {

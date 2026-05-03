@@ -9,21 +9,21 @@ package me.aleksilassila.litematica.printer.printer.zxy.memory;
 //$$ import net.minecraft.block.*;
 //$$ import net.minecraft.block.entity.BlockEntity;
 //$$ import net.minecraft.block.enums.ChestType;
-//$$ import net.minecraft.client.MinecraftClient;
+//$$ import net.minecraft.client.Minecraft;
 //$$ import net.minecraft.client.gui.screen.ingame.AbstractInventoryScreen;
-//$$ import net.minecraft.client.gui.screen.ingame.HandledScreen;
+//$$ import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
 //$$ import net.minecraft.client.realms.dto.RealmsServer;
 //$$ import net.minecraft.client.world.ClientWorld;
-//$$ import net.minecraft.entity.player.PlayerInventory;
-//$$ import net.minecraft.item.ItemStack;
+//$$ import net.minecraft.world.entity.player.Inventory;
+//$$ import net.minecraft.world.item.ItemStack;
 //$$ import net.minecraft.registry.Registries;
 //$$ import net.minecraft.screen.NamedScreenHandlerFactory;
 //$$ import net.minecraft.screen.ScreenHandler;
-//$$ import net.minecraft.screen.slot.Slot;
-//$$ import net.minecraft.text.Text;
-//$$ import net.minecraft.util.Identifier;
-//$$ import net.minecraft.util.math.BlockPos;
-//$$ import net.minecraft.util.math.Vec3d;
+//$$ import net.minecraft.world.inventory.Slot;
+//$$ import net.minecraft.network.chat.Component;
+//$$ import net.minecraft.resources.Identifier;
+//$$ import net.minecraft.core.BlockPos;
+//$$ import net.minecraft.world.phys.Vec3;
 //$$ import net.minecraft.world.World;
 //$$ import net.minecraft.world.chunk.EmptyChunk;
 //$$ import net.minecraft.world.chunk.WorldChunk;
@@ -59,7 +59,7 @@ package me.aleksilassila.litematica.printer.printer.zxy.memory;
 //$$     private static boolean expandedStorageFailed = false;
 //$$
 //$$     public static <T extends ScreenHandler> void handleItemsFromScreen(@NotNull ScreenHandler screen) {
-//$$         MinecraftClient mc = MinecraftClient.getInstance();
+//$$         Minecraft mc = Minecraft.getInstance();
 //$$         {
 //$$         MemoryDatabase database = MemoryDatabase.getCurrent();
 //$$         BlockPos latestPos = MemoryUtils.getLatestPos();
@@ -120,7 +120,7 @@ package me.aleksilassila.litematica.printer.printer.zxy.memory;
 //$$             }
 //$$         }
 //$$         if (ChestTracker.CONFIG.miscOptions.printGuiClassNames)
-//$$             ChestTracker.sendDebugMessage(Text.of(screen.getClass().getSimpleName()));
+//$$             ChestTracker.sendDebugMessage((Component.of(screen.getClass().getSimpleName()));
 //$$     }
 //$$
 //$$         key = null;
@@ -271,7 +271,7 @@ package me.aleksilassila.litematica.printer.printer.zxy.memory;
 //$$     }
 //$$
 //$$     public static boolean checkExistsInWorld(Memory memory) {
-//$$         return checkExistsInWorld(memory, MinecraftClient.getInstance().world);
+//$$         return checkExistsInWorld(memory, Minecraft.getInstance().world);
 //$$     }
 //$$
 //$$     public static boolean checkExistsInWorld(Memory memory, ClientWorld world) {

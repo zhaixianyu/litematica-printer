@@ -6,19 +6,19 @@ import me.aleksilassila.litematica.printer.printer.zxy.Utils.PlayerAction;
 import me.aleksilassila.litematica.printer.printer.zxy.Utils.ZxyUtils;
 import me.aleksilassila.litematica.printer.printer.zxy.inventory.InventoryUtils;
 import net.minecraft.block.*;
-import net.minecraft.client.MinecraftClient;
-import net.minecraft.client.network.ClientPlayerEntity;
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.enchantment.Enchantments;
-import net.minecraft.item.ItemStack;
+import net.minecraft.world.item.ItemStack;
 import net.minecraft.item.Items;
 import net.minecraft.network.packet.c2s.play.ClientCommandC2SPacket;
 import net.minecraft.state.property.Properties;
-import net.minecraft.text.Text;
+import net.minecraft.network.chat.Component;
 import net.minecraft.util.Hand;
-import net.minecraft.util.hit.BlockHitResult;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.Direction;
-import net.minecraft.util.math.Vec3d;
+import net.minecraft.world.phys.BlockHitResult;
+import net.minecraft.core.BlockPos;
+import net.minecraft.core.Direction;
+import net.minecraft.world.phys.Vec3;
 import org.jetbrains.annotations.NotNull;
 
 import static me.aleksilassila.litematica.printer.printer.zxy.Utils.ZxyUtils.getEnchantmentLevel;
@@ -41,9 +41,9 @@ public class PrintWater {
     private static void rightClickBlock(@NotNull ClientPlayerEntity player, BlockPos pos,Printer printer) {
         PlayerAction.setShift(player, true);
         //#if MC > 11802
-        printer.client.interactionManager.interactBlock(player, Hand.MAIN_HAND, new BlockHitResult(Vec3d.ofCenter(pos), Direction.DOWN, pos, true));
+        printer.client.interactionManager.interactBlock(player, Hand.MAIN_HAND, new BlockHitResult(Vec3.ofCenter(pos), Direction.DOWN, pos, true));
         //#else
-        //$$ printer.client.interactionManager.interactBlock(player, player.clientWorld, Hand.MAIN_HAND, new BlockHitResult(Vec3d.ofCenter(pos), Direction.DOWN, pos, true));
+        //$$ printer.client.interactionManager.interactBlock(player, player.clientWorld, Hand.MAIN_HAND, new BlockHitResult(Vec3.ofCenter(pos), Direction.DOWN, pos, true));
         //#endif
         PlayerAction.setShift(player, true);
     }
@@ -60,7 +60,7 @@ public class PrintWater {
         Messager.actionBar("快捷栏中没有可用镐子，碎冰速度较慢");
     }
     public static boolean spawnWater(BlockPos pos){
-        MinecraftClient client = ZxyUtils.client;
+        Minecraft client = ZxyUtils.client;
         //冰碎后无法产生水
         //#if MC > 11904
         BlockState material = client.world.getBlockState(pos.down());

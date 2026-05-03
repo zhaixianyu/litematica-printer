@@ -1,27 +1,28 @@
 package me.aleksilassila.litematica.printer.printer.bedrockUtils;
 
 //import net.fabricmc.fabric.api.event.client.player.ClientPickBlockCallback;
-//import net.minecraft.client.MinecraftClient;
+//import net.minecraft.client.Minecraft;
 
 import me.aleksilassila.litematica.printer.printer.Printer;
 import me.aleksilassila.litematica.printer.printer.zxy.inventory.InventoryUtils;
-import net.minecraft.block.BlockState;
+import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.block.Blocks;
-import net.minecraft.client.MinecraftClient;
+import net.minecraft.client.Minecraft;
 import net.minecraft.client.network.ClientPlayNetworkHandler;
-import net.minecraft.enchantment.EnchantmentHelper;
+import net.minecraft.world.item.enchantment.EnchantmentHelper;
 import net.minecraft.enchantment.Enchantments;
 import net.minecraft.entity.effect.StatusEffectUtil;
 import net.minecraft.entity.effect.StatusEffects;
 import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.entity.player.PlayerInventory;
+import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.item.ItemConvertible;
-import net.minecraft.item.ItemStack;
+import net.minecraft.world.item.ItemStack;
 import net.minecraft.network.packet.c2s.play.UpdateSelectedSlotC2SPacket;
 import net.minecraft.registry.tag.FluidTags;
 import net.minecraft.screen.PlayerScreenHandler;
-import net.minecraft.screen.slot.Slot;
-import net.minecraft.screen.slot.SlotActionType;
+import net.minecraft.world.inventory.Slot;
+import net.minecraft.world.inventory.SlotActionType;
+import net.minecraft.world.level.ItemLike;
 
 import static me.aleksilassila.litematica.printer.printer.bedrockUtils.TargetBlock.switchPickaxe;
 import static me.aleksilassila.litematica.printer.printer.zxy.Utils.ZxyUtils.getEnchantmentLevel;
@@ -30,7 +31,7 @@ import static me.aleksilassila.litematica.printer.printer.zxy.Utils.ZxyUtils.get
 public class InventoryManager {
     public static void refresh()
     {
-        MinecraftClient mc = MinecraftClient.getInstance();
+        Minecraft mc = Minecraft.getInstance();
         ClientPlayNetworkHandler networkHandler = mc.getNetworkHandler();
         if (networkHandler != null && mc.player != null)
         {
@@ -57,7 +58,7 @@ public class InventoryManager {
         }
     }
     static int i = 0;
-    public static boolean switchToItem(ItemConvertible item) {
+    public static boolean switchToItem(ItemLike item) {
 
 //        Item tm;
 //        if (item instanceof Item) {
@@ -65,9 +66,9 @@ public class InventoryManager {
 //        } else {
 //            tm = item.asItem();
 //        }
-//        Printer.getPrinter().switchToItems(MinecraftClient.getInstance().player,new Item[]{tm});
+//        Printer.getPrinter().switchToItems(Minecraft.getInstance().player,new Item[]{tm});
 
-        MinecraftClient minecraftClient = MinecraftClient.getInstance();
+        Minecraft minecraftClient = Minecraft.getInstance();
         PlayerInventory playerInventory = minecraftClient.player.getInventory();
 
         int i = playerInventory.getSlotWithStack(new ItemStack(item));
@@ -113,7 +114,7 @@ public class InventoryManager {
     }
 
     public static boolean canInstantlyMinePiston() {
-        MinecraftClient minecraftClient = MinecraftClient.getInstance();
+        Minecraft minecraftClient = Minecraft.getInstance();
         PlayerInventory playerInventory = minecraftClient.player.getInventory();
 
         for (int i = 0; i < playerInventory.size(); i++) {
@@ -125,7 +126,7 @@ public class InventoryManager {
     }
 
     private static float getBlockBreakingSpeed(BlockState block, int slot) {
-        MinecraftClient minecraftClient = MinecraftClient.getInstance();
+        Minecraft minecraftClient = Minecraft.getInstance();
         PlayerEntity player = minecraftClient.player;
         ItemStack stack = player.getInventory().getStack(slot);
 
@@ -174,7 +175,7 @@ public class InventoryManager {
     }
 
     public static int getInventoryItemCount(ItemConvertible item) {
-        MinecraftClient minecraftClient = MinecraftClient.getInstance();
+        Minecraft minecraftClient = MinecraftClient.getInstance();
         PlayerInventory playerInventory = minecraftClient.player.getInventory();
         return playerInventory.count(item.asItem());
     }

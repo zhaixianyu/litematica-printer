@@ -1,23 +1,20 @@
 package me.aleksilassila.litematica.printer.printer.zxy.Utils;
 
-import me.aleksilassila.litematica.printer.printer.Printer;
-import net.minecraft.block.Block;
-import net.minecraft.block.BlockState;
-import net.minecraft.client.MinecraftClient;
-import net.minecraft.client.network.ClientPlayerEntity;
-import net.minecraft.client.world.ClientWorld;
-import net.minecraft.network.packet.c2s.play.ClientCommandC2SPacket;
-import net.minecraft.util.Hand;
-
-import net.minecraft.util.hit.BlockHitResult;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.Direction;
-import net.minecraft.util.math.Vec3d;
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.multiplayer.ClientLevel;
+import net.minecraft.client.player.LocalPlayer;
+import net.minecraft.core.BlockPos;
+import net.minecraft.core.Direction;
 
 
 //#if MC > 12105
-import net.minecraft.network.packet.c2s.play.PlayerInputC2SPacket;
-import net.minecraft.util.PlayerInput;
+import net.minecraft.network.protocol.game.ServerboundPlayerInputPacket;
+import net.minecraft.world.InteractionHand;
+import net.minecraft.world.entity.player.Input;
+import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.phys.BlockHitResult;
+import net.minecraft.world.phys.Vec3;
 //#endif
 
 import static me.aleksilassila.litematica.printer.printer.Printer.canBreakBlock;
@@ -25,23 +22,23 @@ import static me.aleksilassila.litematica.printer.printer.zxy.Utils.ZxyUtils.can
 import static me.aleksilassila.litematica.printer.printer.zxy.Utils.ZxyUtils.tick;
 
 public class PlayerAction {
-    private static final MinecraftClient client = MinecraftClient.getInstance();
+    private static final Minecraft client = Minecraft.getInstance();
     public static boolean isExistPlayer(){
         return client.player != null;
     }
     public static void closeScreen(){
         if (client.player != null) {
-            client.player.closeScreen();
+            client.player.closeContainer();
         }
     }
-    public static void interactBlock(Hand hand, Vec3d vec3d, Direction direction, BlockPos pos, boolean insideBlock, boolean useShift){
+    public static void interactBlock(InteractionHand hand, Vec3 vec3d, Direction direction, BlockPos pos, boolean insideBlock, boolean useShift){
         if (useShift) setShift(client.player, true);
-        client.interactionManager.interactBlock(client.player,
+        client.gameMode.useItemOn(client.player,
                 //#if MC < 11902
                 //$$ client.world,
                 //#endif
                 hand, new BlockHitResult(vec3d, direction, pos, insideBlock));
-        client.interactionManager.interactItem(client.player,
+        client.gameMode.useItem(client.player,
                 //#if MC < 11902
                 //$$ client.world,
                 //#endif
@@ -49,15 +46,15 @@ public class PlayerAction {
         if (useShift) setShift(client.player, false);
     }
 
-    public static void setShift(ClientPlayerEntity player , boolean shift){
+    public static void setShift(LocalPlayer player , boolean shift){
         //#if MC > 12105
-        PlayerInput input = new PlayerInput(player.input.playerInput.forward(), player.input.playerInput.backward(), player.input.playerInput.left(), player.input.playerInput.right(), player.input.playerInput.jump(), shift, player.input.playerInput.sprint());
-        PlayerInputC2SPacket packet = new PlayerInputC2SPacket(input);
+        Input input = new Input(player.input.keyPresses.forward(), player.input.keyPresses.backward(), player.input.keyPresses.left(), player.input.keyPresses.right(), player.input.keyPresses.jump(), shift, player.input.keyPresses.sprint());
+        ServerboundPlayerInputPacket packet = new ServerboundPlayerInputPacket(input);
         //#else
         //$$ ClientCommandC2SPacket packet = new ClientCommandC2SPacket(player, shift ? ClientCommandC2SPacket.Mode.PRESS_SHIFT_KEY : ClientCommandC2SPacket.Mode.RELEASE_SHIFT_KEY);
         //#endif
 
-        player.networkHandler.sendPacket(packet);
+        player.connection.send(packet);
 
     }
 
@@ -84,14 +81,14 @@ public class PlayerAction {
     }
 
     public static boolean waJue(BlockPos pos) {
-        MinecraftClient client = MinecraftClient.getInstance();
-        ClientWorld world = client.world;
-        BlockState currentState = world.getBlockState(pos);
+        Minecraft client = Minecraft.getInstance();
+        ClientLevel level = client.level;
+        BlockState currentState = level.getBlockState(pos);
         Block block = currentState.getBlock();
         if (canBreakBlock(pos)) {
-            client.interactionManager.updateBlockBreakingProgress(pos, Direction.DOWN);
-            client.interactionManager.cancelBlockBreaking();
-            return world.getBlockState(pos).isOf(block);
+            client.gameMode.continueDestroyBlock(pos, Direction.DOWN);
+            client.gameMode.stopDestroyBlock();
+            return level.getBlockState(pos).is(block);
         }
         return false;
     }

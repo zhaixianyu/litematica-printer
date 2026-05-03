@@ -2,15 +2,15 @@ package me.aleksilassila.litematica.printer.printer.zxy.inventory;
 
 import fi.dy.masa.malilib.util.InventoryUtils;
 import me.aleksilassila.litematica.printer.printer.zxy.Utils.Statistics;
-import net.minecraft.client.network.ClientPlayerEntity;
-import net.minecraft.entity.player.PlayerInventory;
-import net.minecraft.item.ItemStack;
+import net.minecraft.client.player.LocalPlayer;
+import net.minecraft.world.entity.player.Inventory;
+import net.minecraft.world.item.ItemStack;
 import net.minecraft.registry.RegistryKey;
 import net.minecraft.screen.ScreenHandler;
-import net.minecraft.screen.slot.Slot;
+import net.minecraft.world.inventory.Slot;
 import net.minecraft.screen.slot.SlotActionType;
-import net.minecraft.text.Text;
-import net.minecraft.util.math.BlockPos;
+import net.minecraft.network.chat.Component;
+import net.minecraft.core.BlockPos;
 import net.minecraft.world.World;
 
 import java.lang.reflect.Method;
@@ -105,11 +105,11 @@ public class SwitchItem {
         if(itemStack != null) {
             reSwitchItem = itemStack;
             openInv(itemStack);
-        }else client.inGameHud.setOverlayMessage(Text.of("背包已满，请先清理"),false);
+        }else client.inGameHud.setOverlayMessage((Component.of("背包已满，请先清理"),false);
     }
     public static void reSwitchItem(){
         if(client.player == null || reSwitchItem == null) return;
-        ClientPlayerEntity player = client.player;
+        LocalPlayer player = client.player;
         ScreenHandler sc = player.currentScreenHandler;
         if (sc.equals(player.playerScreenHandler)) return;
 
@@ -145,7 +145,7 @@ public class SwitchItem {
                 reSwitchItem = null;
                 player.closeHandledScreen();
                 if(!reInv) {
-                    client.inGameHud.setOverlayMessage(Text.of("复原库存物品失败"),false);
+                    client.inGameHud.setOverlayMessage((Component.of("复原库存物品失败"),false);
                 }
                 client.interactionManager.clickSlot(sc.syncId, i, 0, SlotActionType.PICKUP, client.player);
                 return;

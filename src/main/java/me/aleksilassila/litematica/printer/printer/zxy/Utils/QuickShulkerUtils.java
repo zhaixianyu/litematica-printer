@@ -3,15 +3,15 @@
 //import fi.dy.masa.malilib.util.InventoryUtils;
 //import net.fabricmc.loader.api.FabricLoader;
 //import net.kyrptonaught.quickshulker.client.ClientUtil;
-//import net.minecraft.client.MinecraftClient;
-//import net.minecraft.client.network.ClientPlayerEntity;
-//import net.minecraft.entity.player.PlayerInventory;
-//import net.minecraft.item.ItemStack;
+//import net.minecraft.client.Minecraft;
+//import net.minecraft.client.player.LocalPlayer;
+//import net.minecraft.world.entity.player.Inventory;
+//import net.minecraft.world.item.ItemStack;
 //import net.minecraft.registry.Registries;
 //import net.minecraft.screen.PlayerScreenHandler;
 //import net.minecraft.screen.ScreenHandler;
-//import net.minecraft.screen.slot.Slot;
-//import net.minecraft.text.Text;
+//import net.minecraft.world.inventory.Slot;
+//import net.minecraft.network.chat.Component;
 //import net.minecraft.util.collection.DefaultedList;
 ////import net.minecraft.util.registry.Registry;
 //import org.jetbrains.annotations.NotNull;
@@ -28,7 +28,7 @@
 //    //打开盒子
 //    public static void openShulker(ItemStack itemStack, int slot) {
 //        if (!loadQuickShulker) {
-//            client.inGameHud.setOverlayMessage(Text.of("没有安装快捷盒子啊！！！ 八嘎呀路"), false);
+//            client.inGameHud.setOverlayMessage((Component.of("没有安装快捷盒子啊！！！ 八嘎呀路"), false);
 //            return;
 //        }
 //        //itemStack：要打开的盒子 //slot 盒子所在槽
@@ -37,7 +37,7 @@
 //
 //    //根据传入的物品寻找对应的盒子并打开
 //    public static void searchItem(ItemStack itemStack, boolean ignoreNbt) {
-//        ClientPlayerEntity player = client.player;
+//        LocalPlayer player = client.player;
 //        if (player == null || !player.currentScreenHandler.equals(player.playerScreenHandler)) return;
 //        DefaultedList<Slot> sc = player.playerScreenHandler.slots;
 //        for (int i = 9; i < sc.size(); i++) {
@@ -63,7 +63,7 @@
 //
 //    //切换物品 需要填入替换到哪个槽
 //    public static void switchItem(int slot) {
-//        ClientPlayerEntity player = client.player;
+//        LocalPlayer player = client.player;
 //        if (player != null && slot != -1 && !player.currentScreenHandler.equals(player.playerScreenHandler)) {
 //            InventoryUtils.swapSlots(player.currentScreenHandler, QuickShulkerUtils.slot, slot);
 //            waitForTheItemToBeSwitched = null;
@@ -74,7 +74,7 @@
 //    //将槽与背包中的空位互换
 //    public static void switchPlayerInvToHotbarAir(int slot) {
 //        if (client.player == null) return;
-//        ClientPlayerEntity player = client.player;
+//        LocalPlayer player = client.player;
 //        ScreenHandler sc = player.currentScreenHandler;
 //        DefaultedList<Slot> slots = sc.slots;
 //        int i = sc.equals(player.playerScreenHandler) ? 9 : 0;
@@ -87,7 +87,7 @@
 //    }
 //
 //    public static void test() {
-//        ClientPlayerEntity player = client.player;
+//        LocalPlayer player = client.player;
 //        if (player == null) return;
 //        //要将物品替换到哪个槽 0~8
 //        targetSlot = 0;

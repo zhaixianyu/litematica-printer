@@ -2,12 +2,12 @@ package me.aleksilassila.litematica.printer.printer.zxy.Utils;
 
 import me.aleksilassila.litematica.printer.printer.Printer;
 import net.minecraft.block.Block;
-import net.minecraft.block.BlockState;
-import net.minecraft.item.ItemStack;
+import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.item.ItemStack;
 import net.minecraft.util.Hand;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.Direction;
-import net.minecraft.util.math.Vec3d;
+import net.minecraft.core.BlockPos;
+import net.minecraft.core.Direction;
+import net.minecraft.world.phys.Vec3;
 
 import java.util.HashMap;
 import java.util.LinkedList;
@@ -158,7 +158,7 @@ public class BlockTask {
     }
 
     public static class PlaceBlock extends BlockTask {
-        Vec3d vec3d = Vec3d.ZERO;
+        Vec3 vec3d = Vec3.ZERO;
         public PlaceBlock(BlockPos pos, Block block) {
             super(pos, block);
         }
@@ -175,7 +175,7 @@ public class BlockTask {
             super(pos, state, taskName);
         }
 
-        public PlaceBlock setVec3d(Vec3d vec3d) {
+        public PlaceBlock setVec3(Vec3 vec3d) {
             this.vec3d = vec3d;
             return this;
         }
@@ -183,7 +183,7 @@ public class BlockTask {
         @Override
         public boolean runTask() {
             if (done()) return false;
-            Vec3d vec3d = Printer.getPrinter().usePrecisionPlacement(pos, state);
+            Vec3 vec3d = Printer.getPrinter().usePrecisionPlacement(pos, state);
             if (facingBlock != null && vec3d == null && direction1 != null && taskState == BlockTaskState.INITIAL) {
                 // TODO 应该有个静态变量记录direction1 和 direction2 改变朝向包时使其达到预想效果
                 sendLookPacket(ZxyUtils.client.player, direction1, direction2);

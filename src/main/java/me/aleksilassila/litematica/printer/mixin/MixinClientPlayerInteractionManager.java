@@ -1,16 +1,17 @@
 package me.aleksilassila.litematica.printer.mixin;
 
 import me.aleksilassila.litematica.printer.interfaces.IClientPlayerInteractionManager;
-import net.minecraft.client.MinecraftClient;
-import net.minecraft.client.network.ClientPlayerEntity;
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.multiplayer.MultiPlayerGameMode;
 import net.minecraft.client.network.ClientPlayerInteractionManager;
-import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.client.player.LocalPlayer;
+import net.minecraft.core.BlockPos;
+import net.minecraft.core.Direction;
 import net.minecraft.util.ActionResult;
-import net.minecraft.util.Hand;
-import net.minecraft.util.hit.BlockHitResult;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.Direction;
-import net.minecraft.util.math.Vec3d;
+import net.minecraft.world.InteractionHand;
+import net.minecraft.world.InteractionResult;
+import net.minecraft.world.phys.BlockHitResult;
+import net.minecraft.world.phys.Vec3;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
@@ -21,44 +22,44 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 //$$ import net.minecraft.client.world.ClientWorld;
 //#endif
 
-@Mixin(ClientPlayerInteractionManager.class)
+@Mixin(MultiPlayerGameMode.class)
 public abstract class MixinClientPlayerInteractionManager implements IClientPlayerInteractionManager {
 	@Shadow
-	private MinecraftClient client;
+	private Minecraft minecraft;
 
     @Override
-	public void rightClickBlock(BlockPos pos, Direction side, Vec3d hitVec)
+	public void rightClickBlock(BlockPos pos, Direction side, Vec3 hitVec)
 	{
-		interactBlock(client.player,
+		useItemOn(minecraft.player,
 				//#if MC < 11902
 				//$$ client.world,
 				//#endif
-				Hand.MAIN_HAND,
+				InteractionHand.MAIN_HAND,
 			new BlockHitResult(hitVec, side, pos, false));
-		interactItem(client.player,
+		useItem(minecraft.player,
 				//#if MC < 11902
 				//$$ client.world,
 				//#endif
-				Hand.MAIN_HAND);
+				InteractionHand.MAIN_HAND);
 	}
 
 //	@Inject(at = @At("TAIL"), method = "interactBlock")
-//	private void interactBlock(ClientPlayerEntity player, Hand hand, BlockHitResult hitResult, CallbackInfoReturnable<ActionResult> cir) {
+//	private void interactBlock(LocalPlayer player, Hand hand, BlockHitResult hitResult, CallbackInfoReturnable<ActionResult> cir) {
 //		System.out.println(hitResult.getPos().toString());
 //	}
 
 	@Shadow
-	public abstract ActionResult interactBlock(
-            ClientPlayerEntity clientPlayerEntity_1,
+	public abstract InteractionResult useItemOn(
+			LocalPlayer clientPlayerEntity_1,
 			//#if MC < 11902
 			//$$ ClientWorld world,
 			//#endif
-            Hand hand_1, BlockHitResult blockHitResult_1);
+			InteractionHand hand_1, BlockHitResult blockHitResult_1);
 
 	@Shadow
-	public abstract ActionResult interactItem(PlayerEntity playerEntity_1,
+	public abstract InteractionResult useItem(LocalPlayer playerEntity_1,
 											  //#if MC < 11902
 											  //$$ World world,
 											  //#endif
-                                               Hand hand_1);
+											  InteractionHand hand_1);
 }

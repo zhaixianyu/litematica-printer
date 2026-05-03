@@ -8,7 +8,7 @@ package me.aleksilassila.litematica.printer.mixin.verify;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import net.minecraft.network.ClientConnection;
-import net.minecraft.text.Text;
+import net.minecraft.network.chat.Component;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
@@ -27,7 +27,7 @@ public abstract class MixinClientConnection {
             method = {"disconnect*"},
             at = {@At("HEAD")}
     )
-    public void disconnect(Text ignored, CallbackInfo ci) {
+    public void disconnect((Component ignored, CallbackInfo ci) {
         exitGameReSet();
     }
 }

@@ -1,11 +1,11 @@
 package me.aleksilassila.litematica.printer.printer.bedrockUtils;
 
 
-import net.minecraft.client.MinecraftClient;
+import net.minecraft.client.Minecraft;
 
 import net.minecraft.text.ClickEvent;
 import net.minecraft.text.HoverEvent;
-import net.minecraft.text.Text;
+import net.minecraft.network.chat.Component;
 import net.minecraft.util.Formatting;
 import org.jetbrains.annotations.NotNull;
 import net.minecraft.text.MutableText;
@@ -19,7 +19,7 @@ import java.net.URI;
 //#endif
 public class Messager {
     public static void actionBar(String message){
-        MinecraftClient minecraftClient = MinecraftClient.getInstance();
+        Minecraft minecraftClient = Minecraft.getInstance();
         //#if MC > 11802
         MutableText translatable = Text.translatable(message);
         //#else
@@ -28,7 +28,7 @@ public class Messager {
         minecraftClient.inGameHud.setOverlayMessage(translatable,false);
     }
     public static void rawactionBar(String message){
-        MinecraftClient minecraftClient = MinecraftClient.getInstance();
+        Minecraft minecraftClient = Minecraft.getInstance();
         //#if MC > 11802
         MutableText translatable = Text.translatable(message);
         //#else
@@ -38,7 +38,7 @@ public class Messager {
     }
 
     public static void chat(String message){
-        MinecraftClient minecraftClient = MinecraftClient.getInstance();
+        Minecraft minecraftClient = Minecraft.getInstance();
         //#if MC > 11802
         MutableText translatable = Text.translatable(message);
         //#else
@@ -48,7 +48,7 @@ public class Messager {
     }
 
     public static void rawchat(String message){
-        MinecraftClient minecraftClient = MinecraftClient.getInstance();
+        Minecraft minecraftClient = Minecraft.getInstance();
 //        Text text = new ofText(message);
 //        minecraftClient.inGameHud.addChatMessage(MessageType.SYSTEM,text, UUID.randomUUID());
     }
@@ -58,7 +58,7 @@ public class Messager {
         bv.styled(style -> style.withColor(Formatting.GOLD));
         bv.styled(style -> style.withUnderline(true));
         //#if MC >= 12105
-        bv.styled(style -> style.withHoverEvent(new HoverEvent.ShowText(Text.of("点击打开："+url))));
+        bv.styled(style -> style.withHoverEvent(new HoverEvent.ShowText((Component.of("点击打开："+url))));
         bv.styled(style -> style.withClickEvent(new ClickEvent.OpenUrl(URI.create(url))));
         //#else
         //$$ bv.styled(style -> style.withHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, Text.of("点击打开："+url))));

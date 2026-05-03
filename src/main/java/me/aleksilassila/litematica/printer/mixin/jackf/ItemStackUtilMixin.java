@@ -7,9 +7,11 @@ import com.llamalad7.mixinextras.injector.wrapoperation.Operation;
 import com.llamalad7.mixinextras.injector.wrapoperation.WrapOperation;
 import fi.dy.masa.malilib.util.StringUtils;
 import me.aleksilassila.litematica.printer.printer.zxy.Utils.PinYinSearch;
-import net.minecraft.enchantment.Enchantment;
-import net.minecraft.enchantment.EnchantmentHelper;
-import net.minecraft.item.ItemStack;
+import net.minecraft.core.Holder;
+import net.minecraft.resources.ResourceKey;
+import net.minecraft.world.item.enchantment.Enchantment;
+import net.minecraft.world.item.enchantment.EnchantmentHelper;
+import net.minecraft.world.item.ItemStack;
 import net.minecraft.registry.RegistryKey;
 import net.minecraft.registry.entry.RegistryEntry;
 import net.minecraft.util.Language;
@@ -22,7 +24,7 @@ import red.jackf.chesttracker.impl.util.ItemStacks;
 import net.minecraft.registry.Registries;
 
 //#if MC > 12004
-import net.minecraft.component.type.ItemEnchantmentsComponent;
+import net.minecraft.world.item.enchantment.ItemEnchantments;
 //#endif
 
 @Mixin(ItemStacks.class)
@@ -30,12 +32,12 @@ public class ItemStackUtilMixin {
     @Inject(at = @At(value = "INVOKE", target = "Ljava/util/stream/Stream;anyMatch(Ljava/util/function/Predicate;)Z"), method = "enchantmentPredicate", cancellable = true)
     private static void stackEnchantmentFilter(ItemStack stack, String filter, CallbackInfoReturnable<Boolean> cir) {
         //#if MC > 12004
-        ItemEnchantmentsComponent enchantments = EnchantmentHelper.getEnchantments(stack);
-        if (enchantments.getEnchantments().stream()
+        ItemEnchantments enchantments = EnchantmentHelper.getEnchantmentsForCrafting(stack);
+        if (enchantments.keySet().stream()
                 .anyMatch(ench -> {
                     //#if MC > 12006
-                    RegistryEntry<Enchantment> ench1 = ench;
-                    RegistryKey<Enchantment> enchantmentRegistryKey = ench1.getKey().get();
+                    Holder<Enchantment> ench1 = ench;
+                    ResourceKey<Enchantment> enchantmentRegistryKey = ench1.getKey().get();
                     String translationKey = enchantmentRegistryKey.getValue().toTranslationKey();
                     if (testLang(translationKey, filter)) return true;
                     String translate = StringUtils.translate(translationKey);

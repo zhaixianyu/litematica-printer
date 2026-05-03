@@ -1,32 +1,24 @@
 package me.aleksilassila.litematica.printer.mixin;
 
-import com.llamalad7.mixinextras.injector.wrapoperation.Operation;
-import com.llamalad7.mixinextras.injector.wrapoperation.WrapOperation;
 import me.aleksilassila.litematica.printer.interfaces.Implementation;
 import me.aleksilassila.litematica.printer.printer.Printer;
 
-import net.minecraft.client.MinecraftClient;
-import net.minecraft.client.network.ClientPlayerEntity;
-import net.minecraft.network.ClientConnection;
-import net.minecraft.network.packet.Packet;
-import net.minecraft.network.packet.c2s.play.PlayerMoveC2SPacket;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.Direction;
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.multiplayer.ClientCommonPacketListenerImpl;
+import net.minecraft.core.Direction;
+import net.minecraft.network.Connection;
+import net.minecraft.network.protocol.Packet;
+import net.minecraft.network.protocol.game.ServerboundMovePlayerPacket;
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
-import org.spongepowered.asm.mixin.Overwrite;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
-import org.spongepowered.asm.mixin.injection.Redirect;
 
-import static me.aleksilassila.litematica.printer.printer.zxy.Utils.Statistics.cancelMovePack;
 
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 //#if MC > 12001
-import net.minecraft.client.network.ClientCommonNetworkHandler;
-
-@Mixin(value = ClientCommonNetworkHandler.class)
+@Mixin(value = ClientCommonPacketListenerImpl.class)
 //#else
 //$$ import net.minecraft.client.network.ClientPlayNetworkHandler;
 //$$ @Mixin(ClientPlayNetworkHandler.class)
@@ -34,11 +26,11 @@ import net.minecraft.client.network.ClientCommonNetworkHandler;
 public class ClientCommonNetworkHandlerMixin {
     @Final
     @Shadow
-    protected ClientConnection connection;
+    protected Connection connection;
 
     @Final
     @Shadow
-    protected MinecraftClient client;
+    protected Minecraft minecraft;
 
     /**
      * @author 6
@@ -48,7 +40,7 @@ public class ClientCommonNetworkHandlerMixin {
     //#if MC < 12004
     //$$ @Inject(at = @At(value = "INVOKE", target = "Lnet/minecraft/network/ClientConnection;send(Lnet/minecraft/network/packet/Packet;)V"),method = "sendPacket(Lnet/minecraft/network/packet/Packet;)V", cancellable = true)
     //#else
-    @Inject(at = @At(value = "INVOKE", target = "Lnet/minecraft/network/ClientConnection;send(Lnet/minecraft/network/packet/Packet;)V"), method = "sendPacket", cancellable = true)
+    @Inject(at = @At(value = "INVOKE", target = "Lnet/minecraft/network/Connection;send(Lnet/minecraft/network/protocol/Packet;)V"), method = "send", cancellable = true)
     //#endif
     public void sendPacket(Packet<?> packet, CallbackInfo ci) {
         if (Printer.currentAction == null) {
@@ -57,13 +49,13 @@ public class ClientCommonNetworkHandlerMixin {
 
         Direction direction = Printer.currentAction.lookDirection;
         if (direction != null) {
-            if (packet instanceof PlayerMoveC2SPacket.Full full) {
-                Packet<?> fixedPacket = Implementation.getFixedLookPacket(client.player, full, Printer.currentAction);
+            if (packet instanceof ServerboundMovePlayerPacket.PosRot full) {
+                Packet<?> fixedPacket = Implementation.getFixedLookPacket(minecraft.player, full, Printer.currentAction);
                 if (fixedPacket != null) {
                     this.connection.send(fixedPacket);
                     ci.cancel();
                 }
-            } else if (packet instanceof PlayerMoveC2SPacket.LookAndOnGround) {
+            } else if (packet instanceof ServerboundMovePlayerPacket.Rot) {
                 ci.cancel();
             }
         }

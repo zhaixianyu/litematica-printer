@@ -3,26 +3,26 @@ package me.aleksilassila.litematica.printer.config;
 import fi.dy.masa.malilib.hotkeys.IHotkeyCallback;
 import fi.dy.masa.malilib.hotkeys.IKeybind;
 import fi.dy.masa.malilib.hotkeys.KeyAction;
-import net.minecraft.client.MinecraftClient;
+import net.minecraft.client.Minecraft;
 
 //#if MC >= 12001
 //#else
-//$$ import net.minecraft.text.Text;
-//$$ import net.minecraft.util.Identifier;
+//$$ import net.minecraft.network.chat.Component;
+//$$ import net.minecraft.resources.Identifier;
 //$$ import me.aleksilassila.litematica.printer.printer.zxy.memory.MemoryDatabase;
 //#endif
 
 
 public class KeyCallbackHotkeys implements IHotkeyCallback {
-    private final MinecraftClient client;
+    private final Minecraft client;
 
-    public KeyCallbackHotkeys(MinecraftClient client) {
+    public KeyCallbackHotkeys(Minecraft client) {
         this.client = client;
     }
 
     @Override
     public boolean onKeyAction(KeyAction action, IKeybind key) {
-        if (this.client.player == null || this.client.world == null) return false;
+        if (this.client.player == null || this.client.level == null) return false;
 
         return false;
     }
