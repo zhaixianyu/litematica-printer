@@ -18,14 +18,15 @@
     "openinv.MixinPlayerEntity",
     "openinv.MixinServerPlayerEntity",
     "openinv.MixinServerWorld",
-    "openinv.PlayerManagerMixin"
+    "openinv.PlayerManagerMixin",
+    "openinv.ShulkerBoxBlockAccessor"
   ],
   "client": [
     "ClientCommonNetworkHandlerMixin",
     "FlowerPotBlockAccessor",
+    "MixinClientPacketListener",
     "MixinClientPlayerEntity",
     "MixinClientPlayerInteractionManager",
-    "MixinClientPlayNetworkHandler",
     "PlayerMoveC2SPacketAccessor",
     "jackf.ChestTrackerScreenMixin",
     "jackf.EditMemoryBankScreenMixin",

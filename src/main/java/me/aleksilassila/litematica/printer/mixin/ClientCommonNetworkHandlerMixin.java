@@ -20,8 +20,8 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 //#if MC > 12001
 @Mixin(value = ClientCommonPacketListenerImpl.class)
 //#else
-//$$ import net.minecraft.client.network.ClientPlayNetworkHandler;
-//$$ @Mixin(ClientPlayNetworkHandler.class)
+//$$ import net.minecraft.client.network.ClientPacketListener;
+//$$ @Mixin(ClientPacketListener.class)
 //#endif
 public class ClientCommonNetworkHandlerMixin {
     @Final

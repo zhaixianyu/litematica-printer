@@ -1,9 +1,8 @@
 package me.aleksilassila.litematica.printer.printer.zxy.Utils.overwrite;
 
 import net.minecraft.core.BlockPos;
-import net.minecraft.util.math.Box;
+import net.minecraft.core.Vec3i;
 import net.minecraft.world.phys.Vec3;
-import net.minecraft.util.math.Vec3i;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Iterator;
@@ -32,7 +31,7 @@ public class MyBox implements Iterable<BlockPos> {
     }
 
     public MyBox(fi.dy.masa.litematica.selection.Box box) {
-        this(Vec3d.of(box.getPos1()), Vec3d.of(box.getPos2()));
+        this(Vec3.atCenterOf(box.getPos1()), Vec3.atCenterOf(box.getPos2()));
     }
 
     public MyBox(BlockPos pos) {
@@ -53,7 +52,7 @@ public class MyBox implements Iterable<BlockPos> {
         this.expand(range);
     }
 
-    public MyBox(Vec3d pos1, Vec3d pos2) {
+    public MyBox(Vec3 pos1, Vec3 pos2) {
         this((int) pos1.x, (int) pos1.y, (int) pos1.z, (int) pos2.x, (int) pos2.y, (int) pos2.z);
     }
 

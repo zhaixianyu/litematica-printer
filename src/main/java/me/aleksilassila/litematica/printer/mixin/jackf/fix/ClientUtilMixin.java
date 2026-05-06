@@ -22,7 +22,7 @@ public class ClientUtilMixin {
         ZxyUtils.getPlayer().ifPresent(player ->{
             if(Statistics.loadChestTracker){
                 //#if MC >= 12001
-                MemoryUtils.saveMemory(player.currentScreenHandler);
+                MemoryUtils.saveMemory(player.containerMenu);
                 OpenInventoryPacket.reSet();
                 //#endif
             }

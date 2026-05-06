@@ -10,28 +10,30 @@ import me.aleksilassila.litematica.printer.printer.bedrockUtils.Messager;
 import me.aleksilassila.litematica.printer.printer.zxy.inventory.InventoryUtils;
 import me.aleksilassila.litematica.printer.printer.zxy.inventory.OpenInventoryPacket;
 import me.aleksilassila.litematica.printer.printer.zxy.inventory.SwitchItem;
-import net.minecraft.block.Block;
-import net.minecraft.client.Minecraft;
-import net.minecraft.client.network.ClientPlayNetworkHandler;
+import net.minecraft.client.multiplayer.ClientPacketListener;
 import net.minecraft.client.player.LocalPlayer;
-import net.minecraft.core.BlockPos;
-import net.minecraft.enchantment.Enchantment;
+import net.minecraft.core.*;
+import net.minecraft.core.component.DataComponents;
+import net.minecraft.core.registries.BuiltInRegistries;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.network.HashedStack;
+import net.minecraft.network.protocol.game.ServerboundContainerClickPacket;
+import net.minecraft.resources.ResourceKey;
+import net.minecraft.world.InteractionHand;
 import net.minecraft.world.entity.player.Inventory;
-import net.minecraft.item.Item;
+import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.item.Items;
-import net.minecraft.network.packet.c2s.play.ClickSlotC2SPacket;
-import net.minecraft.registry.Registries;
-import net.minecraft.screen.ScreenHandler;
+import net.minecraft.world.item.Items;
+import net.minecraft.world.item.component.CustomData;
+import net.minecraft.world.item.enchantment.Enchantment;
+import net.minecraft.world.level.block.Block;
+import net.minecraft.client.Minecraft;
+import net.minecraft.world.inventory.AbstractContainerMenu;
 import net.minecraft.world.inventory.Slot;
-import net.minecraft.world.inventory.SlotActionType;
+import net.minecraft.world.inventory.ClickType;
 import net.minecraft.network.chat.Component;
-import net.minecraft.util.Hand;
-import net.minecraft.util.collection.DefaultedList;
 import net.minecraft.world.phys.BlockHitResult;
-import net.minecraft.util.hit.HitResult;
 import net.minecraft.core.BlockPos;
-import net.minecraft.core.Direction;
 import net.minecraft.world.phys.Vec3;
 import org.jetbrains.annotations.NotNull;
 import org.lwjgl.glfw.GLFW;
@@ -45,7 +47,7 @@ import java.util.function.Consumer;
 //#endif
 
 //#if MC >= 12105
-import net.minecraft.screen.sync.ItemStackHash;
+
 //#endif
 
 //#if MC >= 12001
@@ -54,12 +56,7 @@ import me.aleksilassila.litematica.printer.printer.zxy.chesttracker.MemoryUtils;
 //$$ import me.aleksilassila.litematica.printer.printer.zxy.memory.MemoryUtils;
 //#endif
 //#if MC >= 12006
-import net.minecraft.registry.RegistryKey;
 import net.minecraft.world.item.enchantment.ItemEnchantments;
-import net.minecraft.registry.entry.RegistryEntry;
-import net.minecraft.component.DataComponentTypes;
-import net.minecraft.component.type.NbtComponent;
-import net.minecraft.nbt.NbtCompound;
 //#endif
 import static me.aleksilassila.litematica.printer.LitematicaMixinMod.SYNC_INVENTORY_CHECK;
 import static me.aleksilassila.litematica.printer.LitematicaMixinMod.SYNC_INVENTORY_COLOR;
@@ -98,18 +95,18 @@ public class ZxyUtils {
         if (printerMemoryAdding && !openIng && OpenInventoryPacket.key == null) {
             if (invBlockList.isEmpty()) {
                 printerMemoryAdding = false;
-                client.inGameHud.setOverlayMessage((Component.of("打印机库存添加完成"), false);
+                client.gui.setOverlayMessage(Component.literal("打印机库存添加完成"), false);
                 return;
             }
-            client.inGameHud.setOverlayMessage((Component.of("添加库存中"), false);
+            client.gui.setOverlayMessage(Component.literal("添加库存中"), false);
             for (BlockPos pos : invBlockList) {
-                if (client.world != null) {
+                if (client.level != null) {
                     //#if MC < 12001
                     //$$ MemoryUtils.setLatestPos(pos);
                     //#endif
                     closeScreen++;
-                    OpenInventoryPacket.sendOpenInventory(pos, client.world.getRegistryKey());
-//                    ((IClientPlayerInteractionManager) client.interactionManager)
+                    OpenInventoryPacket.sendOpenInventory(pos, client.level.dimension());
+//                    ((IClientPlayerInteractionManager) client.gameMode)
 //                            .rightClickBlock(pos,Direction.UP ,new Vec3(pos.getX(), pos.getY(), pos.getZ()) );
                 }
                 invBlockList.remove(pos);
@@ -134,22 +131,23 @@ public class ZxyUtils {
 
     public static void startOrOffSyncInventory() {
         getReadyColor();
-        if (client.crosshairTarget != null && client.crosshairTarget.getType() == HitResult.Type.BLOCK && syncPosList.isEmpty()) {
-            BlockPos pos = ((BlockHitResult) client.crosshairTarget).getBlockPos();
-            Block block = null;
-            if (client.world != null) {
-                block = client.world.getBlockState(pos).getBlock();
+        if (client.hitResult != null && client.hitResult.getType() == net.minecraft.world.phys.HitResult.Type.BLOCK && syncPosList.isEmpty()) {
+            BlockPos pos = ((BlockHitResult) client.hitResult).getBlockPos();
+            net.minecraft.world.level.block.Block block = null;
+            if (client.level != null) {
+                block = client.level.getBlockState(pos).getBlock();
                 if(!canOpenInv(pos)){
                     Messager.actionBar("打开容器失败");
                     return;
                 }
             }
-            String blockName = Registries.BLOCK.getId(block).toString();
+            String blockName = BuiltInRegistries.BLOCK.getKey(block).toString();
+//            String blockName = Registries.BLOCK.getId(block).toString();
             Printer.getPrinter();
             syncPosList.addAll(Printer.getPrinter().siftBlock(blockName));
             if (!syncPosList.isEmpty()) {
                 if (client.player == null) return;
-                client.player.closeHandledScreen();
+                client.player.closeContainer();
                 if (!openInv(pos,false)){
                     syncPosList = new LinkedList<>();
                     return;
@@ -161,25 +159,25 @@ public class ZxyUtils {
         } else if(!syncPosList.isEmpty()){
             highlightPosList.removeAll(syncPosList);
             syncPosList = new LinkedList<>();
-            if (client.player != null) client.player.closeScreen();
+            if (client.player != null) client.player.clientSideCloseContainer();
             num = 0;
-            client.inGameHud.setOverlayMessage((Component.of("已取消同步"), false);
+            client.gui.setOverlayMessage(Component.literal("已取消同步"), false);
         }
     }
     public static boolean openInv(BlockPos pos,boolean ignoreThePrompt){
         if(LitematicaMixinMod.INVENTORY.getBooleanValue() && OpenInventoryPacket.key == null) {
-            OpenInventoryPacket.sendOpenInventory(pos, client.world.getRegistryKey());
+            OpenInventoryPacket.sendOpenInventory(pos, client.level.dimension());
             return true;
         } else {
-            if (client.player != null && !canInteracted(5,Vec3.ofCenter(pos))) {
-                if(!ignoreThePrompt) client.inGameHud.setOverlayMessage((Component.of("距离过远无法打开容器"), false);
+            if (client.player != null && !canInteracted(5,Vec3.atCenterOf(pos))) {
+                if(!ignoreThePrompt) client.gui.setOverlayMessage(Component.literal("距离过远无法打开容器"), false);
                 return false;
             }
-            if (client.interactionManager != null){
+            if (client.gameMode != null){
                 //#if MC < 11902
-                //$$ client.interactionManager.interactBlock(client.player, client.world, Hand.MAIN_HAND,new BlockHitResult(Vec3.ofCenter(pos), Direction.DOWN,pos,false));
+                //$$ client.gameMode.useItemOn(client.player, client.level, InteractionHand.MAIN_HAND,new BlockHitResult(Vec3.ofCenter(pos), Direction.DOWN,pos,false));
                 //#else
-                client.interactionManager.interactBlock(client.player, Hand.MAIN_HAND,new BlockHitResult(Vec3.ofCenter(pos), Direction.DOWN,pos,false));
+                client.gameMode.useItemOn(client.player, InteractionHand.MAIN_HAND,new BlockHitResult(Vec3.atCenterOf(pos), Direction.DOWN,pos,false));
                 //#endif
                 return true;
             } else return false;
@@ -188,7 +186,7 @@ public class ZxyUtils {
     public static void itemsCount(Map<ItemStack,Integer> itemsCount , ItemStack itemStack){
         // 判断是否存在可合并的键
         Optional<Map.Entry<ItemStack, Integer>> entry = itemsCount.entrySet().stream()
-                .filter(e -> ItemStack.areItemsAndComponentsEqual(e.getKey(), itemStack))
+                .filter(e -> ItemStack.isSameItemSameComponents(e.getKey(), itemStack))
                 .findFirst();
 
         if (entry.isPresent()) {
@@ -208,15 +206,15 @@ public class ZxyUtils {
                 //按下热键后记录看向的容器 开始同步容器 只会触发一次
                 targetBlockInv = new ArrayList<>();
                 targetItemsCount = new HashMap<>();
-                if (client.player != null && (!LitematicaMixinMod.INVENTORY.getBooleanValue() || openIng) && !client.player.currentScreenHandler.equals(client.player.playerScreenHandler)) {
-                    for (int i = 0; i < client.player.currentScreenHandler.slots.get(0).inventory.size(); i++) {
-                        ItemStack copy = client.player.currentScreenHandler.slots.get(i).getStack().copy();
+                if (client.player != null && (!LitematicaMixinMod.INVENTORY.getBooleanValue() || openIng) && !client.player.containerMenu.equals(client.player.inventoryMenu)) {
+                    for (int i = 0; i < client.player.containerMenu.slots.get(0).container.getContainerSize(); i++) {
+                        ItemStack copy = client.player.containerMenu.slots.get(i).getItem().copy();
                         itemsCount(targetItemsCount,copy);
                         targetBlockInv.add(copy);
                     }
                     //上面如果不使用copy()在关闭容器后会使第一个元素号变该物品成总数 非常有趣...
 //                    System.out.println("???1 "+targetBlockInv.get(0).getCount());
-                    client.player.closeHandledScreen();
+                    client.player.closeContainer();
 //                    System.out.println("!!!1 "+targetBlockInv.get(0).getCount());
                     num = 2;
                 }
@@ -225,15 +223,15 @@ public class ZxyUtils {
                 //打开列表中的容器 只要容器同步列表不为空 就会一直执行此处
                 if (client.player == null) return;
                 playerItemsCount = new HashMap<>();
-                client.inGameHud.setOverlayMessage((Component.of("剩余 " + syncPosList.size() + " 个容器. 再次按下快捷键取消同步"), false);
-                if (!client.player.currentScreenHandler.equals(client.player.playerScreenHandler)) return;
-                DefaultedList<Slot> slots = client.player.playerScreenHandler.slots;
-                slots.forEach(slot -> itemsCount(playerItemsCount,slot.getStack()));
+                client.gui.setOverlayMessage(Component.literal("剩余 " + syncPosList.size() + " 个容器. 再次按下快捷键取消同步"), false);
+                if (!client.player.containerMenu.equals(client.player.inventoryMenu)) return;
+                NonNullList<Slot> slots = client.player.inventoryMenu.slots;
+                slots.forEach(slot -> itemsCount(playerItemsCount,slot.getItem()));
 
                 if (SYNC_INVENTORY_CHECK.getBooleanValue() && !targetItemsCount.entrySet().stream()
                         .allMatch(target -> playerItemsCount.entrySet().stream()
                                 .anyMatch(player ->
-                                        ItemStack.areItemsAndComponentsEqual(player.getKey(), target.getKey()) && target.getValue() <= player.getValue()))) return;
+                                        ItemStack.isSameItemSameComponents(player.getKey(), target.getKey()) && target.getValue() <= player.getValue()))) return;
 
                 if ((!LitematicaMixinMod.INVENTORY.getBooleanValue() || !openIng) && OpenInventoryPacket.key == null) {
                     for (BlockPos pos : syncPosList) {
@@ -246,50 +244,50 @@ public class ZxyUtils {
                 }
                 if (syncPosList.isEmpty()) {
                     num = 0;
-                    client.inGameHud.setOverlayMessage((Component.of("同步完成"), false);
+                    client.gui.setOverlayMessage(Component.literal("同步完成"), false);
                 }
             }
             case 3 -> {
                 //开始同步 在打开容器后触发
-                ScreenHandler sc = client.player.currentScreenHandler;
-                if (sc.equals(client.player.playerScreenHandler)) return;
-                int size = Math.min(targetBlockInv.size(),sc.slots.get(0).inventory.size());
+                AbstractContainerMenu sc = client.player.containerMenu;
+                if (sc.equals(client.player.inventoryMenu)) return;
+                int size = Math.min(targetBlockInv.size(),sc.slots.get(0).container.getContainerSize());
 
                 int times = 0;
                 for (int i = 0; i < size; i++) {
-                    ItemStack item1 = sc.slots.get(i).getStack();
+                    ItemStack item1 = sc.slots.get(i).getItem();
                     ItemStack item2 = targetBlockInv.get(i).copy();
                     int currNum = item1.getCount();
                     int tarNum = item2.getCount();
-                    boolean same = ItemStack.areItemsAndComponentsEqual(item1,item2.copy()) && !item1.isEmpty();
-                    if(ItemStack.areItemsAndComponentsEqual(item1,item2) && currNum == tarNum) continue;
+                    boolean same = ItemStack.isSameItemSameComponents(item1,item2.copy()) && !item1.isEmpty();
+                    if(ItemStack.isSameItemSameComponents(item1,item2) && currNum == tarNum) continue;
                     //不和背包交互
                     if (same) {
                         //有多
                         while (currNum > tarNum) {
-                            client.interactionManager.clickSlot(sc.syncId, i, 0, SlotActionType.THROW, client.player);
+                            client.gameMode.handleInventoryMouseClick(sc.containerId, i, 0, ClickType.THROW, client.player);
                             currNum--;
                         }
                     } else {
                         //不同直接扔出
-                        client.interactionManager.clickSlot(sc.syncId, i, 1, SlotActionType.THROW, client.player);
+                        client.gameMode.handleInventoryMouseClick(sc.containerId, i, 1, ClickType.THROW, client.player);
                         times++;
                     }
                     boolean thereAreItems = false;
                     //背包交互
                     for (int i1 = size; i1 < sc.slots.size(); i1++) {
-                        ItemStack stack = sc.slots.get(i1).getStack();
-                        ItemStack currStack = sc.slots.get(i).getStack();
+                        ItemStack stack = sc.slots.get(i1).getItem();
+                        ItemStack currStack = sc.slots.get(i).getItem();
                         currNum = currStack.getCount();
-                        boolean same2 = thereAreItems = ItemStack.areItemsAndComponentsEqual(item2,stack);
+                        boolean same2 = thereAreItems = ItemStack.isSameItemSameComponents(item2,stack);
                         if (same2 && !stack.isEmpty()) {
                             int i2 = stack.getCount();
-                            client.interactionManager.clickSlot(sc.syncId, i1, 0, SlotActionType.PICKUP, client.player);
+                            client.gameMode.handleInventoryMouseClick(sc.containerId, i1, 0, ClickType.PICKUP, client.player);
                             for (; currNum < tarNum && i2 > 0; i2--) {
-                                client.interactionManager.clickSlot(sc.syncId, i, 1, SlotActionType.PICKUP, client.player);
+                                client.gameMode.handleInventoryMouseClick(sc.containerId, i, 1, ClickType.PICKUP, client.player);
                                 currNum++;
                             }
-                            client.interactionManager.clickSlot(sc.syncId, i1, 0, SlotActionType.PICKUP, client.player);
+                            client.gameMode.handleInventoryMouseClick(sc.containerId, i1, 0, ClickType.PICKUP, client.player);
                         }
                         //这里判断没啥用，因为一个游戏刻操作背包太多次.getStack().getCount()获取的数量不准确 下次一定优化，
                         if (currNum != tarNum) times++;
@@ -301,7 +299,7 @@ public class ZxyUtils {
                     highlightPosList.remove(blockPos);
                     blockPos = null;
                 }
-                client.player.closeHandledScreen();
+                client.player.closeContainer();
                 num = 2;
             }
         }
@@ -322,7 +320,7 @@ public class ZxyUtils {
             LitematicaMixinMod.TOGGLE_PRINTING_MODE.setBooleanValue(false);
             LitematicaMixinMod.PRINTER_MODE.setOptionListValue(State.PrintModeType.PRINTER);
             Printer.currentAction = null;
-            client.inGameHud.setOverlayMessage((Component.of("已关闭全部模式"), false);
+            client.gui.setOverlayMessage(Component.literal("已关闭全部模式"), false);
         }
         OpenInventoryPacket.tick();
         test();
@@ -344,11 +342,11 @@ public class ZxyUtils {
     public static void switchPlayerInvToHotbarAir(int slot) {
         if (client.player == null) return;
         LocalPlayer player = client.player;
-        ScreenHandler sc = player.currentScreenHandler;
-        DefaultedList<Slot> slots = sc.slots;
-        int i = sc.equals(player.playerScreenHandler) ? 9 : 0;
+        AbstractContainerMenu sc = player.containerMenu;
+        NonNullList<Slot> slots = sc.slots;
+        int i = sc.equals(player.inventoryMenu) ? 9 : 0;
         for (; i < slots.size(); i++) {
-            if (slots.get(i).getStack().isEmpty() && slots.get(i).inventory instanceof PlayerInventory) {
+            if (slots.get(i).getItem().isEmpty() && slots.get(i).container instanceof Inventory) {
                 fi.dy.masa.malilib.util.InventoryUtils.swapSlots(sc, i, slot);
                 return;
             }
@@ -362,15 +360,15 @@ public class ZxyUtils {
     public static boolean canInteracted(double range,Vec3 d){
         return client.player != null &&
                 d != null &&
-                client.player.getEyePos().squaredDistanceTo(d) < range * range;
+                client.player.getEyePosition().distanceToSqr(d) < range * range;
     }
 
     public static boolean canInteracted(BlockPos blockPos) {
-        return blockPos != null && canInteracted(Vec3.ofCenter(blockPos),getRage());
+        return blockPos != null && canInteracted(Vec3.atCenterOf(blockPos),getRage());
     }
 
     public static boolean bedrockCanInteracted(BlockPos blockPos,double range) {
-        return client.player != null && client.player.getEyePos().squaredDistanceTo(Vec3.ofCenter(blockPos)) < range * range;
+        return client.player != null && client.player.getEyePosition().distanceToSqr(Vec3.atCenterOf(blockPos)) < range * range;
     }
     public static int getRage(){
         return LitematicaMixinMod.PRINTER_RANGE.getIntegerValue();
@@ -401,7 +399,7 @@ public class ZxyUtils {
 
     //刷新物品栏
     public static void refreshPlayerInventory(){
-        ClientPlayNetworkHandler networkHandler = client.getNetworkHandler();
+        ClientPacketListener networkHandler = client.getConnection();
         if (getPlayer().isEmpty()) return;
         LocalPlayer player = getPlayer().get();
         if(networkHandler == null) return;
@@ -409,22 +407,22 @@ public class ZxyUtils {
 
         // Tags with NaN are not equal, so the server will find an inventory desync and send an inventory refresh to the client
         //#if MC >= 12006
-        var nbt = new NbtCompound();
+        var nbt = new CompoundTag();
         nbt.putDouble("force_sync", Double.NaN);
-        NbtComponent.set(DataComponentTypes.CUSTOM_DATA, uniqueItem, nbt);
+        CustomData.set(DataComponents.CUSTOM_DATA, uniqueItem, nbt);
         //#else
         //$$ uniqueItem.getOrCreateNbt().putDouble("force_resync", Double.NaN);
         //#endif
 
         //#if MC >= 12105
-        ItemStackHash itemStackHash = ItemStackHash.fromItemStack(uniqueItem, networkHandler.getComponentHasher());
+        HashedStack itemStackHash = HashedStack.create(uniqueItem, networkHandler.decoratedHashOpsGenenerator());
         //#endif
 
-        networkHandler.sendPacket(new ClickSlotC2SPacket(
-                player.currentScreenHandler.syncId,
-                player.currentScreenHandler.getRevision(),
+        networkHandler.send(new ServerboundContainerClickPacket(
+                player.containerMenu.containerId,
+                player.containerMenu.getStateId(),
                 (short) -999, (byte) 2,
-                SlotActionType.QUICK_CRAFT,
+                ClickType.QUICK_CRAFT,
                 //#if MC < 12105
                 //$$ uniqueItem,
                 //$$ new Int2ObjectOpenHashMap<>()
@@ -439,7 +437,7 @@ public class ZxyUtils {
 
     public static int getEnchantmentLevel(ItemStack itemStack,
                                           //#if MC > 12006
-                                          RegistryKey<Enchantment> enchantment
+                                          ResourceKey<Enchantment> enchantment
                                           //#else
                                           //$$ Enchantment enchantment
                                           //#endif
@@ -447,10 +445,10 @@ public class ZxyUtils {
         //#if MC > 12006
         ItemEnchantments enchantments = itemStack.getEnchantments();
 
-        if (enchantments.equals(ItemEnchantments.DEFAULT)) return -1;
-        Set<RegistryEntry<Enchantment>> enchantmentsEnchantments = enchantments.getEnchantments();
-        for (RegistryEntry<Enchantment> entry : enchantmentsEnchantments) {
-            if (entry.matchesKey(enchantment)) {
+        if (enchantments.equals(ItemEnchantments.EMPTY)) return -1;
+        Set<Holder<Enchantment>> enchantmentsEnchantments = enchantments.keySet();
+        for (Holder<Enchantment> entry : enchantmentsEnchantments) {
+            if (entry.is(enchantment)) {
                 return enchantments.getLevel(entry);
             }
         }
@@ -461,34 +459,34 @@ public class ZxyUtils {
     }
 
     public static void eachBlock(Consumer<Block> consumer){
-        for (Block block : Registries.BLOCK) {
+        for (Block block : BuiltInRegistries.BLOCK) {
             consumer.accept(block);
         }
     }
 
     public static void eachItem(Consumer<Item> consumer){
-        for (Item item : Registries.ITEM) {
+        for (Item item : BuiltInRegistries.ITEM) {
             consumer.accept(item);
         }
     }
 
     //右键单击
-//              client.interactionManager.clickSlot(sc.syncId, i, 1, SlotActionType.PICKUP, client.player);
+//              client.gameMode.handleInventoryMouseClick(sc.containerId, i, 1, ClickType.PICKUP, client.player);
     //左键单击
-//              client.interactionManager.clickSlot(sc.syncId, i, 0, SlotActionType.PICKUP, client.player);
+//              client.gameMode.handleInventoryMouseClick(sc.containerId, i, 0, ClickType.PICKUP, client.player);
     //点击背包外
-//              client.interactionManager.clickSlot(sc.syncId, -999, 0, SlotActionType.PICKUP, client.player);
+//              client.gameMode.handleInventoryMouseClick(sc.containerId, -999, 0, ClickType.PICKUP, client.player);
     //丢弃一个
-//              client.interactionManager.clickSlot(sc.syncId, i, 0, SlotActionType.THROW, client.player);
+//              client.gameMode.handleInventoryMouseClick(sc.syncId, i, 0, ClickType.THROW, client.player);
     //丢弃全部
-//              client.interactionManager.clickSlot(sc.syncId, i, 1, SlotActionType.THROW, client.player);
+//              client.gameMode.handleInventoryMouseClick(sc.syncId, i, 1, ClickType.THROW, client.player);
     //开始拖动
-//              client.interactionManager.clickSlot(sc.syncId, -999, 0, SlotActionType.QUICK_CRAFT, client.player);
+//              client.gameMode.handleInventoryMouseClick(sc.syncId, -999, 0, ClickType.QUICK_CRAFT, client.player);
     //拖动经过的槽
-//              client.interactionManager.clickSlot(sc.syncId, i1, 1, SlotActionType.QUICK_CRAFT, client.player);
+//              client.gameMode.handleInventoryMouseClick(sc.syncId, i1, 1, ClickType.QUICK_CRAFT, client.player);
     //结束拖动
-//              client.interactionManager.clickSlot(sc.syncId, -999, 2, SlotActionType.QUICK_CRAFT, client.player);
+//              client.gameMode.handleInventoryMouseClick(sc.syncId, -999, 2, ClickType.QUICK_CRAFT, client.player);
     //副手交换
-//              client.interactionManager.clickSlot(sc.syncId, i, 40, SlotActionType.SWAP, client.player);
+//              client.gameMode.handleInventoryMouseClick(sc.syncId, i, 40, ClickType.SWAP, client.player);
 
 }

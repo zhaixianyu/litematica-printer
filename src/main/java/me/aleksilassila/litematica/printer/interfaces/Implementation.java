@@ -4,6 +4,8 @@ import me.aleksilassila.litematica.printer.mixin.PlayerMoveC2SPacketAccessor;
 import me.aleksilassila.litematica.printer.printer.PlacementGuide;
 import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.core.Direction;
+import net.minecraft.network.protocol.Packet;
+import net.minecraft.network.protocol.game.ServerboundMovePlayerPacket;
 import net.minecraft.world.entity.player.Abilities;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.item.Item;
@@ -80,10 +82,10 @@ public class Implementation {
     }
 
     public static void sendLookPacket(LocalPlayer playerEntity, float yaw, float pitch){
-        playerEntity.connection.send(new PlayerMoveC2SPacket.LookAndOnGround(
+        playerEntity.connection.send(new ServerboundMovePlayerPacket.Rot(
                 yaw,
                 pitch,
-                playerEntity.isOnGround()
+                playerEntity.onGround()
                 //#if MC > 12101
                 ,playerEntity.horizontalCollision
                 //#endif
@@ -91,11 +93,11 @@ public class Implementation {
     }
 
     public static boolean isLookOnlyPacket(Packet<?> packet) {
-        return packet instanceof PlayerMoveC2SPacket.LookAndOnGround;
+        return packet instanceof ServerboundMovePlayerPacket.Pos;
     }
 
     public static boolean isLookAndMovePacket(Packet<?> packet) {
-        return packet instanceof PlayerMoveC2SPacket.Full;
+        return packet instanceof ServerboundMovePlayerPacket.PosRot;
     }
 
     public static Packet<?> getFixedLookPacket(LocalPlayer playerEntity, Packet<?> packet, PlacementGuide.Action action) {
@@ -108,7 +110,7 @@ public class Implementation {
         double y = accessor.getY();
         double z = accessor.getZ();
         boolean onGround = accessor.getOnGround();
-        return new PlayerMoveC2SPacket.Full(x, y, z, angles[0], angles[1], onGround
+        return new ServerboundMovePlayerPacket.PosRot(x, y, z, angles[0], angles[1], onGround
                 //#if MC > 12101
                 ,playerEntity.horizontalCollision
                 //#endif
@@ -117,7 +119,7 @@ public class Implementation {
 
     protected static float getRequiredYaw(LocalPlayer playerEntity, Direction playerShouldBeFacing) {
         if (playerShouldBeFacing.getAxis().isHorizontal()) {
-            return playerShouldBeFacing.getPositiveHorizontalDegrees();
+            return playerShouldBeFacing.toYRot();
         } else {
             return Implementation.getYRot(playerEntity);
         }

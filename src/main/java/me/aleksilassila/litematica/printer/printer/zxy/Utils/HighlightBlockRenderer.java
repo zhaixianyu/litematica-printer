@@ -1,6 +1,9 @@
 package me.aleksilassila.litematica.printer.printer.zxy.Utils;
 
 import com.mojang.blaze3d.systems.RenderSystem;
+import com.mojang.blaze3d.vertex.BufferBuilder;
+import com.mojang.blaze3d.vertex.MeshData;
+import com.mojang.blaze3d.vertex.Tesselator;
 import fi.dy.masa.litematica.Litematica;
 import fi.dy.masa.malilib.config.options.ConfigColor;
 import fi.dy.masa.malilib.event.RenderEventHandler;
@@ -9,14 +12,8 @@ import fi.dy.masa.malilib.render.RenderUtils;
 import fi.dy.masa.malilib.util.data.Color4f;
 import net.fabricmc.fabric.api.client.networking.v1.ClientPlayConnectionEvents;
 import net.minecraft.world.level.block.state.BlockState;
-import net.minecraft.block.ShapeContext;
-import net.minecraft.client.render.*;
-import net.minecraft.client.util.math.MatrixStack;
-import net.minecraft.entity.Entity;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.phys.Vec3;
-import net.minecraft.util.shape.VoxelShape;
-import net.minecraft.util.shape.VoxelShapes;
 import org.joml.Matrix4f;
 import org.lwjgl.opengl.GL11;
 
@@ -33,7 +30,6 @@ import fi.dy.masa.malilib.render.RenderContext;
 //#endif
 
 import static me.aleksilassila.litematica.printer.printer.zxy.Utils.ZxyUtils.client;
-import static net.minecraft.client.render.VertexFormats.POSITION_COLOR;
 
 
 public class HighlightBlockRenderer implements IRenderer {
@@ -99,7 +95,7 @@ public class HighlightBlockRenderer implements IRenderer {
         //#else
         //$$ RenderSystem.setShader(GameRenderer::getPositionColorProgram);
         //#endif
-        Tessellator tessellator = Tessellator.getInstance();
+        Tesselator tessellator = Tesselator.getInstance();
 
         //#if MC > 12006
             //#if MC > 12104
@@ -112,7 +108,7 @@ public class HighlightBlockRenderer implements IRenderer {
             //#else
             //$$ BufferBuilder buffer = tessellator.begin(VertexFormat.DrawMode.QUADS, VertexFormats.POSITION_COLOR);
             //#endif
-        BuiltBuffer meshData;
+        MeshData meshData;
         //#else
         //$$ BufferBuilder buffer = tessellator.getBuffer();
         //$$ buffer.begin(VertexFormat.DrawMode.QUADS, VertexFormats.POSITION_COLOR);
@@ -128,7 +124,7 @@ public class HighlightBlockRenderer implements IRenderer {
         {
             if(buffer != null){
                 //#if MC > 12006
-                meshData = buffer.end();
+                meshData = buffer.buildOrThrow();
 
                     //#if MC > 12104
                     ctx.upload(meshData, true);

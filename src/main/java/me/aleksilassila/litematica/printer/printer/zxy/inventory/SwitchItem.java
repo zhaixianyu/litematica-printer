@@ -3,15 +3,15 @@ package me.aleksilassila.litematica.printer.printer.zxy.inventory;
 import fi.dy.masa.malilib.util.InventoryUtils;
 import me.aleksilassila.litematica.printer.printer.zxy.Utils.Statistics;
 import net.minecraft.client.player.LocalPlayer;
+import net.minecraft.resources.ResourceKey;
 import net.minecraft.world.entity.player.Inventory;
+import net.minecraft.world.inventory.ClickType;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.registry.RegistryKey;
-import net.minecraft.screen.ScreenHandler;
+import net.minecraft.world.inventory.AbstractContainerMenu;
 import net.minecraft.world.inventory.Slot;
-import net.minecraft.screen.slot.SlotActionType;
 import net.minecraft.network.chat.Component;
 import net.minecraft.core.BlockPos;
-import net.minecraft.world.World;
+import net.minecraft.world.level.Level;
 
 import java.lang.reflect.Method;
 import java.util.ArrayList;
@@ -34,17 +34,17 @@ public class SwitchItem {
         ItemStatistics itemStatistics = itemStacks.get(itemStack);
         if(itemStatistics != null) itemStatistics.syncUseTime();
     }
-    public static void newItem(ItemStack itemStack, BlockPos pos, RegistryKey<World> key, int slot, int shulkerBox){
+    public static void newItem(ItemStack itemStack, BlockPos pos, ResourceKey<Level> key, int slot, int shulkerBox){
         if(shulkerBox != -1) itemStacks.put(itemStack,new ItemStatistics(key,pos,slot,shulkerBox));
     }
     public static void openInv(ItemStack itemStack){
         if(client.player == null) return;
-        if(!client.player.currentScreenHandler.equals(client.player.playerScreenHandler) || Statistics.closeScreen > 0){
+        if(!client.player.containerMenu.equals(client.player.inventoryMenu) || Statistics.closeScreen > 0){
             return;
         }
-        ScreenHandler sc1 = client.player.currentScreenHandler;
+        AbstractContainerMenu sc1 = client.player.containerMenu;
         if (sc1.slots.stream().skip(9).limit(sc1.slots.size()-10)
-                .noneMatch(slot -> InventoryUtils.areStacksEqual(slot.getStack(),reSwitchItem))) {
+                .noneMatch(slot -> InventoryUtils.areStacksEqual(slot.getItem(),reSwitchItem))) {
             itemStacks.remove(reSwitchItem);
             reSwitchItem = null;
             return;
@@ -55,15 +55,15 @@ public class SwitchItem {
                 OpenInventoryPacket.sendOpenInventory(itemStatistics.pos,itemStatistics.key);
                 Statistics.closeScreen++;
             }else {
-                ScreenHandler sc = client.player.currentScreenHandler;
+                AbstractContainerMenu sc = client.player.containerMenu;
                 //因使用快捷濳影盒打开物品列表后无法更新，所以读取的盒子物品列表没意义。
-//                DefaultedList<ItemStack> storedItems = InventoryUtils.getStoredItems(sc.slots.get(itemStatistics.shulkerBoxSlot).getStack(), -1);
+//                NonNullList<ItemStack> storedItems = InventoryUtils.getStoredItems(sc.slots.get(itemStatistics.shulkerBoxSlot).getStack(), -1);
 //                if(storedItems.get(itemStatistics.slot).isEmpty()){
                     try {
 //                        Class quickShulker = Class.forName("net.kyrptonaught.quickshulker.client.ClientUtil");
 //                        Method checkAndSend = quickShulker.getDeclaredMethod("CheckAndSend",ItemStack.class,int.class);
 //                        checkAndSend.invoke(checkAndSend,sc.slots.get(itemStatistics.shulkerBoxSlot).getStack(),itemStatistics.shulkerBoxSlot);
-                        client.player.currentScreenHandler.onSlotClick(itemStatistics.shulkerBoxSlot,1,SlotActionType.PICKUP,client.player);
+                        client.player.containerMenu.clicked(itemStatistics.shulkerBoxSlot,1, ClickType.PICKUP,client.player);
                         Statistics.closeScreen++;
                     } catch (Exception ignored){
                         removeItem(reSwitchItem);
@@ -105,49 +105,50 @@ public class SwitchItem {
         if(itemStack != null) {
             reSwitchItem = itemStack;
             openInv(itemStack);
-        }else client.inGameHud.setOverlayMessage((Component.of("背包已满，请先清理"),false);
+        }else client.gui.setOverlayMessage(Component.literal("背包已满，请先清理"),false);
     }
     public static void reSwitchItem(){
         if(client.player == null || reSwitchItem == null) return;
         LocalPlayer player = client.player;
-        ScreenHandler sc = player.currentScreenHandler;
-        if (sc.equals(player.playerScreenHandler)) return;
+        AbstractContainerMenu sc = player.containerMenu;
+        if (sc.equals(player.inventoryMenu)) return;
 
         List<Integer> sameItem = new ArrayList<>();
         for (int i = 0; i < sc.slots.size(); i++) {
             Slot slot = sc.slots.get(i);
-            if(!(slot.inventory instanceof PlayerInventory) &&
-                    InventoryUtils.areStacksEqual(reSwitchItem,slot.getStack()) &&
-                    slot.getStack().getCount() < slot.getStack().getMaxCount()
+            if(!(slot.container instanceof Inventory) &&
+                    InventoryUtils.areStacksEqual(reSwitchItem,slot.getItem()) &&
+                    slot.getItem().getCount() < slot.getItem().getMaxStackSize()
             ) sameItem.add(i);
-            if(slot.inventory instanceof PlayerInventory && client.interactionManager != null && InventoryUtils.areStacksEqual(slot.getStack(),reSwitchItem)){
+            if(slot.container instanceof Inventory && client.gameMode != null && InventoryUtils.areStacksEqual(slot.getItem(),reSwitchItem)){
                 int slot1 = itemStacks.get(reSwitchItem).slot;
                 boolean reInv = false;
                 //检查记录的槽位是否有物品
-                ItemStack stack = sc.slots.get(slot1).getStack();
-                if(sc.slots.get(slot1).getStack().isEmpty()){
-                    client.interactionManager.clickSlot(sc.syncId, i, 0, SlotActionType.PICKUP, client.player);
-                    client.interactionManager.clickSlot(sc.syncId, slot1, 0, SlotActionType.PICKUP, client.player);
+                ItemStack stack = sc.slots.get(slot1).getItem();
+                if(sc.slots.get(slot1).getItem().isEmpty()){
+                    client.gameMode.handleInventoryMouseClick(sc.containerId, i, 0, ClickType.PICKUP, client.player);
+                    client.gameMode.handleInventoryMouseClick(sc.containerId, slot1, 0, ClickType.PICKUP, client.player);
                     reInv = true;
                 } else {
                     int count = reSwitchItem.getCount();
-                    client.interactionManager.clickSlot(sc.syncId, i, 0, SlotActionType.PICKUP, client.player);
+                    client.gameMode.handleInventoryMouseClick(sc.containerId, i, 0, ClickType.PICKUP, client.player);
                     for (Integer integer : sameItem) {
-                        int count1 = sc.slots.get(integer).getStack().getCount();
-                        int maxCount = sc.slots.get(integer).getStack().getMaxCount();
+                        int count1 = sc.slots.get(integer).getItem().getCount();
+                        int maxCount = sc.slots.get(integer).getItem().getMaxStackSize();
                         int i1 = maxCount - count1;
                         count -= i1;
-                        client.interactionManager.clickSlot(sc.syncId, integer, 0, SlotActionType.PICKUP, client.player);
+                        client.gameMode.handleInventoryMouseClick(sc.containerId, integer, 0, ClickType.PICKUP, client.player);
                         if (count<=0) reInv = true;
                     }
                 }
                 removeItem(reSwitchItem);
                 reSwitchItem = null;
-                player.closeHandledScreen();
+                player.closeContainer();
+                player.closeContainer();
                 if(!reInv) {
-                    client.inGameHud.setOverlayMessage((Component.of("复原库存物品失败"),false);
+                    client.gui.setOverlayMessage(Component.literal("复原库存物品失败"),false);
                 }
-                client.interactionManager.clickSlot(sc.syncId, i, 0, SlotActionType.PICKUP, client.player);
+                client.gameMode.handleInventoryMouseClick(sc.containerId, i, 0, ClickType.PICKUP, client.player);
                 return;
             }
         }
@@ -161,12 +162,12 @@ public class SwitchItem {
         reSwitchItem = null;
     }
     public static class ItemStatistics {
-        public RegistryKey<World> key;
+        public ResourceKey<Level> key;
         public BlockPos pos;
         public int slot;
         public int shulkerBoxSlot;
         public long useTime = System.currentTimeMillis();
-        public ItemStatistics(RegistryKey<World> key, BlockPos pos, int slot, int shulkerBox) {
+        public ItemStatistics(ResourceKey<Level> key, BlockPos pos, int slot, int shulkerBox) {
             this.key = key;
             this.pos = pos;
             this.slot = slot;

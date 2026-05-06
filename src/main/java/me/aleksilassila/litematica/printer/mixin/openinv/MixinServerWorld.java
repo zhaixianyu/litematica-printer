@@ -2,10 +2,10 @@ package me.aleksilassila.litematica.printer.mixin.openinv;
 
 import me.aleksilassila.litematica.printer.printer.zxy.inventory.OpenInventoryPacket;
 import me.aleksilassila.litematica.printer.printer.zxy.inventory.TickList;
+import net.minecraft.server.level.ServerLevel;
+import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.world.level.ChunkPos;
 import net.minecraft.world.level.block.state.BlockState;
-import net.minecraft.server.network.ServerPlayerEntity;
-import net.minecraft.server.world.ServerWorld;
-import net.minecraft.util.math.ChunkPos;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
@@ -14,36 +14,20 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import static me.aleksilassila.litematica.printer.printer.zxy.inventory.OpenInventoryPacket.playerlist;
 import static me.aleksilassila.litematica.printer.printer.zxy.inventory.OpenInventoryPacket.tickMap;
 
-@Mixin(ServerWorld.class)
+@Mixin(ServerLevel.class)
 public class MixinServerWorld {
     @Inject(at = @At("HEAD"),method = "tick")
     public void tick(CallbackInfo ci){
-        for (ServerPlayerEntity s : playerlist) {
+        for (ServerPlayer s : playerlist) {
             TickList list = tickMap.get(s);
-            if (!list.world.isChunkLoaded(ChunkPos.toLong(list.pos))) {
-                //#if MC > 11802
-                list.world.shouldTickBlockPos(list.pos);
-                //#else
-                //$$ list.world.shouldTick(list.pos);
-                //#endif
+            if (!list.world.areEntitiesLoaded(ChunkPos.asLong(list.pos))) {
+                list.world.shouldTickBlocksAt(list.pos);
             }
-//            BlockState state =  list.state;
             BlockState state2 = list.world.getBlockState(list.pos);
             if(state2.isAir()){
                 OpenInventoryPacket.openReturn(s,state2,false);
             }
         }
-
-//        for (ServerPlayerEntity s : playerlist) {
-//            TickList list = OpenInventoryPacket.tickMap.get(s);
-//            list.block.scheduledTick(list.state,list.world,list.pos,list.world.random);
-//            BlockState state =  list.state;
-//            BlockState state2 = list.world.getBlockState(list.pos);
-//            if(!state.equals(state2)){
-//                OpenInventoryPacket.openFail(s);
-//            }
-////            if(list.world.getBlockState(list.pos).equals(list.state)) s.closeHandledScreen();
-//        }
     }
 
 }

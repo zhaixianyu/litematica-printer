@@ -193,7 +193,7 @@ public class MemoryUtils {
 //                .toEntry(OpenInventoryPacket.key.getValue(), OpenInventoryPacket.pos)
 //        );
         if (memory != null) {
-            memoryBank.addMemory(OpenInventoryPacket.key.getValue(),OpenInventoryPacket.pos,memory);
+            memoryBank.addMemory(OpenInventoryPacket.key.identifier(),OpenInventoryPacket.pos,memory);
         }
     }
 }

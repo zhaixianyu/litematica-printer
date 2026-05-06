@@ -75,7 +75,7 @@ package me.aleksilassila.litematica.printer.printer.zxy.memory;
 //$$         Minecraft mc = Minecraft.getInstance();
 //$$         String id = null;
 //$$         String print = null;
-//$$         ClientPlayNetworkHandler cpnh = mc.getNetworkHandler();
+//$$         ClientPacketListener cpnh = mc.getNetworkHandler();
 //$$         String var10000;
 //$$         if (cpnh != null && cpnh.getConnection() != null && cpnh.getConnection().isOpen()) {
 //$$             if (mc.getServer() != null) {

@@ -6,13 +6,11 @@ import me.aleksilassila.litematica.printer.LitematicaMixinMod;
 import me.aleksilassila.litematica.printer.printer.Printer;
 import me.aleksilassila.litematica.printer.printer.zxy.Utils.PlayerAction;
 import me.aleksilassila.litematica.printer.printer.zxy.Utils.ZxyUtils;
-import net.minecraft.block.Blocks;
+import net.minecraft.client.multiplayer.ClientLevel;
+import net.minecraft.world.InteractionHand;
+import net.minecraft.world.item.Items;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.world.ClientWorld;
-import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.item.Items;
-import net.minecraft.util.Hand;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
@@ -22,7 +20,6 @@ import java.util.ArrayList;
 
 import static me.aleksilassila.litematica.printer.printer.Printer.bedrockModeRange;
 import static me.aleksilassila.litematica.printer.printer.zxy.Utils.ZxyUtils.*;
-//import java.util.List;
 
 public class BreakingFlowController {
     public static ArrayList<TargetBlock> cachedTargetBlockList = new ArrayList<>();
@@ -32,7 +29,7 @@ public class BreakingFlowController {
 
         if (cachedTargetBlockList.size() > 5) return;
 
-        ClientWorld world = Minecraft.getInstance().world;
+        ClientLevel world = Minecraft.getInstance().level;
 //        if (world.getBlockState(pos).isOf(Blocks.BEDROCK)) {
         Minecraft minecraftClient = Minecraft.getInstance();
 
@@ -45,11 +42,11 @@ public class BreakingFlowController {
             if (pos.equals(block.getBlockPos()) || pos.equals(block.getnyk()) || pos.equals(block.geths()))
                 return;
         }
-        if (!minecraftClient.world.getBlockState(pos.up()).isAir() || !minecraftClient.world.getBlockState(pos.up().up()).isAir()) {
-            if (!Printer.bedrockModeTarget(minecraftClient.world.getBlockState(pos.up())))
-                addPosList(pos.up());
-            if (!Printer.bedrockModeTarget(minecraftClient.world.getBlockState(pos.up().up())))
-                addPosList(pos.up().up());
+        if (!minecraftClient.level.getBlockState(pos.above()).isAir() || !minecraftClient.level.getBlockState(pos.above().above()).isAir()) {
+            if (!Printer.bedrockModeTarget(minecraftClient.level.getBlockState(pos.above())))
+                addPosList(pos.above());
+            if (!Printer.bedrockModeTarget(minecraftClient.level.getBlockState(pos.above().above())))
+                addPosList(pos.above().above());
             return;
         }
 
@@ -69,14 +66,14 @@ public class BreakingFlowController {
         for (int i = 0; i < poslist.size(); i++) {
             BlockPos blockPos = poslist.get(i);
 
-            if (Minecraft.getInstance().world.getBlockState(blockPos).isAir() && ZxyUtils.bedrockCanInteracted(blockPos, bedrockModeRange())) {
+            if (Minecraft.getInstance().level.getBlockState(blockPos).isAir() && ZxyUtils.bedrockCanInteracted(blockPos, bedrockModeRange())) {
                 InventoryManager.switchToItem(Items.DIAMOND_PICKAXE);
                 //#if MC < 11902
-                //$$ client.interactionManager.interactBlock(client.player,client.world, Hand.MAIN_HAND, new BlockHitResult(Vec3.ofCenter(blockPos), Direction.UP, poslist.get(i), false));
+                //$$ client.useItemOn(client.player,client.world, InteractionHand.MAIN_HAND, new BlockHitResult(Vec3.ofCenter(blockPos), Direction.UP, poslist.get(i), false));
                 //#else
-                client.interactionManager.interactBlock(client.player, Hand.MAIN_HAND, new BlockHitResult(Vec3.ofCenter(blockPos), Direction.UP, poslist.get(i), false));
+                client.gameMode.useItemOn(client.player, InteractionHand.MAIN_HAND, new BlockHitResult(Vec3.atCenterOf(blockPos), Direction.UP, poslist.get(i), false));
                 //#endif
-                if (Minecraft.getInstance().world.getBlockState(blockPos).isAir()) {
+                if (Minecraft.getInstance().level.getBlockState(blockPos).isAir()) {
                     poslist.remove(i);
                     i--;
                     continue;
@@ -90,7 +87,7 @@ public class BreakingFlowController {
 
 
             if (!ZxyUtils.bedrockCanInteracted(blockPos, bedrockModeRange())) continue;
-            if (!Minecraft.getInstance().world.getBlockState(blockPos).isAir()) {
+            if (!Minecraft.getInstance().level.getBlockState(blockPos).isAir()) {
 //                BlockBreaker.breakBlock(Minecraft.getInstance().world, poslist.get(i));
                 InventoryManager.switchToItem(Items.DIAMOND_PICKAXE);
                 PlayerAction.waJue(blockPos);
@@ -117,7 +114,7 @@ public class BreakingFlowController {
                 continue;
             }
             //玩家切换世界，或离目标方块太远时，删除所有缓存的任务
-            if (selectedBlock.getWorld() != Minecraft.getInstance().world) {
+            if (selectedBlock.getWorld() != Minecraft.getInstance().level) {
                 cachedTargetBlockList = new ArrayList<TargetBlock>();
                 break;
             }
@@ -125,7 +122,7 @@ public class BreakingFlowController {
 //            if (blockInPlayerRange(selectedBlock.getBlockPos(), player, 5f)) {
 //            if (DataManager.getRenderLayerRange().isPositionWithinRange(selectedBlock.getBlockPos())) {
             //#if MC > 12006
-            ItemStack mainHandStack = client.player.getMainHandStack();
+            ItemStack mainHandStack = client.player.getMainHandItem();
             cachedTargetBlockList.stream().filter( targetBlock -> targetBlock.getStatus() == TargetBlock.Status.EXTENDED).forEach(TargetBlock::tick);
             //#endif
             TargetBlock.Status status = cachedTargetBlockList.get(i).tick();
@@ -133,7 +130,7 @@ public class BreakingFlowController {
                 continue;
             } else if (status == TargetBlock.Status.FAILED || status == TargetBlock.Status.RETRACTED) {
                 for (BlockPos temppo : cachedTargetBlockList.get(i).temppos) {
-                    if (!minecraftClient.world.getBlockState(temppo).isAir()) addPosList(temppo);
+                    if (!minecraftClient.level.getBlockState(temppo).isAir()) addPosList(temppo);
                 }
                 cachedTargetBlockList.remove(i);
             }/* else {
@@ -162,7 +159,7 @@ public class BreakingFlowController {
 
     private static boolean shouldAddNewTargetBlock(BlockPos pos) {
         for (int i = 0; i < cachedTargetBlockList.size(); i++) {
-            if (cachedTargetBlockList.get(i).getBlockPos().getManhattanDistance(pos) == 0) {
+            if (cachedTargetBlockList.get(i).getBlockPos().distManhattan(pos) == 0) {
                 return false;
             }
         }

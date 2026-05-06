@@ -7,18 +7,15 @@ package me.aleksilassila.litematica.printer.mixin.openinv;
 
 import com.llamalad7.mixinextras.injector.wrapoperation.Operation;
 import com.llamalad7.mixinextras.injector.wrapoperation.WrapOperation;
-import me.aleksilassila.litematica.printer.printer.Printer;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
+import net.minecraft.client.multiplayer.ClientLevel;
+import net.minecraft.client.multiplayer.MultiPlayerGameMode;
 import net.minecraft.client.player.LocalPlayer;
-import net.minecraft.client.network.ClientPlayerInteractionManager;
-import net.minecraft.client.world.ClientWorld;
-import net.minecraft.world.entity.player.Inventory;
-import net.minecraft.item.Item;
-import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.Item;
 import net.minecraft.core.BlockPos;
 import org.jetbrains.annotations.Nullable;
 import org.spongepowered.asm.mixin.Mixin;
@@ -40,7 +37,7 @@ public abstract class MixinMinecraft {
 
     @Shadow
     @Nullable
-    public ClientWorld world;
+    public ClientLevel level;
 
     @Inject(method = {"setScreen"}, at = {@At(value = "HEAD")}, cancellable = true)
     public void setScreen(@Nullable Screen screen, CallbackInfo ci) {
@@ -51,24 +48,24 @@ public abstract class MixinMinecraft {
     }
     //鼠标中键从打印机库存或通过快捷濳影盒 取出对应物品
     //#if MC > 12101
-    @WrapOperation(method = "doItemPick",at = @At(value = "INVOKE", target = "Lnet/minecraft/client/network/ClientPlayerInteractionManager;pickItemFromBlock(Lnet/minecraft/util/math/BlockPos;Z)V" ))
-    private void doItemPick(ClientPlayerInteractionManager instance, BlockPos pos, boolean b, Operation<Void> original) {
-        if(world == null) {
-            original.call(instance, pos, b);
+    @WrapOperation(method = "pickBlock",at = @At(value = "INVOKE", target = "Lnet/minecraft/client/multiplayer/MultiPlayerGameMode;handlePickItemFromBlock(Lnet/minecraft/core/BlockPos;Z)V" ))
+    private void doItemPick(MultiPlayerGameMode instance, BlockPos blockPos, boolean bl, Operation<Void> original) {
+        if(level == null) {
+            original.call(instance, blockPos, bl);
             return;
         }
-        Item item = world.getBlockState(pos).getBlock().asItem();
-        if (player.playerScreenHandler.slots.stream().noneMatch(slot -> slot.getStack().getItem().equals(item)) &&
-                !player.getAbilities().creativeMode && (INVENTORY.getBooleanValue() || QUICKSHULKER.getBooleanValue())) {
+        Item item = level.getBlockState(blockPos).getBlock().asItem();
+        if (player.inventoryMenu.slots.stream().noneMatch(slot -> slot.getItem().getItem().equals(item)) &&
+                !player.getAbilities().instabuild && (INVENTORY.getBooleanValue() || QUICKSHULKER.getBooleanValue())) {
             remoteItem.add(item);
             switchItem();
             return;
         }
-        original.call(instance, pos, b);
+        original.call(instance, blockPos, bl);
     }
     //#else
-    //$$ @WrapOperation(method = "doItemPick",at = @At(value = "INVOKE", target = "Lnet/minecraft/entity/player/PlayerInventory;getSlotWithStack(Lnet/minecraft/item/ItemStack;)I" ))
-    //$$ private int doItemPick(PlayerInventory instance, ItemStack stack, Operation<Integer> original) {
+    //$$ @WrapOperation(method = "doItemPick",at = @At(value = "INVOKE", target = "Lnet/minecraft/entity/player/Inventory;getSlotWithStack(Lnet/minecraft/item/ItemStack;)I" ))
+    //$$ private int doItemPick(Inventory instance, ItemStack stack, Operation<Integer> original) {
     //$$     int slotWithStack = original.call(instance, stack);
     //$$     if(!player.getAbilities().creativeMode && (INVENTORY.getBooleanValue() || QUICKSHULKER.getBooleanValue()) && slotWithStack == -1){
     //$$         Item item = stack.getItem();

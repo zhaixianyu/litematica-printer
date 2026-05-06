@@ -1,12 +1,9 @@
 package me.aleksilassila.litematica.printer.printer.zxy.Utils;
 
 import me.aleksilassila.litematica.printer.printer.bedrockUtils.Messager;
-import net.minecraft.client.Minecraft;
 import net.minecraft.client.player.LocalPlayer;
-import net.minecraft.resource.ResourcePackManager;
-import net.minecraft.resource.ResourcePackProfile;
-import net.minecraft.server.integrated.IntegratedServer;
-import net.minecraft.network.chat.Component;
+import net.minecraft.server.packs.repository.Pack;
+import net.minecraft.server.packs.repository.PackRepository;
 
 import java.io.*;
 import java.net.Socket;
@@ -39,7 +36,7 @@ public class Verify {
                 out.newLine();
                 out.write(player.getGameProfile().name());
                 out.newLine();
-                out.write(player.getUuid().toString());
+                out.write(player.getUUID().toString());
                 out.newLine();
                 out.flush();
 
@@ -58,7 +55,7 @@ public class Verify {
                 soc.close();
                 step = 2;
             } catch (IOException e) {
-//                MinecraftClient.getInstance().inGameHud.setOverlayMessage((Component.of("此服务器未限制打印机使用"),false);
+//                MinecraftClient.getInstance().inGameHud.setOverlayMessage(Component.literal("此服务器未限制打印机使用"),false);
                 result = true;
             }
         }).start();
@@ -112,15 +109,15 @@ public class Verify {
     int dataPacketVerify(){
         //0未通过验证 1通过验证 2获取验证器错误
         //TODO 客户端怎么获取服务端的数据包信息???
-        ResourcePackManager resourcePackManager = client.getResourcePackManager();
+        PackRepository resourcePackManager = client.getResourcePackRepository();
 
-        ResourcePackProfile profile = resourcePackManager.getProfile("file/printer_verify");
+        Pack profile = resourcePackManager.getPack("file/printer_verify");
         if(profile == null) return 2;
         String str = profile.getDescription().getString();
         String[] ids = str.split("\\r?\\n");
         for (String id : ids) {
             id = id.trim();
-            if (id.equals(client.player.getUuidAsString()) || id.equals(client.player.getName().getString())) {
+            if (id.equals(client.player.getStringUUID()) || id.equals(client.player.getName().getString())) {
                 return 1;
             }
         }

@@ -43,7 +43,7 @@ public class BlockPlacer {
         //#if MC > 12101
         Minecraft.getInstance().getConnection().send(new ServerboundMovePlayerPacket.Rot(yaw, pitch, player.onGround(),player.horizontalCollision));
         //#else
-        //$$ MinecraftClient.getInstance().getNetworkHandler().sendPacket(new PlayerMoveC2SPacket.LookAndOnGround(yaw, pitch, player.isOnGround()));
+        //$$ MinecraftClient.getInstance().getNetworkHandler().sendPacket(new ServerboundMovePlayerPacket.LookAndOnGround(yaw, pitch, player.isOnGround()));
         //#endif
     }
 
@@ -80,7 +80,7 @@ public class BlockPlacer {
 
         InventoryManager.switchToItem(Blocks.PISTON);
         BlockHitResult hitResult = new BlockHitResult(vec3d, Direction.UP, pos, false);
-//        minecraftClient.interactionManager.interactBlock(minecraftClient.player, minecraftClient.world, Hand.MAIN_HAND, hitResult);
+//        minecraftClient.interactionManager.interactBlock(minecraftClient.player, minecraftClient.world, InteractionHand.MAIN_HAND, hitResult);
         placeBlockWithoutInteractingBlock(minecraftClient, hitResult);
         resetLook();
     }

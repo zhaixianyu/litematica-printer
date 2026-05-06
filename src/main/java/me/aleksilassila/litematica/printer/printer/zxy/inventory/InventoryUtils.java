@@ -4,33 +4,36 @@ import fi.dy.masa.litematica.config.Configs;
 import me.aleksilassila.litematica.printer.LitematicaMixinMod;
 import me.aleksilassila.litematica.printer.interfaces.Implementation;
 import me.aleksilassila.litematica.printer.mixin.masa.Litematica_InventoryUtilsMixin;
+import me.aleksilassila.litematica.printer.mixin.openinv.ShulkerBoxBlockAccessor;
 import me.aleksilassila.litematica.printer.printer.Printer;
 import me.aleksilassila.litematica.printer.printer.zxy.Utils.ZxyUtils;
-import net.minecraft.block.Block;
+import net.minecraft.core.registries.BuiltInRegistries;
+import net.minecraft.world.InteractionHand;
+import net.minecraft.world.inventory.ClickType;
+import net.minecraft.world.level.block.Block;
+import net.minecraft.core.NonNullList;
+import net.minecraft.world.entity.monster.Shulker;
+import net.minecraft.world.inventory.AbstractContainerMenu;
+import net.minecraft.world.item.Item;
+import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.ShulkerBoxBlock;
+import net.minecraft.world.level.block.entity.BlockEntity;
+import net.minecraft.world.level.block.entity.ShulkerBoxBlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
-import net.minecraft.block.entity.BlockEntity;
-import net.minecraft.block.entity.ShulkerBoxBlockEntity;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.player.LocalPlayer;
-import net.minecraft.entity.mob.ShulkerEntity;
 import net.minecraft.world.entity.player.Inventory;
-import net.minecraft.item.Item;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.registry.Registries;
-import net.minecraft.screen.ScreenHandler;
 import net.minecraft.world.inventory.Slot;
-import net.minecraft.world.inventory.SlotActionType;
 import net.minecraft.network.chat.Component;
-import net.minecraft.util.Hand;
-import net.minecraft.util.collection.DefaultedList;
 import net.minecraft.core.BlockPos;
-import net.minecraft.world.World;
+import net.minecraft.world.level.Level;
 import net.minecraft.resources.Identifier;
-import net.minecraft.registry.RegistryKey;
 
 //#if MC > 11904
 import me.aleksilassila.litematica.printer.printer.zxy.chesttracker.MemoryUtils;
 import me.aleksilassila.litematica.printer.printer.zxy.chesttracker.SearchItem;
+import net.minecraft.world.phys.AABB;
 import red.jackf.chesttracker.api.providers.InteractionTracker;
 //#else
 //$$
@@ -53,37 +56,37 @@ import static me.aleksilassila.litematica.printer.printer.zxy.Utils.Statistics.c
 import static me.aleksilassila.litematica.printer.printer.zxy.Utils.Statistics.loadChestTracker;
 import static me.aleksilassila.litematica.printer.printer.zxy.Utils.ZxyUtils.client;
 import static me.aleksilassila.litematica.printer.printer.zxy.inventory.OpenInventoryPacket.openIng;
-import static net.minecraft.block.ShulkerBoxBlock.FACING;
 
 public class InventoryUtils {
-    public static boolean isInventory(World world, BlockPos pos) {
+    public static boolean isInventory(Level world, BlockPos pos) {
         return fi.dy.masa.malilib.util.InventoryUtils.getInventory(world, pos) != null;
     }
     public static boolean hasItem(Item item){
         if (client.player.isCreative()) return true;
-        PlayerInventory inventory = client.player.getInventory();
-        for (int i = 0; i < inventory.size(); i++) {
-            if (inventory.getStack(i).getItem().equals(item)) return true;
+        Inventory inventory = client.player.getInventory();
+        for (int i = 0; i < inventory.getContainerSize(); i++) {
+            if (inventory.getItem(i).getItem().equals(item)) return true;
         }
         return false;
     }
 
     public static boolean canOpenInv(BlockPos pos) {
-        if (client.world != null) {
-            BlockState blockState = client.world.getBlockState(pos);
-            BlockEntity blockEntity = client.world.getBlockEntity(pos);
-            boolean isInventory = InventoryUtils.isInventory(client.world, pos);
+        if (client.level != null) {
+            BlockState blockState = client.level.getBlockState(pos);
+            BlockEntity blockEntity = client.level.getBlockEntity(pos);
+            boolean isInventory = InventoryUtils.isInventory(client.level, pos);
             try {
-                if ((isInventory && blockState.createScreenHandlerFactory(client.world, pos) == null) ||
+                if ((isInventory && blockState.getMenuProvider(client.level, pos) == null) ||
                         (blockEntity instanceof ShulkerBoxBlockEntity entity &&
+                                !ShulkerBoxBlockAccessor.canOpen(blockState,client.level,pos,entity)
                                 //#if MC > 12101
-                                !client.world.isSpaceEmpty(ShulkerEntity.calculateBoundingBox(1.0F, blockState.get(FACING), 0.0F, 0.5F, pos.toBottomCenterPos()).offset(pos).contract(1.0E-6)) &&
+                                // !client.level.noCollision(Shulker.getProgressDeltaAabb(1.0F, blockState.getValue(ShulkerBoxBlock.FACING), 0.0F, 0.5F, pos.getBottomCenter()).deflate(1.0E-6)) &&
                                 //#elseif MC <= 12101 && MC > 12004
-                                //$$ !client.world.isSpaceEmpty(ShulkerEntity.calculateBoundingBox(1.0F, blockState.get(FACING), 0.0F, 0.5F).offset(pos).contract(1.0E-6)) &&
+                                //$$ !client.level.noCollision(Shulker.getProgressDeltaAabb(1.0F, blockState.getValue(ShulkerBoxBlock.FACING), 0.0F, 0.5F).offset(pos).contract(1.0E-6)) &&
                                 //#elseif MC <= 12004
-                                //$$ !client.world.isSpaceEmpty(ShulkerEntity.calculateBoundingBox(blockState.get(FACING), 0.0f, 0.5f).offset(pos).contract(1.0E-6)) &&
+                                //$$ !client.level.noCollision(Shulker.getProgressDeltaAabb(blockState.getValue(ShulkerBoxBlock.FACING), 0.0f, 0.5f).offset(pos).contract(1.0E-6)) &&
                                 //#endif
-                                entity.getAnimationStage() == ShulkerBoxBlockEntity.AnimationStage.CLOSED)) {
+                                )) {
                     return false;
                 } else if (!isInventory) {
                     return false;
@@ -103,10 +106,10 @@ public class InventoryUtils {
     public static boolean switchItem() {
         if (!remoteItem.isEmpty() && !isOpenHandler && !openIng && OpenInventoryPacket.key == null) {
             LocalPlayer player = client.player;
-            ScreenHandler sc = player.currentScreenHandler;
-            if (!player.currentScreenHandler.equals(player.playerScreenHandler)) return false;
+            AbstractContainerMenu sc = player.containerMenu;
+            if (!player.containerMenu.equals(player.inventoryMenu)) return false;
             //排除合成栏 装备栏 副手
-            if (PRINT_CHECK.getBooleanValue() && sc.slots.stream().skip(9).limit(sc.slots.size() - 10).noneMatch(slot -> slot.getStack().isEmpty())
+            if (PRINT_CHECK.getBooleanValue() && sc.slots.stream().skip(9).limit(sc.slots.size() - 10).noneMatch(slot -> slot.getItem().isEmpty())
                     && (LitematicaMixinMod.QUICKSHULKER.getBooleanValue() || LitematicaMixinMod.INVENTORY.getBooleanValue())) {
                 SwitchItem.checkItems();
                 return true;
@@ -117,9 +120,9 @@ public class InventoryUtils {
                 for (Item item : remoteItem) {
                     //#if MC >= 12001
                     //#if MC > 12004
-                    MemoryUtils.currentMemoryKey = client.world.getRegistryKey().getValue();
+                    MemoryUtils.currentMemoryKey = client.level.dimension().identifier();
                     //#else
-                    //$$ MemoryUtils.currentMemoryKey = client.world.getDimensionKey().getValue();
+                    //$$ MemoryUtils.currentMemoryKey = client.level.getDimensionKey().getValue();
                     //#endif
                     MemoryUtils.itemStack = new ItemStack(item);
                     if (SearchItem.search(true)) {
@@ -162,14 +165,14 @@ public class InventoryUtils {
 //        if(true) return;
 
         LocalPlayer player = Minecraft.getInstance().player;
-        ScreenHandler sc = player.currentScreenHandler;
-        if (sc.equals(player.playerScreenHandler)) {
+        AbstractContainerMenu sc = player.containerMenu;
+        if (sc.equals(player.inventoryMenu)) {
             return;
         }
-        DefaultedList<Slot> slots = sc.slots;
+        NonNullList<Slot> slots = sc.slots;
         for (Item item : remoteItem) {
-            for (int y = 0; y < slots.get(0).inventory.size(); y++) {
-                if (slots.get(y).getStack().getItem().equals(item)) {
+            for (int y = 0; y < slots.get(0).container.getContainerSize(); y++) {
+                if (slots.get(y).getItem().getItem().equals(item)) {
 
                     String[] str = Configs.Generic.PICK_BLOCKABLE_SLOTS.getStringValue().split(",");
                     if (str.length == 0) return;
@@ -177,15 +180,15 @@ public class InventoryUtils {
                         if (s == null) break;
                         try {
                             int c = Integer.parseInt(s) - 1;
-                            if (Registries.ITEM.getId(player.getInventory().getStack(c).getItem()).toString().contains("shulker_box") &&
+                            if (BuiltInRegistries.ITEM.getKey(player.getInventory().getItem(c).getItem()).toString().contains("shulker_box") &&
                                     LitematicaMixinMod.QUICKSHULKER.getBooleanValue()) {
-                                Minecraft.getInstance().inGameHud.setOverlayMessage((Component.of("濳影盒占用了预选栏"), false);
+                                Minecraft.getInstance().gui.setOverlayMessage(Component.literal("濳影盒占用了预选栏"), false);
                                 continue;
                             }
 
                             if (OpenInventoryPacket.key != null) {
-                                SwitchItem.newItem(slots.get(y).getStack(), OpenInventoryPacket.pos, OpenInventoryPacket.key, y, -1);
-                            } else SwitchItem.newItem(slots.get(y).getStack(), null, null, y, shulkerBoxSlot);
+                                SwitchItem.newItem(slots.get(y).getItem(), OpenInventoryPacket.pos, OpenInventoryPacket.key, y, -1);
+                            } else SwitchItem.newItem(slots.get(y).getItem(), null, null, y, shulkerBoxSlot);
                             int a = Litematica_InventoryUtilsMixin.getEmptyPickBlockableHotbarSlot(player.getInventory()) == -1 ?
                                     Litematica_InventoryUtilsMixin.getPickBlockTargetSlot(player) :
                                     Litematica_InventoryUtilsMixin.getEmptyPickBlockableHotbarSlot(player.getInventory());
@@ -193,12 +196,12 @@ public class InventoryUtils {
                             ZxyUtils.switchPlayerInvToHotbarAir(c);
                             fi.dy.masa.malilib.util.InventoryUtils.swapSlots(sc, y, c);
                             InventoryUtils.setSelectedSlot(c);
-                            player.closeHandledScreen();
+                            player.closeContainer();
                             //刷新濳影盒
                             if (shulkerBoxSlot != -1) {
-                                ScreenHandler handler = client.player.currentScreenHandler;
-                                client.interactionManager.clickSlot(handler.syncId, shulkerBoxSlot, 0, SlotActionType.PICKUP, client.player);
-                                client.interactionManager.clickSlot(handler.syncId, shulkerBoxSlot, 0, SlotActionType.PICKUP, client.player);
+                                AbstractContainerMenu handler = client.player.containerMenu;
+                                client.gameMode.handleInventoryMouseClick(handler.containerId, shulkerBoxSlot, 0, ClickType.PICKUP, client.player);
+                                client.gameMode.handleInventoryMouseClick(handler.containerId, shulkerBoxSlot, 0, ClickType.PICKUP, client.player);
                             }
                             shulkerBoxSlot = -1;
                             isOpenHandler = false;
@@ -214,9 +217,9 @@ public class InventoryUtils {
         shulkerBoxSlot = -1;
         remoteItem = new LinkedHashSet<>();
         isOpenHandler = false;
-        ScreenHandler sc2 = player.currentScreenHandler;
-        if (!sc2.equals(player.playerScreenHandler)) {
-            player.closeHandledScreen();
+        AbstractContainerMenu sc2 = player.containerMenu;
+        if (!sc2.equals(player.inventoryMenu)) {
+            player.closeContainer();
         }
     }
 
@@ -242,19 +245,19 @@ public class InventoryUtils {
         } else return -1;
     }
 
-    public static DefaultedList<ItemStack> getMainStacks() {
+    public static NonNullList<ItemStack> getMainStacks() {
         if (client.player != null) {
             //#if MC > 12104
-            return client.player.getInventory().getMainStacks();
+            return client.player.getInventory().getNonEquipmentItems();
             //#else
             //$$ return client.player.getInventory().main;
             //#endif
-        }else return DefaultedList.of();
+        }else return NonNullList.create();
     }
 
     public static boolean switchToItems(LocalPlayer player, Item[] items) {
         if (items == null) return false;
-        PlayerInventory inv = Implementation.getInventory(player);
+        Inventory inv = Implementation.getInventory(player);
         //inv.getMainHandStack()  信息滞后 如果服务器有延迟这个获取的信息可能是错误的
 //        for (Item item : items) {
 //            if (inv.getMainHandStack().getItem() == item) {
@@ -262,18 +265,18 @@ public class InventoryUtils {
 //            }
 //        }
         for (Item item : items) {
-            if (Implementation.getAbilities(player).creativeMode) {
+            if (Implementation.getAbilities(player).instabuild) {
                 fi.dy.masa.litematica.util.InventoryUtils.setPickedItemToHand(new ItemStack(item), client);
-                client.interactionManager.clickCreativeStack(client.player.getStackInHand(Hand.MAIN_HAND), 36 + getSelectedSlot());
+                client.gameMode.handleCreativeModeItemAdd(client.player.getItemInHand(InteractionHand.MAIN_HAND), 36 + getSelectedSlot());
                 return true;
             } else {
                 int slot = -1;
-                for (int i = 0; i < inv.size(); i++) {
-                    if (inv.getStack(i).getItem() == item && inv.getStack(i).getCount() > 0)
+                for (int i = 0; i < inv.getContainerSize(); i++) {
+                    if (inv.getItem(i).getItem() == item && inv.getItem(i).getCount() > 0)
                         slot = i;
                 }
                 if (slot != -1) {
-                    Printer.yxcfItem = inv.getStack(slot);
+                    Printer.yxcfItem = inv.getItem(slot);
                     Printer.getPrinter().swapHandWithSlot(player, slot);
                     return true;
                 }
@@ -294,12 +297,12 @@ public class InventoryUtils {
 
     static boolean openShulker(HashSet<Item> items) {
         for (Item item : items) {
-            ScreenHandler sc = Minecraft.getInstance().player.playerScreenHandler;
+            AbstractContainerMenu sc = Minecraft.getInstance().player.inventoryMenu;
             for (int i = 9; i < sc.slots.size(); i++) {
-                ItemStack stack = sc.slots.get(i).getStack();
-                String itemid = Registries.ITEM.getId(stack.getItem()).toString();
+                ItemStack stack = sc.slots.get(i).getItem();
+                String itemid = BuiltInRegistries.ITEM.getKey(stack.getItem()).toString();
                 if (itemid.contains("shulker_box") && stack.getCount() == 1) {
-                    DefaultedList<ItemStack> items1 = fi.dy.masa.malilib.util.InventoryUtils.getStoredItems(stack, -1);
+                    NonNullList<ItemStack> items1 = fi.dy.masa.malilib.util.InventoryUtils.getStoredItems(stack, -1);
                     if (items1.stream().anyMatch(s1 -> s1.getItem().equals(item))) {
                         try {
                             shulkerBoxSlot = i;

@@ -1,10 +1,10 @@
 package me.aleksilassila.litematica.printer.printer.zxy.Utils;
 
 import me.aleksilassila.litematica.printer.printer.Printer;
-import net.minecraft.block.Block;
+import net.minecraft.world.InteractionHand;
+import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.util.Hand;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.world.phys.Vec3;
@@ -191,7 +191,7 @@ public class BlockTask {
                 return false;
             }
             vec3d = vec3d != null ? vec3d : this.vec3d;
-            PlayerAction.interactBlock(Hand.MAIN_HAND, vec3d, side, pos, false, useShift);
+            PlayerAction.interactBlock(InteractionHand.MAIN_HAND, vec3d, side, pos, false, useShift);
             taskState = BlockTaskState.DONE_TASK;
             return true;
         }
@@ -205,7 +205,7 @@ public class BlockTask {
                 if (blockTask.done()) continue;
                 blockTask.tick();
             }
-            blockTaskList.removeIf(task -> task.done() || !task.pos.isWithinDistance(ZxyUtils.client.player.getEyePos(), getRage()));
+            blockTaskList.removeIf(task -> task.done() || !task.pos.closerToCenterThan(ZxyUtils.client.player.getEyePosition(), getRage()));
         }
 
         public static boolean addTask(BlockTask task) {

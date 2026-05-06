@@ -69,7 +69,7 @@ public class HotkeysCallback implements IHotkeyCallback {
             //$$         database.clearDimension(dimension);
             //$$     }
             //$$ }
-            //$$ client.inGameHud.setOverlayMessage((Component.of("打印机库存已清空"), false);
+            //$$ client.gui.setOverlayMessage(Component.literal("打印机库存已清空"), false);
             //#endif
             return true;
         }
@@ -88,7 +88,7 @@ public class HotkeysCallback implements IHotkeyCallback {
             else if(key == DELETE.getKeybind()){
                 MemoryBankImpl memoryBank = MemoryBankAccessImpl.INSTANCE.getLoadedInternal().orElse(null);
                 if (memoryBank!= null && OpenInventoryPacket.key != null && client.player != null) {
-                    memoryBank.removeMemory(OpenInventoryPacket.key.getValue(),OpenInventoryPacket.pos);
+                    memoryBank.removeMemory(OpenInventoryPacket.key.identifier(),OpenInventoryPacket.pos);
                     OpenInventoryPacket.key = null;
                     client.player.closeContainer();
                 }

@@ -15,7 +15,7 @@ import static me.aleksilassila.litematica.printer.printer.zxy.inventory.SwitchIt
 import static me.aleksilassila.litematica.printer.printer.zxy.Utils.ZxyUtils.*;
 
 @Mixin(ClientPacketListener.class)
-public abstract class MixinClientPlayNetworkHandler {
+public abstract class MixinClientPacketListener {
 
     @Inject(at = @At("TAIL"),method = "handleContainerContent")
     public void onInventory(ClientboundContainerSetContentPacket packet, CallbackInfo ci){

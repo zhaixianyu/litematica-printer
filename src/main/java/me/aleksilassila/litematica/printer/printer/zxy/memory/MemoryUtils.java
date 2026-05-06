@@ -18,13 +18,13 @@ package me.aleksilassila.litematica.printer.printer.zxy.memory;
 //$$ import net.minecraft.world.item.ItemStack;
 //$$ import net.minecraft.registry.Registries;
 //$$ import net.minecraft.screen.NamedScreenHandlerFactory;
-//$$ import net.minecraft.screen.ScreenHandler;
+//$$ import net.minecraft.world.inventory.AbstractContainerMenu;
 //$$ import net.minecraft.world.inventory.Slot;
 //$$ import net.minecraft.network.chat.Component;
 //$$ import net.minecraft.resources.Identifier;
 //$$ import net.minecraft.core.BlockPos;
 //$$ import net.minecraft.world.phys.Vec3;
-//$$ import net.minecraft.world.World;
+//$$ import net.minecraft.world.level.Level;
 //$$ import net.minecraft.world.chunk.EmptyChunk;
 //$$ import net.minecraft.world.chunk.WorldChunk;
 //$$ import net.minecraft.world.level.storage.LevelStorage;
@@ -58,7 +58,7 @@ package me.aleksilassila.litematica.printer.printer.zxy.memory;
 //$$
 //$$     private static boolean expandedStorageFailed = false;
 //$$
-//$$     public static <T extends ScreenHandler> void handleItemsFromScreen(@NotNull ScreenHandler screen) {
+//$$     public static <T extends AbstractContainerMenu> void handleItemsFromScreen(@NotNull AbstractContainerMenu screen) {
 //$$         Minecraft mc = Minecraft.getInstance();
 //$$         {
 //$$         MemoryDatabase database = MemoryDatabase.getCurrent();
@@ -120,7 +120,7 @@ package me.aleksilassila.litematica.printer.printer.zxy.memory;
 //$$             }
 //$$         }
 //$$         if (ChestTracker.CONFIG.miscOptions.printGuiClassNames)
-//$$             ChestTracker.sendDebugMessage((Component.of(screen.getClass().getSimpleName()));
+//$$             ChestTracker.sendDebugMessage(Component.literal(screen.getClass().getSimpleName()));
 //$$     }
 //$$
 //$$         key = null;
@@ -147,7 +147,7 @@ package me.aleksilassila.litematica.printer.printer.zxy.memory;
 //$$
 //$$     public static boolean isValidSlot(Slot slot) {
 //$$         try {
-//$$             return !(slot.inventory instanceof PlayerInventory)
+//$$             return !(slot.inventory instanceof Inventory)
 //$$                 && !AppliedEnergisticsHandler.isAE2Slot(slot)
 //$$                 && slot.hasStack();
 //$$         } catch (Throwable ex) {
@@ -219,7 +219,7 @@ package me.aleksilassila.litematica.printer.printer.zxy.memory;
 //$$         }
 //$$     }
 //$$
-//$$     public static <T extends ScreenHandler> boolean validScreenToTrack(HandledScreen<T> screen) {
+//$$     public static <T extends AbstractContainerMenu> boolean validScreenToTrack(HandledScreen<T> screen) {
 //$$         return !(screen instanceof AbstractInventoryScreen) && screen != null;
 //$$     }
 //$$
@@ -274,7 +274,7 @@ package me.aleksilassila.litematica.printer.printer.zxy.memory;
 //$$         return checkExistsInWorld(memory, Minecraft.getInstance().world);
 //$$     }
 //$$
-//$$     public static boolean checkExistsInWorld(Memory memory, ClientWorld world) {
+//$$     public static boolean checkExistsInWorld(Memory memory, ClientLevel world) {
 //$$         BlockPos pos = memory.getPosition();
 //$$         if (world != null && pos != null) {
 //$$             WorldChunk chunk = world.getWorldChunk(pos);
@@ -291,7 +291,7 @@ package me.aleksilassila.litematica.printer.printer.zxy.memory;
 //$$         //}
 //$$     }
 //$$
-//$$     public static void checkValidCycle(ClientWorld world) {
+//$$     public static void checkValidCycle(ClientLevel world) {
 //$$         if (world.getTime() % ChestTracker.CONFIG.databaseOptions.destroyedMemoryCheckInterval == 0) {
 //$$             MemoryDatabase database = MemoryDatabase.getCurrent();
 //$$             if (database != null) {
