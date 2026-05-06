@@ -28,7 +28,7 @@ import net.minecraft.world.inventory.Slot;
 import net.minecraft.network.chat.Component;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.level.Level;
-import net.minecraft.resources.Identifier;
+import net.minecraft.resources.ResourceLocation;
 
 //#if MC > 11904
 import me.aleksilassila.litematica.printer.printer.zxy.chesttracker.MemoryUtils;
@@ -78,15 +78,7 @@ public class InventoryUtils {
             try {
                 if ((isInventory && blockState.getMenuProvider(client.level, pos) == null) ||
                         (blockEntity instanceof ShulkerBoxBlockEntity entity &&
-                                !ShulkerBoxBlockAccessor.canOpen(blockState,client.level,pos,entity)
-                                //#if MC > 12101
-                                // !client.level.noCollision(Shulker.getProgressDeltaAabb(1.0F, blockState.getValue(ShulkerBoxBlock.FACING), 0.0F, 0.5F, pos.getBottomCenter()).deflate(1.0E-6)) &&
-                                //#elseif MC <= 12101 && MC > 12004
-                                //$$ !client.level.noCollision(Shulker.getProgressDeltaAabb(1.0F, blockState.getValue(ShulkerBoxBlock.FACING), 0.0F, 0.5F).offset(pos).contract(1.0E-6)) &&
-                                //#elseif MC <= 12004
-                                //$$ !client.level.noCollision(Shulker.getProgressDeltaAabb(blockState.getValue(ShulkerBoxBlock.FACING), 0.0f, 0.5f).offset(pos).contract(1.0E-6)) &&
-                                //#endif
-                                )) {
+                                !ShulkerBoxBlockAccessor.canOpen(blockState,client.level,pos,entity))) {
                     return false;
                 } else if (!isInventory) {
                     return false;
@@ -120,7 +112,7 @@ public class InventoryUtils {
                 for (Item item : remoteItem) {
                     //#if MC >= 12001
                     //#if MC > 12004
-                    MemoryUtils.currentMemoryKey = client.level.dimension().identifier();
+                    MemoryUtils.currentMemoryKey = client.level.dimension().location();
                     //#else
                     //$$ MemoryUtils.currentMemoryKey = client.level.getDimensionKey().getValue();
                     //#endif
@@ -227,9 +219,9 @@ public class InventoryUtils {
 
         if (client.player != null) {
             //#if MC > 12104
-            client.player.getInventory().setSelectedSlot(slot);
+            //$$ client.player.getInventory().setSelectedSlot(slot);
             //#else
-            //$$ client.player.getInventory().selectedSlot = slot;
+            client.player.getInventory().selected = slot;
             //#endif
         }
     }
@@ -238,9 +230,9 @@ public class InventoryUtils {
 
         if (client.player != null) {
             //#if MC > 12104
-            return client.player.getInventory().getSelectedSlot();
+            //$$ return client.player.getInventory().getSelectedSlot();
             //#else
-            //$$ return client.player.getInventory().selectedSlot;
+            return client.player.getInventory().selected;
             //#endif
         } else return -1;
     }
@@ -248,9 +240,9 @@ public class InventoryUtils {
     public static NonNullList<ItemStack> getMainStacks() {
         if (client.player != null) {
             //#if MC > 12104
-            return client.player.getInventory().getNonEquipmentItems();
+            //$$ return client.player.getInventory().getNonEquipmentItems();
             //#else
-            //$$ return client.player.getInventory().main;
+            return client.player.getInventory().items;
             //#endif
         }else return NonNullList.create();
     }

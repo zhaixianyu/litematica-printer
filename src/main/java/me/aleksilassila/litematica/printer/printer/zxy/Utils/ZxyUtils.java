@@ -16,7 +16,6 @@ import net.minecraft.core.*;
 import net.minecraft.core.component.DataComponents;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.nbt.CompoundTag;
-import net.minecraft.network.HashedStack;
 import net.minecraft.network.protocol.game.ServerboundContainerClickPacket;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.world.InteractionHand;
@@ -47,7 +46,7 @@ import java.util.function.Consumer;
 //#endif
 
 //#if MC >= 12105
-
+//$$ import net.minecraft.network.HashedStack;
 //#endif
 
 //#if MC >= 12001
@@ -415,7 +414,7 @@ public class ZxyUtils {
         //#endif
 
         //#if MC >= 12105
-        HashedStack itemStackHash = HashedStack.create(uniqueItem, networkHandler.decoratedHashOpsGenenerator());
+        //$$ HashedStack itemStackHash = HashedStack.create(uniqueItem, networkHandler.decoratedHashOpsGenenerator());
         //#endif
 
         networkHandler.send(new ServerboundContainerClickPacket(
@@ -424,11 +423,11 @@ public class ZxyUtils {
                 (short) -999, (byte) 2,
                 ClickType.QUICK_CRAFT,
                 //#if MC < 12105
-                //$$ uniqueItem,
-                //$$ new Int2ObjectOpenHashMap<>()
+                uniqueItem,
+                new Int2ObjectOpenHashMap<>()
                 //#else
-                new Int2ObjectOpenHashMap<>(),
-                itemStackHash
+                //$$ new Int2ObjectOpenHashMap<>(),
+                //$$ itemStackHash
                 //#endif
 
 

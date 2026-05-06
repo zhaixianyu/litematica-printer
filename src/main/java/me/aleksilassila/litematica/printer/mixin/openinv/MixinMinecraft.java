@@ -15,8 +15,10 @@ import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
 import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.client.multiplayer.MultiPlayerGameMode;
 import net.minecraft.client.player.LocalPlayer;
+import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.item.Item;
 import net.minecraft.core.BlockPos;
+import net.minecraft.world.item.ItemStack;
 import org.jetbrains.annotations.Nullable;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
@@ -64,11 +66,11 @@ public abstract class MixinMinecraft {
         original.call(instance, blockPos, bl);
     }
     //#else
-    //$$ @WrapOperation(method = "doItemPick",at = @At(value = "INVOKE", target = "Lnet/minecraft/entity/player/Inventory;getSlotWithStack(Lnet/minecraft/item/ItemStack;)I" ))
-    //$$ private int doItemPick(Inventory instance, ItemStack stack, Operation<Integer> original) {
-    //$$     int slotWithStack = original.call(instance, stack);
-    //$$     if(!player.getAbilities().creativeMode && (INVENTORY.getBooleanValue() || QUICKSHULKER.getBooleanValue()) && slotWithStack == -1){
-    //$$         Item item = stack.getItem();
+    //$$ @WrapOperation(method = "pickBlock",at = @At(value = "INVOKE", target = "Lnet/minecraft/world/entity/player/Inventory;findSlotMatchingItem(Lnet/minecraft/world/item/ItemStack;)I" ))
+    //$$ private int doItemPick(Inventory instance, ItemStack itemStack, Operation<Integer> original) {
+    //$$     int slotWithStack = original.call(instance, itemStack);
+    //$$     if(!player.getAbilities().instabuild && (INVENTORY.getBooleanValue() || QUICKSHULKER.getBooleanValue()) && slotWithStack == -1){
+    //$$         Item item = itemStack.getItem();
     //$$         remoteItem.add(item);
     //$$         switchItem();
     //$$         return -1;

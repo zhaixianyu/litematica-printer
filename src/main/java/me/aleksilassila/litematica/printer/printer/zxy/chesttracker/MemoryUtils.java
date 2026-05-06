@@ -12,7 +12,7 @@ import net.minecraft.client.gui.components.EditBox;
 import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.network.chat.Component;
-import net.minecraft.resources.Identifier;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.inventory.Slot;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.core.BlockPos;
@@ -46,7 +46,7 @@ public class MemoryUtils {
     //点击的物品
     public static ItemStack itemStack = null;
     //当前打开的维度
-    public static Identifier currentMemoryKey = null;
+    public static ResourceLocation currentMemoryKey = null;
     //远程取物返回包中的方块数据
     public static BlockState blockState = null;
     //箱子追踪搜索请求
@@ -98,14 +98,14 @@ public class MemoryUtils {
             if (screen instanceof ChestTrackerScreen chestTrackerScreen){
                 ScreenKeyboardEvents.afterKeyRelease(chestTrackerScreen).register((currentScreen, keyCode
                         //#if MC <= 12106
-                        //$$ ,scanCode ,modifiers
+                        ,scanCode ,modifiers
                         //#endif
                 ) -> {
                     boolean b1 = false;
                     //#if MC > 12106
-                    b1 = minecraftClient.options.keyInventory.matches(keyCode);
+                    //$$ b1 = minecraftClient.options.keyInventory.matches(keyCode);
                     //#else
-                    //$$ b1 = minecraftClient.options.keyInventory.matches(keyCode,scanCode);
+                    b1 = minecraftClient.options.keyInventory.matches(keyCode,scanCode);
                     //#endif
                     if (b1 && !(chestTrackerScreen.getFocused() instanceof EditBox)){
                         chestTrackerScreen.onClose();
@@ -193,7 +193,7 @@ public class MemoryUtils {
 //                .toEntry(OpenInventoryPacket.key.getValue(), OpenInventoryPacket.pos)
 //        );
         if (memory != null) {
-            memoryBank.addMemory(OpenInventoryPacket.key.identifier(),OpenInventoryPacket.pos,memory);
+            memoryBank.addMemory(OpenInventoryPacket.key.location(),OpenInventoryPacket.pos,memory);
         }
     }
 }

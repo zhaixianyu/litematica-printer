@@ -88,7 +88,7 @@ public class HotkeysCallback implements IHotkeyCallback {
             else if(key == DELETE.getKeybind()){
                 MemoryBankImpl memoryBank = MemoryBankAccessImpl.INSTANCE.getLoadedInternal().orElse(null);
                 if (memoryBank!= null && OpenInventoryPacket.key != null && client.player != null) {
-                    memoryBank.removeMemory(OpenInventoryPacket.key.identifier(),OpenInventoryPacket.pos);
+                    memoryBank.removeMemory(OpenInventoryPacket.key.location(),OpenInventoryPacket.pos);
                     OpenInventoryPacket.key = null;
                     client.player.closeContainer();
                 }

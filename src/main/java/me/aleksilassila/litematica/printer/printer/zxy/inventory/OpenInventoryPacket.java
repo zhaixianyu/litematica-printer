@@ -22,7 +22,6 @@ import net.minecraft.world.Container;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.level.ChunkPos;
 import net.minecraft.world.level.Level;
-import net.minecraft.world.level.block.entity.BaseContainerBlockEntity;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.entity.ShulkerBoxBlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
@@ -30,14 +29,14 @@ import net.minecraft.world.level.block.Block;
 import net.minecraft.core.BlockPos;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.network.chat.Component;
-import net.minecraft.resources.Identifier;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.phys.BlockHitResult;
+import org.jetbrains.annotations.NotNull;
 
 
 //#if MC >= 12001
 import me.aleksilassila.litematica.printer.printer.zxy.chesttracker.MemoryUtils;
 import net.minecraft.world.phys.Vec3;
-import org.jspecify.annotations.NonNull;
 import red.jackf.chesttracker.api.providers.InteractionTracker;
 //#endif
 
@@ -47,6 +46,7 @@ import red.jackf.chesttracker.api.providers.InteractionTracker;
 //#endif
 
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.HashMap;
 
 import static me.aleksilassila.litematica.printer.printer.Printer.printerMemorySync;
@@ -62,9 +62,9 @@ import static me.aleksilassila.litematica.printer.printer.zxy.inventory.OpenInve
 public class OpenInventoryPacket {
 
     //#if MC > 12104
-    private static final TicketType OPEN_TICKET = TicketType.UNKNOWN;
+    //$$ private static final TicketType OPEN_TICKET = TicketType.UNKNOWN;
     //#else
-    //$$ private static final TicketType<ChunkPos> OPEN_TICKET = TicketType.create("openInv", Comparator.comparingLong(ChunkPos::toLong), 2);
+    private static final TicketType<ChunkPos> OPEN_TICKET = TicketType.create("openInv", Comparator.comparingLong(ChunkPos::toLong), 2);
     //#endif
     public static HashMap<ServerPlayer, TickList> tickMap = new HashMap<>();
     public static boolean openIng = false;
@@ -75,9 +75,9 @@ public class OpenInventoryPacket {
     public static long clientTryTime = 0;
     public static long remoteTime = 0;
     //#if MC > 12006
-    private static final Identifier OPEN_INVENTORY = Identifier.fromNamespaceAndPath("remoteinventory", "open_inventory");
-    private static final Identifier OPEN_RETURN = Identifier.fromNamespaceAndPath("openreturn", "open_return");
-    private static final Identifier HELLO_REMOTE_INTERACTIONS = Identifier.fromNamespaceAndPath("hello", "hello_remote_interactions");
+    private static final ResourceLocation OPEN_INVENTORY = ResourceLocation.fromNamespaceAndPath("remoteinventory", "open_inventory");
+    private static final ResourceLocation OPEN_RETURN = ResourceLocation.fromNamespaceAndPath("openreturn", "open_return");
+    private static final ResourceLocation HELLO_REMOTE_INTERACTIONS = ResourceLocation.fromNamespaceAndPath("hello", "hello_remote_interactions");
     //#else
     //$$ private static final Identifier OPEN_INVENTORY = new Identifier("remoteinventory", "open_inventory");
     //$$ private static final Identifier OPEN_RETURN = new Identifier("openreturn", "open_return");
@@ -108,7 +108,7 @@ public class OpenInventoryPacket {
        public OpenPackage() {
        }
         @Override
-        public @NonNull Type<? extends CustomPacketPayload> type() {
+        public @NotNull Type<? extends CustomPacketPayload> type() {
             return OPEN_INVENTORY_ID;
         }
     }
@@ -125,7 +125,7 @@ public class OpenInventoryPacket {
             }
         };
         @Override
-        public @NonNull Type<? extends CustomPacketPayload> type() {
+        public @NotNull Type<? extends CustomPacketPayload> type() {
             return HELLO_REMOTE_INTERACTIONS_ID;
         }
     }
@@ -149,7 +149,7 @@ public class OpenInventoryPacket {
         };
 
         @Override
-        public @NonNull Type<? extends CustomPacketPayload> type() {
+        public @NotNull Type<? extends CustomPacketPayload> type() {
             return OPEN_RETURN_ID;
         }
     }
@@ -215,9 +215,9 @@ public class OpenInventoryPacket {
             if (payload instanceof OpenPackage packetByteBuf) {
                 MinecraftServer server;
                 //#if MC > 12106
-                server = context.server();
+                //$$ server = context.server();
                 //#else
-                //$$ server = context.player().getServer();
+                server = context.player().getServer();
                 //#endif
                 server.execute(() -> {
                     openInv(server, context.player(), packetByteBuf.pos, packetByteBuf.world);
@@ -251,9 +251,9 @@ public class OpenInventoryPacket {
         BlockState blockState = world.getBlockState(pos);
         if (blockState == null) {
             //#if MC > 12104
-            world.getChunkSource().addTicketWithRadius(OPEN_TICKET, new ChunkPos(pos), 2);
+            //$$ world.getChunkSource().addTicketWithRadius(OPEN_TICKET, new ChunkPos(pos), 2);
             //#else
-            //$$ world.getChunkSource().addTicketWithRadius(OPEN_TICKET, new ChunkPos(pos), 2, new ChunkPos(pos));
+            world.getChunkSource().addRegionTicket(OPEN_TICKET, new ChunkPos(pos), 2, new ChunkPos(pos));
             //#endif
 
         }
@@ -316,7 +316,7 @@ public class OpenInventoryPacket {
 //        System.out.println(pos+"   key: "+key);
         FriendlyByteBuf buf = new FriendlyByteBuf(Unpooled.buffer());
         buf.writeBlockPos(pos);
-        buf.writeIdentifier(key.identifier());
+        buf.writeResourceLocation(key.location());
         //#if MC > 12004
         OpenPackage openPackage = new OpenPackage();
         openPackage.world = key;
@@ -350,7 +350,7 @@ public class OpenInventoryPacket {
                 //$$ String translate = StringUtils.translate(translationKey);
                 //$$ if (client.player != null) client.player.sendMessage(Component.literal("打开容器失败 \n位于"+ translate+"  "+pos.toString()),false);
                 //#else
-                String translationKey = key.identifier().toLanguageKey();
+                String translationKey = key.location().toLanguageKey();
                 String translate = StringUtils.translate(translationKey);
                     //#if MC > 12101
                     if (client.player != null) client.player.displayClientMessage(Component.literal("打开容器失败 \n位于"+ translate+"  "+pos.getCenter().toString()),false);
@@ -360,7 +360,7 @@ public class OpenInventoryPacket {
                 //#endif
 
                 //#if MC >= 12001
-                MemoryUtils.PRINTER_MEMORY.removeMemory(key.identifier(), pos);
+                MemoryUtils.PRINTER_MEMORY.removeMemory(key.location(), pos);
                 //#else
                 //$$ red.jackf.chesttracker.memory.MemoryDatabase.getCurrent().removePos(key.getValue() , pos);
                 //$$ me.aleksilassila.litematica.printer.printer.zxy.memory.MemoryDatabase.getCurrent().removePos(key.getValue() , pos);

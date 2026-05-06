@@ -139,9 +139,9 @@ public class InventoryManager {
             f *= 1.0F + (float) (MobEffectUtil.getDigSpeedAmplification(player) + 1) * 0.2F;
         }
 
-        if (player.hasEffect(MobEffects.MINING_FATIGUE)) {
+        if (player.hasEffect(MobEffects.DIG_SLOWDOWN)) {
             float k;
-            switch (player.getEffect(MobEffects.MINING_FATIGUE).getAmplifier()) {
+            switch (player.getEffect(MobEffects.DIG_SLOWDOWN).getAmplifier()) {
                 case 0:
                     k = 0.3F;
                     break;

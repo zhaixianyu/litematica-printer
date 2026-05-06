@@ -35,7 +35,7 @@ public class ItemStackUtilMixin {
                     //#if MC > 12006
                     Holder<Enchantment> ench1 = ench;
                     ResourceKey<Enchantment> enchantmentRegistryKey = ench1.unwrapKey().get();
-                    String translationKey = enchantmentRegistryKey.identifier().toLanguageKey();
+                    String translationKey = enchantmentRegistryKey.location().toLanguageKey();
                     if (testLang(translationKey, filter)) return true;
                     String translate = StringUtils.translate(translationKey);
                     return translate != null && (translate.contains(filter) || PinYinSearch.hasPinYin(translate, filter));

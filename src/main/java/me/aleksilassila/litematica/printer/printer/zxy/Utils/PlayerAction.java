@@ -6,16 +6,16 @@ import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 
-
-//#if MC > 12105
-import net.minecraft.network.protocol.game.ServerboundPlayerInputPacket;
+import net.minecraft.network.protocol.game.ServerboundPlayerCommandPacket;
 import net.minecraft.world.InteractionHand;
-import net.minecraft.world.entity.player.Input;
+//#if MC > 12105
+//$$ import net.minecraft.network.protocol.game.ServerboundPlayerInputPacket;
+//$$ import net.minecraft.world.entity.player.Input;
+//#endif
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.state.BlockState;
-import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.Vec3;
-//#endif
+import net.minecraft.world.phys.BlockHitResult;
 
 import static me.aleksilassila.litematica.printer.printer.Printer.canBreakBlock;
 import static me.aleksilassila.litematica.printer.printer.zxy.Utils.ZxyUtils.canInteracted;
@@ -48,10 +48,10 @@ public class PlayerAction {
 
     public static void setShift(LocalPlayer player , boolean shift){
         //#if MC > 12105
-        Input input = new Input(player.input.keyPresses.forward(), player.input.keyPresses.backward(), player.input.keyPresses.left(), player.input.keyPresses.right(), player.input.keyPresses.jump(), shift, player.input.keyPresses.sprint());
-        ServerboundPlayerInputPacket packet = new ServerboundPlayerInputPacket(input);
+        //$$ Input input = new Input(player.input.keyPresses.forward(), player.input.keyPresses.backward(), player.input.keyPresses.left(), player.input.keyPresses.right(), player.input.keyPresses.jump(), shift, player.input.keyPresses.sprint());
+        //$$ ServerboundPlayerInputPacket packet = new ServerboundPlayerInputPacket(input);
         //#else
-        //$$ ClientCommandC2SPacket packet = new ClientCommandC2SPacket(player, shift ? ClientCommandC2SPacket.Mode.PRESS_SHIFT_KEY : ClientCommandC2SPacket.Mode.RELEASE_SHIFT_KEY);
+        ServerboundPlayerCommandPacket packet = new ServerboundPlayerCommandPacket(player, shift ? ServerboundPlayerCommandPacket.Action.PRESS_SHIFT_KEY : ServerboundPlayerCommandPacket.Action.RELEASE_SHIFT_KEY);
         //#endif
 
         player.connection.send(packet);

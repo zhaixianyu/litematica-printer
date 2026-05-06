@@ -8,7 +8,7 @@ import net.minecraft.client.gui.components.EditBox;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.resources.Identifier;
+import net.minecraft.resources.ResourceLocation;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Overwrite;
 import org.spongepowered.asm.mixin.Shadow;
@@ -26,9 +26,9 @@ import red.jackf.chesttracker.impl.util.ItemStacks;
 import java.util.*;
 
 //#if MC > 12106
-import net.minecraft.client.input.KeyEvent;
+//$$ import net.minecraft.client.input.KeyEvent;
 //#else
-//$$
+
 //#endif
 
 
@@ -65,7 +65,7 @@ public abstract class ChestTrackerScreenMixin extends Screen {
             this.scroll.setDisabled(filtered.size() <= guiConfig.gridWidth * guiConfig.gridHeight);
         }).start();
     }
-    @Shadow(remap = false) private Identifier currentMemoryKey;
+    @Shadow(remap = false) private ResourceLocation currentMemoryKey;
 
     @Inject(at = @At("HEAD"), method = "updateItems",remap = false)
     private void upDateItems(CallbackInfo ci) {

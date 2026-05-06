@@ -10,7 +10,7 @@ import net.minecraft.resources.ResourceKey;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.resources.Identifier;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.level.block.ShulkerBoxBlock;
 import org.jetbrains.annotations.NotNull;
@@ -30,7 +30,7 @@ import java.util.concurrent.atomic.AtomicBoolean;
 public class SearchItem {
     static AtomicBoolean hasItem = new AtomicBoolean(false);
     static boolean isPrinterMemory = false;
-    static Map<Identifier,Map<BlockPos, Memory>> currItems = new LinkedHashMap<>();
+    static Map<ResourceLocation,Map<BlockPos, Memory>> currItems = new LinkedHashMap<>();
     public static int page = 0;
     public static int maxPage = 0;
     public static void initPage(){
@@ -70,9 +70,9 @@ public class SearchItem {
         SearchItem.isPrinterMemory = isPrinterMemory;
         MemoryBankImpl memoryBank = isPrinterMemory ? MemoryUtils.PRINTER_MEMORY : MemoryBankAccessImpl.INSTANCE.getLoadedInternal().orElse(null);
         if (memoryBank != null) {
-            Map<Identifier, MemoryKeyImpl> memories = memoryBank.getMemories();
+            Map<ResourceLocation, MemoryKeyImpl> memories = memoryBank.getMemories();
             if (MemoryUtils.currentMemoryKey != null) {
-                Map<Identifier,Map<BlockPos,Memory>> itemMemoryMap = new LinkedHashMap<>();
+                Map<ResourceLocation,Map<BlockPos,Memory>> itemMemoryMap = new LinkedHashMap<>();
                 //搜索当前选中的维度
                 Map<BlockPos, Memory> blockPosMemoryMap = memoriesSearch(MemoryUtils.currentMemoryKey, MemoryUtils.itemStack, memoryBank);
                 itemMemoryMap.put(MemoryUtils.currentMemoryKey,blockPosMemoryMap);
@@ -96,7 +96,7 @@ public class SearchItem {
         return false;
     }
 
-    public static Map<BlockPos,Memory> memoriesSearch(Identifier key, ItemStack itemStack, MemoryBankImpl memoryBank) {
+    public static Map<BlockPos,Memory> memoriesSearch(ResourceLocation key, ItemStack itemStack, MemoryBankImpl memoryBank) {
         if (key == null || itemStack == null) return null;
         LocalPlayer player = ZxyUtils.client.player;
         if (player == null) return null;
