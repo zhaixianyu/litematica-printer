@@ -41,9 +41,9 @@ public class BlockPlacer {
         LocalPlayer player = ZxyUtils.client.player;
         if(player == null) return;
         //#if MC > 12101
-        //$$ Minecraft.getInstance().getConnection().send(new ServerboundMovePlayerPacket.Rot(yaw, pitch, player.onGround(),player.horizontalCollision));
+        Minecraft.getInstance().getConnection().send(new ServerboundMovePlayerPacket.Rot(yaw, pitch, player.onGround(),player.horizontalCollision));
         //#else
-        Minecraft.getInstance().getConnection().send(new ServerboundMovePlayerPacket.Rot(yaw, pitch, player.isOnGround()));
+        //$$ Minecraft.getInstance().getConnection().send(new ServerboundMovePlayerPacket.Rot(yaw, pitch, player.onGround()));
         //#endif
     }
 
@@ -91,16 +91,16 @@ public class BlockPlacer {
 
         PlayerAction.interactBlock(InteractionHand.OFF_HAND,
                 //#if MC > 11902
-                //$$ hitResult.getBlockPos().getCenter()
+                hitResult.getBlockPos().getCenter()
                 //#else
-                Vec3.atCenterOf(hitResult.getBlockPos())
+                //$$ Vec3.atCenterOf(hitResult.getBlockPos())
                 //#endif
                 ,hitResult.getDirection(),hitResult.getBlockPos(),hitResult.isInside(),false);
         if (!itemStack.isEmpty() && !player.getCooldowns().isOnCooldown(
                 //#if MC > 12101
-                //$$ itemStack
+                itemStack
                 //#else
-                itemStack.getItem()
+                //$$ itemStack.getItem()
                 //#endif
         )) {
             UseOnContext itemUsageContext = new UseOnContext(player, InteractionHand.OFF_HAND, hitResult);

@@ -17,11 +17,11 @@ import org.spongepowered.asm.mixin.injection.Inject;
 
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 //#if MC > 12001
-//$$ import net.minecraft.client.multiplayer.ClientCommonPacketListenerImpl;
-//$$ @Mixin(value = ClientCommonPacketListenerImpl.class)
+import net.minecraft.client.multiplayer.ClientCommonPacketListenerImpl;
+@Mixin(value = ClientCommonPacketListenerImpl.class)
 //#else
-import net.minecraft.client.multiplayer.ClientPacketListener;
-@Mixin(ClientPacketListener.class)
+//$$ import net.minecraft.client.multiplayer.ClientPacketListener;
+//$$ @Mixin(ClientPacketListener.class)
 //#endif
 public class ClientCommonNetworkHandlerMixin {
     @Final
@@ -38,9 +38,9 @@ public class ClientCommonNetworkHandlerMixin {
      */
 
     //#if MC < 12004
-    @Inject(at = @At(value = "INVOKE", target = "Lnet/minecraft/network/Connection;send(Lnet/minecraft/network/protocol/Packet;)V"),method = "send(Lnet/minecraft/network/protocol/Packet;)V", cancellable = true)
+    //$$ @Inject(at = @At(value = "INVOKE", target = "Lnet/minecraft/network/Connection;send(Lnet/minecraft/network/protocol/Packet;)V"),method = "send(Lnet/minecraft/network/protocol/Packet;)V", cancellable = true)
     //#else
-    //$$ @Inject(at = @At(value = "INVOKE", target = "Lnet/minecraft/network/Connection;send(Lnet/minecraft/network/protocol/Packet;)V"), method = "send", cancellable = true)
+    @Inject(at = @At(value = "INVOKE", target = "Lnet/minecraft/network/Connection;send(Lnet/minecraft/network/protocol/Packet;)V"), method = "send", cancellable = true)
     //#endif
     public void sendPacket(Packet<?> packet, CallbackInfo ci) {
         if (Printer.currentAction == null) {

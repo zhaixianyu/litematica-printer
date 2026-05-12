@@ -23,7 +23,7 @@ public class MixinServerWorld {
             if (!list.world.areEntitiesLoaded(ChunkPos.asLong(list.pos))) {
                 list.world.shouldTickBlocksAt(list.pos
                         //#if MC < 11902
-                        .asLong()
+                        //$$ .asLong()
                         //#endif
                 );
             }

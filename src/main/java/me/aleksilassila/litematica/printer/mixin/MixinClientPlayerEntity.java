@@ -18,7 +18,7 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import java.util.HashMap;
 
 //#if MC >= 12001
-//$$ import me.aleksilassila.litematica.printer.printer.zxy.chesttracker.MemoryUtils;
+import me.aleksilassila.litematica.printer.printer.zxy.chesttracker.MemoryUtils;
 //#endif
 
 import static me.aleksilassila.litematica.printer.printer.Printer.isEnablePrinter;
@@ -33,8 +33,8 @@ public class MixinClientPlayerEntity {
 	@Inject(at = @At("HEAD"), method = "closeContainer")
 	public void close(CallbackInfo ci) {
 		//#if MC >= 12001
-		//$$ 	if(Statistics.loadChestTracker) MemoryUtils.saveMemory(((LocalPlayer)(Object)this).containerMenu);
-		//$$ 	OpenInventoryPacket.reSet();
+			if(Statistics.loadChestTracker) MemoryUtils.saveMemory(((LocalPlayer)(Object)this).containerMenu);
+			OpenInventoryPacket.reSet();
 		//#endif
 	}
 	@Inject(at = @At("TAIL"), method = "tick")

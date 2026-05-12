@@ -85,9 +85,9 @@ public class Implementation {
         playerEntity.connection.send(new ServerboundMovePlayerPacket.Rot(
                 yaw,
                 pitch,
-                playerEntity.isOnGround()
+                playerEntity.onGround()
                 //#if MC > 12101
-                //$$ ,playerEntity.horizontalCollision
+                ,playerEntity.horizontalCollision
                 //#endif
         ));
     }
@@ -112,7 +112,7 @@ public class Implementation {
         boolean onGround = accessor.getOnGround();
         return new ServerboundMovePlayerPacket.PosRot(x, y, z, angles[0], angles[1], onGround
                 //#if MC > 12101
-                //$$ ,playerEntity.horizontalCollision
+                ,playerEntity.horizontalCollision
                 //#endif
         );
     }
@@ -161,7 +161,7 @@ public class Implementation {
             ChestBlock.class, AbstractFurnaceBlock.class, CraftingTableBlock.class,
             LeverBlock.class, DoorBlock.class, TrapDoorBlock.class,
             BedBlock.class, RedStoneWireBlock.class, ScaffoldingBlock.class, HopperBlock.class,
-            EnchantmentTableBlock.class, NoteBlock.class, JukeboxBlock.class, CakeBlock.class,
+            EnchantingTableBlock.class, NoteBlock.class, JukeboxBlock.class, CakeBlock.class,
             FenceGateBlock.class, BrewingStandBlock.class, DragonEggBlock.class, CommandBlock.class,
             BeaconBlock.class, AnvilBlock.class, ComparatorBlock.class, RepeaterBlock.class,
             DropperBlock.class, DispenserBlock.class, ShulkerBoxBlock.class, LecternBlock.class,
@@ -169,7 +169,7 @@ public class Implementation {
             LoomBlock.class, CartographyTableBlock.class, GrindstoneBlock.class,
             StonecutterBlock.class,
             //#if MC > 12002
-            //$$ CrafterBlock.class
+            CrafterBlock.class
             //#endif
 
     };

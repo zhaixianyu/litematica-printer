@@ -17,7 +17,7 @@ import me.aleksilassila.litematica.printer.printer.zxy.inventory.OpenInventoryPa
 import net.fabricmc.api.ClientModInitializer;
 import net.fabricmc.api.ModInitializer;
 //#if MC >= 12001
-//$$ import me.aleksilassila.litematica.printer.printer.zxy.chesttracker.MemoryUtils;
+import me.aleksilassila.litematica.printer.printer.zxy.chesttracker.MemoryUtils;
 //#endif
 import java.util.List;
 
@@ -54,9 +54,9 @@ public class LitematicaMixinMod implements ModInitializer, ClientModInitializer 
 	public static final ConfigHotkey CLOSE_ALL_MODE = new ConfigHotkey("关闭全部模式", "LEFT_CONTROL,G","关闭全部模式，若此时为单模模式将模式恢复为打印");
 
 	//#if MC >= 12001
-	//$$ public static final ConfigHotkey LAST = new ConfigHotkey("上一个容器", "",GUI_NO_ORDER,"");
-	//$$ public static final ConfigHotkey NEXT = new ConfigHotkey("下一个容器", "",GUI_NO_ORDER,"");
-	//$$ public static final ConfigHotkey DELETE = new ConfigHotkey("删除当前容器", "",GUI_NO_ORDER,"");
+	public static final ConfigHotkey LAST = new ConfigHotkey("上一个容器", "",GUI_NO_ORDER,"");
+	public static final ConfigHotkey NEXT = new ConfigHotkey("下一个容器", "",GUI_NO_ORDER,"");
+	public static final ConfigHotkey DELETE = new ConfigHotkey("删除当前容器", "",GUI_NO_ORDER,"");
 	//#endif
 
 	public static final ConfigStringList FLUID_BLOCK_LIST = new ConfigStringList("替换方块名单", ImmutableList.of("minecraft:water|minecraft:lava => minecraft:sand|minecraft:gravel","//all=>minecraft:air"), "更改后需关闭打印机一次才会使用新的名单。\n格式：要替换的方块 => 替换成什么方块，多个用|分隔，//表示忽略。\n破坏方块受挖掘模式同等限制");
@@ -136,7 +136,7 @@ public class LitematicaMixinMod implements ModInitializer, ClientModInitializer 
 		OpenInventoryPacket.registerReceivePacket();
 		OpenInventoryPacket.registerClientReceivePacket();
 		//#if MC >= 12001
-		//$$ if(loadChestTracker) MemoryUtils.setup();
+		if(loadChestTracker) MemoryUtils.setup();
 		//#endif
 
 //		}

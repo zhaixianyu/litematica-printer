@@ -94,7 +94,7 @@ public class PrinterUtils {
         sides.put(requiredDir, new Vec3(0, 0, 0));
 
         if (world.getBlockState(pos).hasProperty(SlabBlock.TYPE)) {
-            sides.put(requiredDir.getOpposite(), Vec3.atLowerCornerOf(requiredDir.getNormal()).scale(0.5));
+            sides.put(requiredDir.getOpposite(), Vec3.atLowerCornerOf(requiredDir.getUnitVec3i()).scale(0.5));
         }
 
         for (Direction side : horizontalDirections) {
@@ -106,7 +106,7 @@ public class PrinterUtils {
                 }
             }
 
-            sides.put(side, Vec3.atLowerCornerOf(requiredDir.getNormal()).scale(0.25));
+            sides.put(side, Vec3.atLowerCornerOf(requiredDir.getUnitVec3i()).scale(0.25));
         }
 
         return sides;

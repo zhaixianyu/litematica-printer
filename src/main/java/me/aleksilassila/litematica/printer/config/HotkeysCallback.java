@@ -13,17 +13,17 @@ import me.aleksilassila.litematica.printer.printer.bedrockUtils.Messager;
 import me.aleksilassila.litematica.printer.printer.zxy.inventory.OpenInventoryPacket;
 
 //#if MC >= 12001
-//$$ import fi.dy.masa.malilib.util.GuiUtils;
-//$$ import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
-//$$ import net.minecraft.client.gui.screens.inventory.CreativeModeInventoryScreen;
-//$$ import me.aleksilassila.litematica.printer.printer.zxy.chesttracker.MemoryUtils;
-//$$ import me.aleksilassila.litematica.printer.printer.zxy.chesttracker.SearchItem;
-//$$ import red.jackf.chesttracker.impl.memory.MemoryBankAccessImpl;
-//$$ import red.jackf.chesttracker.impl.memory.MemoryBankImpl;
+import fi.dy.masa.malilib.util.GuiUtils;
+import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
+import net.minecraft.client.gui.screens.inventory.CreativeModeInventoryScreen;
+import me.aleksilassila.litematica.printer.printer.zxy.chesttracker.MemoryUtils;
+import me.aleksilassila.litematica.printer.printer.zxy.chesttracker.SearchItem;
+import red.jackf.chesttracker.impl.memory.MemoryBankAccessImpl;
+import red.jackf.chesttracker.impl.memory.MemoryBankImpl;
 //#else
-import net.minecraft.network.chat.Component;
-import me.aleksilassila.litematica.printer.printer.zxy.memory.MemoryDatabase;
-import net.minecraft.resources.ResourceLocation;
+//$$ import net.minecraft.network.chat.Component;
+//$$ import me.aleksilassila.litematica.printer.printer.zxy.memory.MemoryDatabase;
+//$$ import net.minecraft.resources.ResourceLocation;
 //#endif
 
 import static me.aleksilassila.litematica.printer.LitematicaMixinMod.*;
@@ -61,39 +61,39 @@ public class HotkeysCallback implements IHotkeyCallback {
             return true;
         }else if(key == REMOVE_PRINT_INVENTORY.getKeybind()){
             //#if MC >= 12001
-            //$$ MemoryUtils.deletePrinterMemory();
+            MemoryUtils.deletePrinterMemory();
             //#else
-            MemoryDatabase database = MemoryDatabase.getCurrent();
-            if (database != null) {
-                for (ResourceLocation dimension : database.getDimensions()) {
-                    database.clearDimension(dimension);
-                }
-            }
-            client.gui.setOverlayMessage(Component.nullToEmpty("打印机库存已清空"), false);
+            //$$ MemoryDatabase database = MemoryDatabase.getCurrent();
+            //$$ if (database != null) {
+            //$$     for (ResourceLocation dimension : database.getDimensions()) {
+            //$$         database.clearDimension(dimension);
+            //$$     }
+            //$$ }
+            //$$ client.gui.setOverlayMessage(Component.literal("打印机库存已清空"), false);
             //#endif
             return true;
         }
         //#if MC >= 12001
-        //$$ else if(GuiUtils.getCurrentScreen() instanceof AbstractContainerScreen<?> gui &&
-        //$$         !(GuiUtils.getCurrentScreen() instanceof CreativeModeInventoryScreen))
-        //$$ {
-        //$$     if(key == LAST.getKeybind()){
-        //$$         SearchItem.page = --SearchItem.page <= -1 ? SearchItem.maxPage-1 : SearchItem.page;
-        //$$         SearchItem.openInventory(SearchItem.page);
-        //$$     }
-        //$$     else if(key == NEXT.getKeybind()){
-        //$$         SearchItem.page = ++SearchItem.page >= SearchItem.maxPage ? 0 : SearchItem.page;
-        //$$         SearchItem.openInventory(SearchItem.page);
-        //$$     }
-        //$$     else if(key == DELETE.getKeybind()){
-        //$$         MemoryBankImpl memoryBank = MemoryBankAccessImpl.INSTANCE.getLoadedInternal().orElse(null);
-        //$$         if (memoryBank!= null && OpenInventoryPacket.key != null && client.player != null) {
-        //$$             memoryBank.removeMemory(OpenInventoryPacket.key.location(),OpenInventoryPacket.pos);
-        //$$             OpenInventoryPacket.key = null;
-        //$$             client.player.closeContainer();
-        //$$         }
-        //$$     }
-        //$$ }
+        else if(GuiUtils.getCurrentScreen() instanceof AbstractContainerScreen<?> gui &&
+                !(GuiUtils.getCurrentScreen() instanceof CreativeModeInventoryScreen))
+        {
+            if(key == LAST.getKeybind()){
+                SearchItem.page = --SearchItem.page <= -1 ? SearchItem.maxPage-1 : SearchItem.page;
+                SearchItem.openInventory(SearchItem.page);
+            }
+            else if(key == NEXT.getKeybind()){
+                SearchItem.page = ++SearchItem.page >= SearchItem.maxPage ? 0 : SearchItem.page;
+                SearchItem.openInventory(SearchItem.page);
+            }
+            else if(key == DELETE.getKeybind()){
+                MemoryBankImpl memoryBank = MemoryBankAccessImpl.INSTANCE.getLoadedInternal().orElse(null);
+                if (memoryBank!= null && OpenInventoryPacket.key != null && client.player != null) {
+                    memoryBank.removeMemory(OpenInventoryPacket.key.identifier(),OpenInventoryPacket.pos);
+                    OpenInventoryPacket.key = null;
+                    client.player.closeContainer();
+                }
+            }
+        }
         //#endif
         return false;
     }

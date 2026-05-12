@@ -79,7 +79,7 @@ public class InventoryManager {
         if (i != -1) {
             if(!item.toString().contains("pickaxe")){
                 for (int i1 = 0; i1 < sc.slots.size(); i1++) {
-                    if (ItemStack.isSame(sc.slots.get(i1).getItem(),new ItemStack(item))) i = i1;
+                    if (ItemStack.isSameItem(sc.slots.get(i1).getItem(),new ItemStack(item))) i = i1;
                 }
                 minecraftClient.gameMode.handleInventoryMouseClick(sc.containerId, i, 40, ClickType.SWAP, minecraftClient.player);
                 refresh();
@@ -128,7 +128,7 @@ public class InventoryManager {
 
         float f = stack.getDestroySpeed(block);
         if (f > 1.0F) {
-            int i = getEnchantmentLevel(stack, Enchantments.BLOCK_EFFICIENCY);
+            int i = getEnchantmentLevel(stack, Enchantments.EFFICIENCY);
             ItemStack itemStack = player.getInventory().getItem(slot);
             if (i > 0 && !itemStack.isEmpty()) {
                 f += (float) (i * i + 1);
@@ -139,9 +139,9 @@ public class InventoryManager {
             f *= 1.0F + (float) (MobEffectUtil.getDigSpeedAmplification(player) + 1) * 0.2F;
         }
 
-        if (player.hasEffect(MobEffects.DIG_SLOWDOWN)) {
+        if (player.hasEffect(MobEffects.MINING_FATIGUE)) {
             float k;
-            switch (player.getEffect(MobEffects.DIG_SLOWDOWN).getAmplifier()) {
+            switch (player.getEffect(MobEffects.MINING_FATIGUE).getAmplifier()) {
                 case 0:
                     k = 0.3F;
                     break;
@@ -163,7 +163,7 @@ public class InventoryManager {
             f /= 5.0F;
         }
 
-        if (!player.isOnGround()) {
+        if (!player.onGround()) {
             f /= 5.0F;
         }
 

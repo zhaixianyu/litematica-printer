@@ -98,9 +98,9 @@ public class Configs implements IConfigHandler {
             list.add(PRINTER_INVENTORY);
             list.add(REMOVE_PRINT_INVENTORY);
             //#if MC >= 12001
-            //$$ list.add(LAST);
-            //$$ list.add(NEXT);
-            //$$ list.add(DELETE);
+            list.add(LAST);
+            list.add(NEXT);
+            list.add(DELETE);
             //#endif
         }
         if(FabricLoader.getInstance().isDevelopmentEnvironment()) list.add(TEST);
@@ -127,9 +127,9 @@ public class Configs implements IConfigHandler {
             list.add(PRINTER_INVENTORY);
             list.add(REMOVE_PRINT_INVENTORY);
             //#if MC >= 12001
-            //$$ list.add(LAST);
-            //$$ list.add(NEXT);
-            //$$ list.add(DELETE);
+            list.add(LAST);
+            list.add(NEXT);
+            list.add(DELETE);
             //#endif
         }
         if(FabricLoader.getInstance().isDevelopmentEnvironment()) list.add(TEST);

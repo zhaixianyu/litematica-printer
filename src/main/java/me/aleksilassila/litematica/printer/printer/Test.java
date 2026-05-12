@@ -19,9 +19,9 @@ public class Test {
     public static void t1(){
         Minecraft client = ZxyUtils.client;
         LocalPlayer player = client.player;
-        client.getConnection().send(new ServerboundMovePlayerPacket.Rot(1.0f,0.0f,player.isOnGround()
+        client.getConnection().send(new ServerboundMovePlayerPacket.Rot(1.0f,0.0f,player.onGround()
                 //#if MC > 12101
-                //$$ ,player.horizontalCollision
+                ,player.horizontalCollision
                 //#endif
         ));
         if (client.hitResult == null || client.hitResult.getType() != HitResult.Type.BLOCK) return;

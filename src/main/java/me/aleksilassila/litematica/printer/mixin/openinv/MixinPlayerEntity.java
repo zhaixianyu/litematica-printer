@@ -13,17 +13,17 @@ import org.spongepowered.asm.mixin.injection.At;
 public class MixinPlayerEntity {
 
     //#if MC > 12106
-    //$$
+
     //#else
-    @WrapOperation(at = @At(value = "INVOKE", target = "Lnet/minecraft/world/inventory/AbstractContainerMenu;stillValid(Lnet/minecraft/world/entity/player/Player;)Z"),method = "tick")
-    public boolean tick(AbstractContainerMenu instance, Player player, Operation<Boolean> original){
-        if (player instanceof ServerPlayer) {
-            for (ServerPlayer serverPlayer : OpenInventoryPacket.playerlist) {
-                if (serverPlayer.equals(player)) return true;
-            }
-        }
-        return instance.stillValid(player);
-    }
+    //$$ @WrapOperation(at = @At(value = "INVOKE", target = "Lnet/minecraft/world/inventory/AbstractContainerMenu;stillValid(Lnet/minecraft/world/entity/player/Player;)Z"),method = "tick")
+    //$$ public boolean tick(AbstractContainerMenu instance, Player player, Operation<Boolean> original){
+    //$$     if (player instanceof ServerPlayer) {
+    //$$         for (ServerPlayer serverPlayer : OpenInventoryPacket.playerlist) {
+    //$$             if (serverPlayer.equals(player)) return true;
+    //$$         }
+    //$$     }
+    //$$     return instance.stillValid(player);
+    //$$ }
     //#endif
 
 }

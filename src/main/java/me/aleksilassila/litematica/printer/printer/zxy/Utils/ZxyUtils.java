@@ -13,7 +13,7 @@ import me.aleksilassila.litematica.printer.printer.zxy.inventory.SwitchItem;
 import net.minecraft.client.multiplayer.ClientPacketListener;
 import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.core.*;
-import net.minecraft.core.Registry;
+import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.protocol.game.ServerboundContainerClickPacket;
 import net.minecraft.resources.ResourceKey;
@@ -40,22 +40,22 @@ import java.util.*;
 import java.util.function.Consumer;
 
 //#if MC < 12101
-import net.minecraft.world.item.enchantment.EnchantmentHelper;
+//$$ import net.minecraft.world.item.enchantment.EnchantmentHelper;
 //#endif
 
 //#if MC >= 12105
-//$$ import net.minecraft.network.HashedStack;
+import net.minecraft.network.HashedStack;
 //#endif
 
 //#if MC >= 12001
-//$$ import me.aleksilassila.litematica.printer.printer.zxy.chesttracker.MemoryUtils;
+import me.aleksilassila.litematica.printer.printer.zxy.chesttracker.MemoryUtils;
 //#else
-import me.aleksilassila.litematica.printer.printer.zxy.memory.MemoryUtils;
+//$$ import me.aleksilassila.litematica.printer.printer.zxy.memory.MemoryUtils;
 //#endif
 //#if MC >= 12006
-//$$ import net.minecraft.core.component.DataComponents;
-//$$ import net.minecraft.world.item.component.CustomData;
-//$$ import net.minecraft.world.item.enchantment.ItemEnchantments;
+import net.minecraft.core.component.DataComponents;
+import net.minecraft.world.item.component.CustomData;
+import net.minecraft.world.item.enchantment.ItemEnchantments;
 //#endif
 import static me.aleksilassila.litematica.printer.LitematicaMixinMod.SYNC_INVENTORY_CHECK;
 import static me.aleksilassila.litematica.printer.LitematicaMixinMod.SYNC_INVENTORY_COLOR;
@@ -81,7 +81,7 @@ public class ZxyUtils {
         if (LitematicaMixinMod.INVENTORY.getBooleanValue() && !printerMemoryAdding) {
             printerMemoryAdding = true;
             //#if MC >= 12001
-            //$$ if (MemoryUtils.PRINTER_MEMORY == null) MemoryUtils.createPrinterMemory();
+            if (MemoryUtils.PRINTER_MEMORY == null) MemoryUtils.createPrinterMemory();
             //#endif
 
             for (String string : LitematicaMixinMod.INVENTORY_LIST.getStrings()) {
@@ -94,14 +94,14 @@ public class ZxyUtils {
         if (printerMemoryAdding && !openIng && OpenInventoryPacket.key == null) {
             if (invBlockList.isEmpty()) {
                 printerMemoryAdding = false;
-                client.gui.setOverlayMessage(Component.nullToEmpty("打印机库存添加完成"), false);
+                client.gui.setOverlayMessage(Component.literal("打印机库存添加完成"), false);
                 return;
             }
-            client.gui.setOverlayMessage(Component.nullToEmpty("添加库存中"), false);
+            client.gui.setOverlayMessage(Component.literal("添加库存中"), false);
             for (BlockPos pos : invBlockList) {
                 if (client.level != null) {
                     //#if MC < 12001
-                    MemoryUtils.setLatestPos(pos);
+                    //$$ MemoryUtils.setLatestPos(pos);
                     //#endif
                     closeScreen++;
                     OpenInventoryPacket.sendOpenInventory(pos, client.level.dimension());
@@ -140,7 +140,7 @@ public class ZxyUtils {
                     return;
                 }
             }
-            String blockName = Registry.BLOCK.getKey(block).toString();
+            String blockName = BuiltInRegistries.BLOCK.getKey(block).toString();
 //            String blockName = Registries.BLOCK.getId(block).toString();
             Printer.getPrinter();
             syncPosList.addAll(Printer.getPrinter().siftBlock(blockName));
@@ -160,7 +160,7 @@ public class ZxyUtils {
             syncPosList = new LinkedList<>();
             if (client.player != null) client.player.clientSideCloseContainer();
             num = 0;
-            client.gui.setOverlayMessage(Component.nullToEmpty("已取消同步"), false);
+            client.gui.setOverlayMessage(Component.literal("已取消同步"), false);
         }
     }
     public static boolean openInv(BlockPos pos,boolean ignoreThePrompt){
@@ -169,14 +169,14 @@ public class ZxyUtils {
             return true;
         } else {
             if (client.player != null && !canInteracted(5,Vec3.atCenterOf(pos))) {
-                if(!ignoreThePrompt) client.gui.setOverlayMessage(Component.nullToEmpty("距离过远无法打开容器"), false);
+                if(!ignoreThePrompt) client.gui.setOverlayMessage(Component.literal("距离过远无法打开容器"), false);
                 return false;
             }
             if (client.gameMode != null){
                 //#if MC < 11902
-                client.gameMode.useItemOn(client.player, client.level, InteractionHand.MAIN_HAND,new BlockHitResult(Vec3.atCenterOf(pos), Direction.DOWN,pos,false));
+                //$$ client.gameMode.useItemOn(client.player, client.level, InteractionHand.MAIN_HAND,new BlockHitResult(Vec3.atCenterOf(pos), Direction.DOWN,pos,false));
                 //#else
-                //$$ client.gameMode.useItemOn(client.player, InteractionHand.MAIN_HAND,new BlockHitResult(Vec3.atCenterOf(pos), Direction.DOWN,pos,false));
+                client.gameMode.useItemOn(client.player, InteractionHand.MAIN_HAND,new BlockHitResult(Vec3.atCenterOf(pos), Direction.DOWN,pos,false));
                 //#endif
                 return true;
             } else return false;
@@ -185,7 +185,7 @@ public class ZxyUtils {
     public static void itemsCount(Map<ItemStack,Integer> itemsCount , ItemStack itemStack){
         // 判断是否存在可合并的键
         Optional<Map.Entry<ItemStack, Integer>> entry = itemsCount.entrySet().stream()
-                .filter(e -> ItemStack.isSameItemSameTags(e.getKey(), itemStack))
+                .filter(e -> ItemStack.isSameItemSameComponents(e.getKey(), itemStack))
                 .findFirst();
 
         if (entry.isPresent()) {
@@ -222,7 +222,7 @@ public class ZxyUtils {
                 //打开列表中的容器 只要容器同步列表不为空 就会一直执行此处
                 if (client.player == null) return;
                 playerItemsCount = new HashMap<>();
-                client.gui.setOverlayMessage(Component.nullToEmpty("剩余 " + syncPosList.size() + " 个容器. 再次按下快捷键取消同步"), false);
+                client.gui.setOverlayMessage(Component.literal("剩余 " + syncPosList.size() + " 个容器. 再次按下快捷键取消同步"), false);
                 if (!client.player.containerMenu.equals(client.player.inventoryMenu)) return;
                 NonNullList<Slot> slots = client.player.inventoryMenu.slots;
                 slots.forEach(slot -> itemsCount(playerItemsCount,slot.getItem()));
@@ -230,7 +230,7 @@ public class ZxyUtils {
                 if (SYNC_INVENTORY_CHECK.getBooleanValue() && !targetItemsCount.entrySet().stream()
                         .allMatch(target -> playerItemsCount.entrySet().stream()
                                 .anyMatch(player ->
-                                        ItemStack.isSameItemSameTags(player.getKey(), target.getKey()) && target.getValue() <= player.getValue()))) return;
+                                        ItemStack.isSameItemSameComponents(player.getKey(), target.getKey()) && target.getValue() <= player.getValue()))) return;
 
                 if ((!LitematicaMixinMod.INVENTORY.getBooleanValue() || !openIng) && OpenInventoryPacket.key == null) {
                     for (BlockPos pos : syncPosList) {
@@ -243,7 +243,7 @@ public class ZxyUtils {
                 }
                 if (syncPosList.isEmpty()) {
                     num = 0;
-                    client.gui.setOverlayMessage(Component.nullToEmpty("同步完成"), false);
+                    client.gui.setOverlayMessage(Component.literal("同步完成"), false);
                 }
             }
             case 3 -> {
@@ -258,8 +258,8 @@ public class ZxyUtils {
                     ItemStack item2 = targetBlockInv.get(i).copy();
                     int currNum = item1.getCount();
                     int tarNum = item2.getCount();
-                    boolean same = ItemStack.isSameItemSameTags(item1,item2.copy()) && !item1.isEmpty();
-                    if(ItemStack.isSameItemSameTags(item1,item2) && currNum == tarNum) continue;
+                    boolean same = ItemStack.isSameItemSameComponents(item1,item2.copy()) && !item1.isEmpty();
+                    if(ItemStack.isSameItemSameComponents(item1,item2) && currNum == tarNum) continue;
                     //不和背包交互
                     if (same) {
                         //有多
@@ -278,7 +278,7 @@ public class ZxyUtils {
                         ItemStack stack = sc.slots.get(i1).getItem();
                         ItemStack currStack = sc.slots.get(i).getItem();
                         currNum = currStack.getCount();
-                        boolean same2 = thereAreItems = ItemStack.isSameItemSameTags(item2,stack);
+                        boolean same2 = thereAreItems = ItemStack.isSameItemSameComponents(item2,stack);
                         if (same2 && !stack.isEmpty()) {
                             int i2 = stack.getCount();
                             client.gameMode.handleInventoryMouseClick(sc.containerId, i1, 0, ClickType.PICKUP, client.player);
@@ -319,7 +319,7 @@ public class ZxyUtils {
             LitematicaMixinMod.TOGGLE_PRINTING_MODE.setBooleanValue(false);
             LitematicaMixinMod.PRINTER_MODE.setOptionListValue(State.PrintModeType.PRINTER);
             Printer.currentAction = null;
-            client.gui.setOverlayMessage(Component.nullToEmpty("已关闭全部模式"), false);
+            client.gui.setOverlayMessage(Component.literal("已关闭全部模式"), false);
         }
         OpenInventoryPacket.tick();
         test();
@@ -406,15 +406,15 @@ public class ZxyUtils {
 
         // Tags with NaN are not equal, so the server will find an inventory desync and send an inventory refresh to the client
         //#if MC >= 12006
-        //$$ var nbt = new CompoundTag();
-        //$$ nbt.putDouble("force_sync", Double.NaN);
-        //$$ CustomData.set(DataComponents.CUSTOM_DATA, uniqueItem, nbt);
+        var nbt = new CompoundTag();
+        nbt.putDouble("force_sync", Double.NaN);
+        CustomData.set(DataComponents.CUSTOM_DATA, uniqueItem, nbt);
         //#else
-        uniqueItem.getOrCreateTag().putDouble("force_resync", Double.NaN);
+        //$$ uniqueItem.getOrCreateTag().putDouble("force_resync", Double.NaN);
         //#endif
 
         //#if MC >= 12105
-        //$$ HashedStack itemStackHash = HashedStack.create(uniqueItem, networkHandler.decoratedHashOpsGenenerator());
+        HashedStack itemStackHash = HashedStack.create(uniqueItem, networkHandler.decoratedHashOpsGenenerator());
         //#endif
 
         networkHandler.send(new ServerboundContainerClickPacket(
@@ -423,11 +423,11 @@ public class ZxyUtils {
                 (short) -999, (byte) 2,
                 ClickType.QUICK_CRAFT,
                 //#if MC < 12105
-                uniqueItem,
-                new Int2ObjectOpenHashMap<>()
+                //$$ uniqueItem,
+                //$$ new Int2ObjectOpenHashMap<>()
                 //#else
-                //$$ new Int2ObjectOpenHashMap<>(),
-                //$$ itemStackHash
+                new Int2ObjectOpenHashMap<>(),
+                itemStackHash
                 //#endif
 
 
@@ -436,35 +436,35 @@ public class ZxyUtils {
 
     public static int getEnchantmentLevel(ItemStack itemStack,
                                           //#if MC > 12006
-                                          //$$ ResourceKey<Enchantment> enchantment
+                                          ResourceKey<Enchantment> enchantment
                                           //#else
-                                          Enchantment enchantment
+                                          //$$ Enchantment enchantment
                                           //#endif
     ){
         //#if MC > 12006
-        //$$ ItemEnchantments enchantments = itemStack.getEnchantments();
-        //$$
-        //$$ if (enchantments.equals(ItemEnchantments.EMPTY)) return -1;
-        //$$ Set<Holder<Enchantment>> enchantmentsEnchantments = enchantments.keySet();
-        //$$ for (Holder<Enchantment> entry : enchantmentsEnchantments) {
-        //$$     if (entry.is(enchantment)) {
-        //$$         return enchantments.getLevel(entry);
-        //$$     }
-        //$$ }
-        //$$ return -1;
+        ItemEnchantments enchantments = itemStack.getEnchantments();
+
+        if (enchantments.equals(ItemEnchantments.EMPTY)) return -1;
+        Set<Holder<Enchantment>> enchantmentsEnchantments = enchantments.keySet();
+        for (Holder<Enchantment> entry : enchantmentsEnchantments) {
+            if (entry.is(enchantment)) {
+                return enchantments.getLevel(entry);
+            }
+        }
+        return -1;
         //#else
-        return EnchantmentHelper.getItemEnchantmentLevel(enchantment,itemStack);
+        //$$ return EnchantmentHelper.getItemEnchantmentLevel(enchantment,itemStack);
         //#endif
     }
 
     public static void eachBlock(Consumer<Block> consumer){
-        for (Block block : Registry.BLOCK) {
+        for (Block block : BuiltInRegistries.BLOCK) {
             consumer.accept(block);
         }
     }
 
     public static void eachItem(Consumer<Item> consumer){
-        for (Item item : Registry.ITEM) {
+        for (Item item : BuiltInRegistries.ITEM) {
             consumer.accept(item);
         }
     }

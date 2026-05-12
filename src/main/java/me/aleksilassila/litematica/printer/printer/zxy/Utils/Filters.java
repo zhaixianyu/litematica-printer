@@ -1,6 +1,6 @@
 package me.aleksilassila.litematica.printer.printer.zxy.Utils;
 
-import net.minecraft.core.Registry;
+import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.tags.TagKey;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.state.BlockState;
@@ -47,7 +47,7 @@ public class Filters {
         }else return false;
 
         String originId = block != null ?
-                Registry.BLOCK.getKey(block).toString() : Registry.ITEM.getKey(itemStack.getItem()).toString();
+                BuiltInRegistries.BLOCK.getKey(block).toString() : BuiltInRegistries.ITEM.getKey(itemStack.getItem()).toString();
         String[] args = blockName.split(",");
         String oName = args[0];
         if(args.length > 1){
@@ -60,7 +60,7 @@ public class Filters {
         }catch (Exception ignored){}
 
         //中文 、 拼音
-        String name = block != null ?  block.getName().getString() : itemStack.getItem().getDescription().getString();
+        String name = block != null ?  block.getName().getString() : itemStack.getItem().getName().getString();
         if (Filters.filters(name,oName,args)) return b;
 
         ArrayList<String> pinYin = PinYinSearch.getPinYin(name);
