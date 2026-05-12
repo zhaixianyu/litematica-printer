@@ -11,7 +11,7 @@ import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 //#if MC >= 12001
-import me.aleksilassila.litematica.printer.printer.zxy.chesttracker.MemoryUtils;
+//$$ import me.aleksilassila.litematica.printer.printer.zxy.chesttracker.MemoryUtils;
 //#endif
 
 @Mixin(ClientUtil.class)
@@ -22,8 +22,8 @@ public class ClientUtilMixin {
         ZxyUtils.getPlayer().ifPresent(player ->{
             if(Statistics.loadChestTracker){
                 //#if MC >= 12001
-                MemoryUtils.saveMemory(player.containerMenu);
-                OpenInventoryPacket.reSet();
+                //$$ MemoryUtils.saveMemory(player.containerMenu);
+                //$$ OpenInventoryPacket.reSet();
                 //#endif
             }
         });

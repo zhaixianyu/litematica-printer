@@ -7,9 +7,9 @@ import net.minecraft.client.Minecraft;
 
 //#if MC >= 12001
 //#else
-//$$ import net.minecraft.network.chat.Component;
-//$$ import net.minecraft.resources.Identifier;
-//$$ import me.aleksilassila.litematica.printer.printer.zxy.memory.MemoryDatabase;
+import net.minecraft.network.chat.Component;
+import net.minecraft.resources.ResourceLocation;
+import me.aleksilassila.litematica.printer.printer.zxy.memory.MemoryDatabase;
 //#endif
 
 

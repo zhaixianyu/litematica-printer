@@ -1,2 +1,2 @@
-net.minecraft.util.registry.Registry net.minecraft.registry.Registries
-net.minecraft.util.math.Matrix4f org.joml.Matrix4f
+net.minecraft.core.Registry net.minecraft.core.registries.BuiltInRegistries
+com.mojang.math.Matrix4f org.joml.Matrix4f

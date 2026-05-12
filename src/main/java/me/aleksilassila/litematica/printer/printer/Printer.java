@@ -27,7 +27,7 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.core.BlockPos;
-import net.minecraft.core.registries.BuiltInRegistries;
+import net.minecraft.core.Registry;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
@@ -71,23 +71,13 @@ import org.slf4j.LoggerFactory;
     //$$
     //#endif
 //#else
-//$$ import me.aleksilassila.litematica.printer.printer.zxy.memory.MemoryUtils;
-//$$ import me.aleksilassila.litematica.printer.printer.zxy.memory.Memory;
-//$$ import me.aleksilassila.litematica.printer.printer.zxy.memory.MemoryDatabase;
+import me.aleksilassila.litematica.printer.printer.zxy.memory.MemoryUtils;
+import me.aleksilassila.litematica.printer.printer.zxy.memory.Memory;
+import me.aleksilassila.litematica.printer.printer.zxy.memory.MemoryDatabase;
 //#endif
-
-//#if MC < 11904
-//$$ import net.minecraft.command.argument.ItemStringReader;
-//$$ import com.mojang.brigadier.StringReader;
-//$$ import net.minecraft.util.registry.RegistryKey;
-//$$ import net.minecraft.util.registry.Registry;
-//#else
-
-//#endif
-
 
 //#if MC < 11900
-//$$ import fi.dy.masa.malilib.util.SubChunkPos;
+import fi.dy.masa.malilib.util.SubChunkPos;
 //#endif
 
 public class Printer extends PrinterUtils {
@@ -226,7 +216,7 @@ public class Printer extends PrinterUtils {
             String[] originBlock = split[0].split("\\|");
             String[] newBlock = split[1].split("\\|");
 
-            replaceTaskMap.put(new ArrayList<>(List.of(originBlock)), new ItemConfig(BuiltInRegistries.ITEM.stream().filter(item ->
+            replaceTaskMap.put(new ArrayList<>(List.of(originBlock)), new ItemConfig(Registry.ITEM.stream().filter(item ->
                     Arrays.stream(newBlock).anyMatch(targetBlockName -> equalsItemName(targetBlockName, new ItemStack(item)))).toList(), holdRequired));
         }
 
@@ -260,7 +250,7 @@ public class Printer extends PrinterUtils {
 
                     if ((!entry.getValue().holdRequired || entry.getValue().itemList.stream().anyMatch(item -> hasItem(item))) &&
                             ("all".equals(blockName) || equalsBlockName(blockName, currentState, finalPos)) &&
-                            entry.getValue().itemList.stream().noneMatch(item -> equalsBlockName(item.getName().getString(), currentState, finalPos))) {
+                            entry.getValue().itemList.stream().noneMatch(item -> equalsBlockName(item.getDescription().getString(), currentState, finalPos))) {
                         if (((Predicate<List<Item>>) items -> {
                             action.set(guide.buildAction(client.level, Blocks.AIR.defaultBlockState(), currentState, finalPos, guide.getClassHook(currentState)));
                             if (excavateBlock(finalPos) == null) {
@@ -602,7 +592,7 @@ public class Printer extends PrinterUtils {
                             break ;
                         }
                         case LEFT: {
-                            if(world.getBlockState(pos.offset(requiredState.getValue(ChestBlock.FACING).getUnitVec3i())).isAir()) continue;
+                            if(world.getBlockState(pos.offset(requiredState.getValue(ChestBlock.FACING).getNormal())).isAir()) continue;
                             action.side = requiredState.getValue(ChestBlock.FACING).getClockWise().getOpposite();
                             useShift = true;
                             break ;
@@ -658,7 +648,7 @@ public class Printer extends PrinterUtils {
         return state.is(Blocks.PISTON) ||
                 state.is(Blocks.STICKY_PISTON) ||
                 //#if MC > 12002
-                state.is(Blocks.CRAFTER) ||
+                //$$ state.is(Blocks.CRAFTER) ||
                 //#endif
                 state.is(Blocks.OBSERVER) ||
                 state.is(Blocks.DROPPER) ||
@@ -668,9 +658,9 @@ public class Printer extends PrinterUtils {
     public static boolean isSchematicBlock(BlockPos offset) {
         SchematicPlacementManager schematicPlacementManager = DataManager.getSchematicPlacementManager();
         //#if MC < 11900
-        //$$ List<SchematicPlacementManager.PlacementPart> allPlacementsTouchingChunk = schematicPlacementManager.getAllPlacementsTouchingSubChunk(new SubChunkPos(offset));
+        List<SchematicPlacementManager.PlacementPart> allPlacementsTouchingChunk = schematicPlacementManager.getAllPlacementsTouchingSubChunk(new SubChunkPos(offset));
         //#else
-        List<SchematicPlacementManager.PlacementPart> allPlacementsTouchingChunk = schematicPlacementManager.getAllPlacementsTouchingChunk(offset);
+        //$$ List<SchematicPlacementManager.PlacementPart> allPlacementsTouchingChunk = schematicPlacementManager.getAllPlacementsTouchingChunk(offset);
         //#endif
 
         for (SchematicPlacementManager.PlacementPart placementPart : allPlacementsTouchingChunk) {

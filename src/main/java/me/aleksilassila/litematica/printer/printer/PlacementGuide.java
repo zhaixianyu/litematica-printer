@@ -2,7 +2,6 @@ package me.aleksilassila.litematica.printer.printer;
 
 import fi.dy.masa.litematica.world.WorldSchematic;
 import me.aleksilassila.litematica.printer.LitematicaMixinMod;
-import me.aleksilassila.litematica.printer.interfaces.IClientPlayerInteractionManager;
 import me.aleksilassila.litematica.printer.interfaces.Implementation;
 import me.aleksilassila.litematica.printer.mixin.FlowerPotBlockAccessor;
 import me.aleksilassila.litematica.printer.printer.zxy.Utils.PlayerAction;
@@ -16,11 +15,6 @@ import net.minecraft.util.Tuple;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
-//#if MC < 12104
-//#else
-
-//#endif
-
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.world.item.Items;
@@ -33,7 +27,6 @@ import net.minecraft.world.level.Level;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import java.util.*;
-import java.util.concurrent.atomic.AtomicReference;
 
 import static me.aleksilassila.litematica.printer.printer.Printer.*;
 import static me.aleksilassila.litematica.printer.printer.qwer.PrintWater.*;
@@ -115,9 +108,9 @@ public class PlacementGuide extends PrinterUtils {
         Direction look = null;
         for (Property<?> prop : requiredState.getProperties()) {
             //#if MC > 12101
-            if (prop instanceof EnumProperty<?> enumProperty && enumProperty.getValueClass().equals(Direction.class) && prop.getName().equalsIgnoreCase("FACING")) {
+            //$$ if (prop instanceof EnumProperty<?> enumProperty && enumProperty.getValueClass().equals(Direction.class) && prop.getName().equalsIgnoreCase("FACING")) {
             //#else
-            //$$ if (prop instanceof EnumProperty<?> && prop.getName().equalsIgnoreCase("FACING")) {
+            if (prop instanceof EnumProperty<?> && prop.getName().equalsIgnoreCase("FACING")) {
             //#endif
                 look = ((Direction) requiredState.getValue(prop)).getOpposite();
             }
@@ -189,7 +182,7 @@ public class PlacementGuide extends PrinterUtils {
 
                     Map<Direction, Vec3> sides = new HashMap<>();
                     for (Direction direction : horizontalDirections) {
-                        sides.put(direction, Vec3.atLowerCornerOf(half.getUnitVec3i()).scale(0.25));
+                        sides.put(direction, Vec3.atLowerCornerOf(half.getNormal()).scale(0.25));
                     }
 
                     sides.put(half, new Vec3(0, 0, 0));
@@ -203,7 +196,7 @@ public class PlacementGuide extends PrinterUtils {
 
                     Map<Direction, Vec3> sides = new HashMap<>(){{
                         put(half,
-                            Vec3.atLowerCornerOf(half.getUnitVec3i()).scale(0.25));
+                            Vec3.atLowerCornerOf(half.getNormal()).scale(0.25));
                         put(half, new Vec3(0, 0, 0));
                     }};
 
@@ -274,7 +267,7 @@ public class PlacementGuide extends PrinterUtils {
                             null : (Direction) getPropertyByName(requiredState, "FACING");
 
                     Map<Direction,Vec3> sides = new HashMap<>();
-                    sides.put(Direction.DOWN,Vec3.atLowerCornerOf(side.getUnitVec3i()).scale(0.5));
+                    sides.put(Direction.DOWN,Vec3.atLowerCornerOf(side.getNormal()).scale(0.5));
 
                     return new Action().setSides(sides).setLookDirection(look);
                 }
@@ -355,17 +348,17 @@ public class PlacementGuide extends PrinterUtils {
                     break;
                 }
                 //#if MC > 12002
-                case CRAFTER: {
-                    Action action = new Action().setItem(Items.CRAFTER);
-                    FrontAndTop orientation = requiredState.getValue(BlockStateProperties.ORIENTATION);
-                    Direction look = orientation.front().getOpposite();
-                    action.setLookDirection(look);
-                    Direction side = orientation.top();
-                    if (look == Direction.DOWN || look == Direction.UP) {
-                        action.setLookDirection2(side);
-                    }
-                    return action;
-                }
+                //$$ case CRAFTER: {
+                //$$     Action action = new Action().setItem(Items.CRAFTER);
+                //$$     FrontAndTop orientation = requiredState.getValue(BlockStateProperties.ORIENTATION);
+                //$$     Direction look = orientation.front().getOpposite();
+                //$$     action.setLookDirection(look);
+                //$$     Direction side = orientation.top();
+                //$$     if (look == Direction.DOWN || look == Direction.UP) {
+                //$$         action.setLookDirection2(side);
+                //$$     }
+                //$$     return action;
+                //$$ }
                 //#endif
                 case SKIP: {
                     break;
@@ -677,9 +670,9 @@ public class PlacementGuide extends PrinterUtils {
 
         public static boolean isReplaceable(BlockState state){
             //#if MC < 11904
-            //$$ return state.getMaterial().isReplaceable();
+            return state.getMaterial().isReplaceable();
             //#else
-            return state.canBeReplaced();
+            //$$ return state.canBeReplaced();
             //#endif
         }
 
@@ -787,7 +780,7 @@ public class PlacementGuide extends PrinterUtils {
             if(!usePrecisionPlacement){
                 hitModifier = hitModifier.yRot((direction.toYRot() + 90) % 360);
                 hitVec = Vec3.atCenterOf(target)
-                        .add(Vec3.atLowerCornerOf(side.getUnitVec3i()).scale(0.5))
+                        .add(Vec3.atLowerCornerOf(side.getNormal()).scale(0.5))
                         .add(hitModifier.scale(0.5));
             }
 
@@ -871,7 +864,7 @@ public class PlacementGuide extends PrinterUtils {
         WALLSKULL(WallSkullBlock.class),
         NETHER_PORTAL_BLOCK(NetherPortalBlock.class),
         //#if MC > 12002
-        CRAFTER(CrafterBlock.class),
+        //$$ CRAFTER(CrafterBlock.class),
         //#endif
 
         // Only clicks

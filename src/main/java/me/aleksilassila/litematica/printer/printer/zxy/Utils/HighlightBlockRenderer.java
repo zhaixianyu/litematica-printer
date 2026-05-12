@@ -2,6 +2,7 @@ package me.aleksilassila.litematica.printer.printer.zxy.Utils;
 
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.*;
+import com.mojang.math.Matrix4f;
 import fi.dy.masa.litematica.Litematica;
 import com.mojang.blaze3d.vertex.DefaultVertexFormat;
 import com.mojang.blaze3d.vertex.VertexFormat;
@@ -11,10 +12,10 @@ import fi.dy.masa.malilib.interfaces.IRenderer;
 import fi.dy.masa.litematica.render.RenderUtils;
 import fi.dy.masa.malilib.util.Color4f;
 import net.fabricmc.fabric.api.client.networking.v1.ClientPlayConnectionEvents;
+import net.minecraft.client.renderer.GameRenderer;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.phys.Vec3;
-import org.joml.Matrix4f;
 import org.lwjgl.opengl.GL11;
 
 import java.util.*;
@@ -63,9 +64,9 @@ public class HighlightBlockRenderer implements IRenderer {
     }
 
     //#if MC > 12004
-    public void test3(Matrix4f matrices, Color4f color4f, Set<BlockPos> posSet){
+    //$$ public void test3(Matrix4f matrices, Color4f color4f, Set<BlockPos> posSet){
     //#else
-    //$$ public void test3(MatrixStack matrices ,Color4f color4f, Set<BlockPos> posSet){
+    public void test3(PoseStack matrices ,Color4f color4f, Set<BlockPos> posSet){
     //#endif
         //#if MC <= 12104
         RenderSystem.disableDepthTest();
@@ -94,7 +95,7 @@ public class HighlightBlockRenderer implements IRenderer {
 
         //#if MC > 12101
         //#else
-        //$$ RenderSystem.setShader(GameRenderer::getPositionColorProgram);
+        RenderSystem.setShader(GameRenderer::getPositionColorShader);
         //#endif
         Tesselator tessellator = Tesselator.getInstance();
 
@@ -107,12 +108,12 @@ public class HighlightBlockRenderer implements IRenderer {
                 //#endif
             //$$ BufferBuilder buffer = ctx.getBuilder();
             //#else
-            BufferBuilder buffer = tessellator.begin(VertexFormat.Mode.QUADS, DefaultVertexFormat.POSITION_COLOR);
+            //$$ BufferBuilder buffer = tessellator.begin(VertexFormat.Mode.QUADS, DefaultVertexFormat.POSITION_COLOR);
             //#endif
-        MeshData meshData;
+        //$$ MeshData meshData;
         //#else
-        //$$ BufferBuilder buffer = tessellator.getBuffer();
-        //$$ buffer.begin(VertexFormat.DrawMode.QUADS, VertexFormats.POSITION_COLOR);
+        BufferBuilder buffer = tessellator.getBuilder();
+        buffer.begin(VertexFormat.Mode.QUADS, DefaultVertexFormat.POSITION_COLOR);
         //#endif
         for (BlockPos pos : posSet) {
             //#if MC >= 12105
@@ -125,21 +126,21 @@ public class HighlightBlockRenderer implements IRenderer {
         {
             if(buffer != null){
                 //#if MC > 12006
-                meshData = buffer.buildOrThrow();
-
+                //$$ meshData = buffer.buildOrThrow();
+                //$$
                     //#if MC > 12104
                     //$$ ctx.upload(meshData, true);
                     //$$ ctx.startResorting(meshData, ctx.createVertexSorter(fi.dy.masa.malilib.render.RenderUtils.camPos()));
                     //$$ meshData.close();
                     //$$ ctx.drawPost();
                     //#else
-                    BufferUploader.drawWithShader(meshData);
-                    meshData.close();
+                    //$$ BufferUploader.drawWithShader(meshData);
+                    //$$ meshData.close();
                     //#endif
-
-
+                //$$
+                //$$
                 //#else
-                //$$ tessellator.draw();
+                tessellator.end();
                 //#endif
             }
         }
@@ -184,9 +185,9 @@ public class HighlightBlockRenderer implements IRenderer {
 
     @Override
     //#if MC > 12004
-    public void onRenderWorldLast(Matrix4f matrices, Matrix4f projMatrix){
+    //$$ public void onRenderWorldLast(Matrix4f matrices, Matrix4f projMatrix){
     //#else
-    //$$ public void onRenderWorldLast(MatrixStack matrices, Matrix4f projMatrix){
+    public void onRenderWorldLast(PoseStack matrices, Matrix4f projMatrix){
     //#endif
         //更改渲染
         setMap.forEach((k,v) -> {

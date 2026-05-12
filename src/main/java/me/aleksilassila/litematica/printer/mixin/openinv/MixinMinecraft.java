@@ -50,33 +50,33 @@ public abstract class MixinMinecraft {
     }
     //鼠标中键从打印机库存或通过快捷濳影盒 取出对应物品
     //#if MC > 12101
-    @WrapOperation(method = "pickBlock",at = @At(value = "INVOKE", target = "Lnet/minecraft/client/multiplayer/MultiPlayerGameMode;handlePickItemFromBlock(Lnet/minecraft/core/BlockPos;Z)V" ))
-    private void doItemPick(MultiPlayerGameMode instance, BlockPos blockPos, boolean bl, Operation<Void> original) {
-        if(level == null) {
-            original.call(instance, blockPos, bl);
-            return;
-        }
-        Item item = level.getBlockState(blockPos).getBlock().asItem();
-        if (player.inventoryMenu.slots.stream().noneMatch(slot -> slot.getItem().getItem().equals(item)) &&
-                !player.getAbilities().instabuild && (INVENTORY.getBooleanValue() || QUICKSHULKER.getBooleanValue())) {
-            remoteItem.add(item);
-            switchItem();
-            return;
-        }
-        original.call(instance, blockPos, bl);
-    }
-    //#else
-    //$$ @WrapOperation(method = "pickBlock",at = @At(value = "INVOKE", target = "Lnet/minecraft/world/entity/player/Inventory;findSlotMatchingItem(Lnet/minecraft/world/item/ItemStack;)I" ))
-    //$$ private int doItemPick(Inventory instance, ItemStack itemStack, Operation<Integer> original) {
-    //$$     int slotWithStack = original.call(instance, itemStack);
-    //$$     if(!player.getAbilities().instabuild && (INVENTORY.getBooleanValue() || QUICKSHULKER.getBooleanValue()) && slotWithStack == -1){
-    //$$         Item item = itemStack.getItem();
+    //$$ @WrapOperation(method = "pickBlock",at = @At(value = "INVOKE", target = "Lnet/minecraft/client/multiplayer/MultiPlayerGameMode;handlePickItemFromBlock(Lnet/minecraft/core/BlockPos;Z)V" ))
+    //$$ private void doItemPick(MultiPlayerGameMode instance, BlockPos blockPos, boolean bl, Operation<Void> original) {
+    //$$     if(level == null) {
+    //$$         original.call(instance, blockPos, bl);
+    //$$         return;
+    //$$     }
+    //$$     Item item = level.getBlockState(blockPos).getBlock().asItem();
+    //$$     if (player.inventoryMenu.slots.stream().noneMatch(slot -> slot.getItem().getItem().equals(item)) &&
+    //$$             !player.getAbilities().instabuild && (INVENTORY.getBooleanValue() || QUICKSHULKER.getBooleanValue())) {
     //$$         remoteItem.add(item);
     //$$         switchItem();
-    //$$         return -1;
+    //$$         return;
     //$$     }
-    //$$     return slotWithStack;
+    //$$     original.call(instance, blockPos, bl);
     //$$ }
+    //#else
+    @WrapOperation(method = "pickBlock",at = @At(value = "INVOKE", target = "Lnet/minecraft/world/entity/player/Inventory;findSlotMatchingItem(Lnet/minecraft/world/item/ItemStack;)I" ))
+    private int doItemPick(Inventory instance, ItemStack itemStack, Operation<Integer> original) {
+        int slotWithStack = original.call(instance, itemStack);
+        if(!player.getAbilities().instabuild && (INVENTORY.getBooleanValue() || QUICKSHULKER.getBooleanValue()) && slotWithStack == -1){
+            Item item = itemStack.getItem();
+            remoteItem.add(item);
+            switchItem();
+            return -1;
+        }
+        return slotWithStack;
+    }
     //#endif
 
 }

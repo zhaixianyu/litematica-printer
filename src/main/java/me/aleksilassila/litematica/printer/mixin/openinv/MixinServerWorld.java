@@ -21,7 +21,11 @@ public class MixinServerWorld {
         for (ServerPlayer s : playerlist) {
             TickList list = tickMap.get(s);
             if (!list.world.areEntitiesLoaded(ChunkPos.asLong(list.pos))) {
-                list.world.shouldTickBlocksAt(list.pos);
+                list.world.shouldTickBlocksAt(list.pos
+                        //#if MC < 11902
+                        .asLong()
+                        //#endif
+                );
             }
             BlockState state2 = list.world.getBlockState(list.pos);
             if(state2.isAir()){

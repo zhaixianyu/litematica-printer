@@ -41,9 +41,9 @@ public class BlockPlacer {
         LocalPlayer player = ZxyUtils.client.player;
         if(player == null) return;
         //#if MC > 12101
-        Minecraft.getInstance().getConnection().send(new ServerboundMovePlayerPacket.Rot(yaw, pitch, player.onGround(),player.horizontalCollision));
+        //$$ Minecraft.getInstance().getConnection().send(new ServerboundMovePlayerPacket.Rot(yaw, pitch, player.onGround(),player.horizontalCollision));
         //#else
-        //$$ MinecraftClient.getInstance().getNetworkHandler().sendPacket(new ServerboundMovePlayerPacket.LookAndOnGround(yaw, pitch, player.isOnGround()));
+        Minecraft.getInstance().getConnection().send(new ServerboundMovePlayerPacket.Rot(yaw, pitch, player.isOnGround()));
         //#endif
     }
 
@@ -72,7 +72,7 @@ public class BlockPlacer {
                 yaw = player.getYRot();
                 BlockPlacer.pitch = player.getXRot();
                 BlockPlacer.pitch = player.getVoicePitch();
-                sendLookPacket(player.getYRot(1.0f), pitch);
+                sendLookPacket(player.getYRot(), pitch);
                 break;
         }
 
@@ -89,12 +89,18 @@ public class BlockPlacer {
         LocalPlayer player = minecraftClient.player;
         ItemStack itemStack = player.getItemInHand(InteractionHand.OFF_HAND);
 
-        PlayerAction.interactBlock(InteractionHand.OFF_HAND,hitResult.getBlockPos().getCenter(),hitResult.getDirection(),hitResult.getBlockPos(),hitResult.isInside(),false);
+        PlayerAction.interactBlock(InteractionHand.OFF_HAND,
+                //#if MC > 11902
+                //$$ hitResult.getBlockPos().getCenter()
+                //#else
+                Vec3.atCenterOf(hitResult.getBlockPos())
+                //#endif
+                ,hitResult.getDirection(),hitResult.getBlockPos(),hitResult.isInside(),false);
         if (!itemStack.isEmpty() && !player.getCooldowns().isOnCooldown(
                 //#if MC > 12101
-                itemStack
+                //$$ itemStack
                 //#else
-                //$$ itemStack.getItem()
+                itemStack.getItem()
                 //#endif
         )) {
             UseOnContext itemUsageContext = new UseOnContext(player, InteractionHand.OFF_HAND, hitResult);

@@ -2,6 +2,7 @@ package me.aleksilassila.litematica.printer.mixin;
 
 import me.aleksilassila.litematica.printer.interfaces.IClientPlayerInteractionManager;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.client.multiplayer.MultiPlayerGameMode;
 import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.core.BlockPos;
@@ -14,8 +15,7 @@ import net.minecraft.world.phys.Vec3;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 //#if MC < 11904
-//$$ import net.minecraft.world.level.Level;
-//$$ import net.minecraft.client.world.ClientWorld;
+import net.minecraft.world.level.Level;
 //#endif
 
 @Mixin(MultiPlayerGameMode.class)
@@ -28,13 +28,13 @@ public abstract class MixinClientPlayerInteractionManager implements IClientPlay
 	{
 		useItemOn(minecraft.player,
 				//#if MC < 11902
-				//$$ client.level,
+				minecraft.level,
 				//#endif
 				InteractionHand.MAIN_HAND,
 			new BlockHitResult(hitVec, side, pos, false));
 		useItem(minecraft.player,
 				//#if MC < 11902
-				//$$ client.level,
+				minecraft.level,
 				//#endif
 				InteractionHand.MAIN_HAND);
 	}
@@ -48,14 +48,14 @@ public abstract class MixinClientPlayerInteractionManager implements IClientPlay
 	public abstract InteractionResult useItemOn(
 			LocalPlayer clientPlayerEntity_1,
 			//#if MC < 11902
-			//$$ ClientLevel world,
+			ClientLevel world,
 			//#endif
 			InteractionHand hand_1, BlockHitResult blockHitResult_1);
 
 	@Shadow
 	public abstract InteractionResult useItem(Player playerEntity_1,
 											  //#if MC < 11902
-											  //$$ World world,
+											  Level world,
 											  //#endif
 											  InteractionHand hand_1);
 }

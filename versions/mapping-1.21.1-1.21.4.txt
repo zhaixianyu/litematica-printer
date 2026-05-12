@@ -1,1 +1,2 @@
 net.minecraft.core.Direction getNormal() getUnitVec3i()
+net.minecraft.world.item.Item getDescription() getName()

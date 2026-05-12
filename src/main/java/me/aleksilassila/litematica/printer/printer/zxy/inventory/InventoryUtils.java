@@ -7,7 +7,8 @@ import me.aleksilassila.litematica.printer.mixin.masa.Litematica_InventoryUtilsM
 import me.aleksilassila.litematica.printer.mixin.openinv.ShulkerBoxBlockAccessor;
 import me.aleksilassila.litematica.printer.printer.Printer;
 import me.aleksilassila.litematica.printer.printer.zxy.Utils.ZxyUtils;
-import net.minecraft.core.registries.BuiltInRegistries;
+import net.minecraft.core.Registry;
+import net.minecraft.resources.ResourceKey;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.inventory.ClickType;
 import net.minecraft.world.level.block.Block;
@@ -31,17 +32,16 @@ import net.minecraft.world.level.Level;
 import net.minecraft.resources.ResourceLocation;
 
 //#if MC > 11904
-import me.aleksilassila.litematica.printer.printer.zxy.chesttracker.MemoryUtils;
-import me.aleksilassila.litematica.printer.printer.zxy.chesttracker.SearchItem;
-import net.minecraft.world.phys.AABB;
-import red.jackf.chesttracker.api.providers.InteractionTracker;
+//$$ import me.aleksilassila.litematica.printer.printer.zxy.chesttracker.MemoryUtils;
+//$$ import me.aleksilassila.litematica.printer.printer.zxy.chesttracker.SearchItem;
+//$$ import net.minecraft.world.phys.AABB;
+//$$ import red.jackf.chesttracker.api.providers.InteractionTracker;
 //#else
-//$$
-//$$     import me.aleksilassila.litematica.printer.printer.zxy.memory.Memory;
-//$$     import me.aleksilassila.litematica.printer.printer.zxy.memory.MemoryDatabase;
-//$$     import me.aleksilassila.litematica.printer.printer.zxy.memory.MemoryUtils;
+    import me.aleksilassila.litematica.printer.printer.zxy.memory.Memory;
+    import me.aleksilassila.litematica.printer.printer.zxy.memory.MemoryDatabase;
+    import me.aleksilassila.litematica.printer.printer.zxy.memory.MemoryUtils;
 //#if MC > 11902
-//$$ import net.minecraft.registry.RegistryKeys;
+//$$ import net.minecraft.core.registries.Registries;
 //#else
 //#endif
 //#endif
@@ -112,36 +112,36 @@ public class InventoryUtils {
                 for (Item item : remoteItem) {
                     //#if MC >= 12001
                     //#if MC > 12004
-                    MemoryUtils.currentMemoryKey = client.level.dimension().location();
+                    //$$ MemoryUtils.currentMemoryKey = client.level.dimension().location();
                     //#else
-                    //$$ MemoryUtils.currentMemoryKey = client.level.getDimensionKey().getValue();
+                    //$$ MemoryUtils.currentMemoryKey = client.level.dimensionTypeId().location();
                     //#endif
-                    MemoryUtils.itemStack = new ItemStack(item);
-                    if (SearchItem.search(true)) {
-                        closeScreen++;
-                        isOpenHandler = true;
-                        Printer.printerMemorySync = true;
-                        return true;
-                    }
+                    //$$ MemoryUtils.itemStack = new ItemStack(item);
+                    //$$ if (SearchItem.search(true)) {
+                    //$$     closeScreen++;
+                    //$$     isOpenHandler = true;
+                    //$$     Printer.printerMemorySync = true;
+                    //$$     return true;
+                    //$$ }
                     //#else
-                    //$$
-                    //$$    MemoryDatabase database = MemoryDatabase.getCurrent();
-                    //$$    if (database != null) {
-                    //$$        for (Identifier dimension : database.getDimensions()) {
-                    //$$            for (Memory memory : database.findItems(item.getDefaultStack(), dimension)) {
-                    //$$                MemoryUtils.setLatestPos(memory.getPosition());
-                    //#if MC < 11904
-                    //$$ OpenInventoryPacket.sendOpenInventory(memory.getPosition(), RegistryKey.of(Registry.WORLD_KEY, dimension));
-                    //#else
-                    //$$ OpenInventoryPacket.sendOpenInventory(memory.getPosition(), RegistryKey.of(RegistryKeys.WORLD, dimension));
-                    //#endif
-                    //$$                if(closeScreen == 0)closeScreen++;
-                    //$$                Printer.printerMemorySync = true;
-                    //$$                isOpenHandler = true;
-                    //$$                return true;
-                    //$$            }
-                    //$$        }
-                    //$$    }
+
+                       MemoryDatabase database = MemoryDatabase.getCurrent();
+                       if (database != null) {
+                           for (ResourceLocation dimension : database.getDimensions()) {
+                               for (Memory memory : database.findItems(item.getDefaultInstance(), dimension)) {
+                                   MemoryUtils.setLatestPos(memory.getPosition());
+                                   //#if MC > 11902
+                                   //$$ OpenInventoryPacket.sendOpenInventory(memory.getPosition(), ResourceKey.create(Registries.DIMENSION, dimension));
+                                   //#else
+                                   OpenInventoryPacket.sendOpenInventory(memory.getPosition(), ResourceKey.create(Registry.DIMENSION_REGISTRY, dimension));
+                                   //#endif
+                                   if(closeScreen == 0)closeScreen++;
+                                   Printer.printerMemorySync = true;
+                                   isOpenHandler = true;
+                                   return true;
+                               }
+                           }
+                       }
                     //#endif
                 }
                 remoteItem = new LinkedHashSet<>();
@@ -172,9 +172,9 @@ public class InventoryUtils {
                         if (s == null) break;
                         try {
                             int c = Integer.parseInt(s) - 1;
-                            if (BuiltInRegistries.ITEM.getKey(player.getInventory().getItem(c).getItem()).toString().contains("shulker_box") &&
+                            if (Registry.ITEM.getKey(player.getInventory().getItem(c).getItem()).toString().contains("shulker_box") &&
                                     LitematicaMixinMod.QUICKSHULKER.getBooleanValue()) {
-                                Minecraft.getInstance().gui.setOverlayMessage(Component.literal("濳影盒占用了预选栏"), false);
+                                Minecraft.getInstance().gui.setOverlayMessage(Component.nullToEmpty("濳影盒占用了预选栏"), false);
                                 continue;
                             }
 
@@ -292,7 +292,7 @@ public class InventoryUtils {
             AbstractContainerMenu sc = Minecraft.getInstance().player.inventoryMenu;
             for (int i = 9; i < sc.slots.size(); i++) {
                 ItemStack stack = sc.slots.get(i).getItem();
-                String itemid = BuiltInRegistries.ITEM.getKey(stack.getItem()).toString();
+                String itemid = Registry.ITEM.getKey(stack.getItem()).toString();
                 if (itemid.contains("shulker_box") && stack.getCount() == 1) {
                     NonNullList<ItemStack> items1 = fi.dy.masa.malilib.util.InventoryUtils.getStoredItems(stack, -1);
                     if (items1.stream().anyMatch(s1 -> s1.getItem().equals(item))) {
@@ -300,7 +300,7 @@ public class InventoryUtils {
                             shulkerBoxSlot = i;
 //                            ClientUtil.CheckAndSend(stack,i);
                             //#if MC >= 12001
-                            if (loadChestTracker) InteractionTracker.INSTANCE.clear();
+                            //$$ if (loadChestTracker) InteractionTracker.INSTANCE.clear();
                             //#endif
                             method.invoke(method, stack, i);
                             closeScreen++;

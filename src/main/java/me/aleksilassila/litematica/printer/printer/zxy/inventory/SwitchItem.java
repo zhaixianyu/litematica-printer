@@ -105,7 +105,7 @@ public class SwitchItem {
         if(itemStack != null) {
             reSwitchItem = itemStack;
             openInv(itemStack);
-        }else client.gui.setOverlayMessage(Component.literal("背包已满，请先清理"),false);
+        }else client.gui.setOverlayMessage(Component.nullToEmpty("背包已满，请先清理"),false);
     }
     public static void reSwitchItem(){
         if(client.player == null || reSwitchItem == null) return;
@@ -146,7 +146,7 @@ public class SwitchItem {
                 player.closeContainer();
                 player.closeContainer();
                 if(!reInv) {
-                    client.gui.setOverlayMessage(Component.literal("复原库存物品失败"),false);
+                    client.gui.setOverlayMessage(Component.nullToEmpty("复原库存物品失败"),false);
                 }
                 client.gameMode.handleInventoryMouseClick(sc.containerId, i, 0, ClickType.PICKUP, client.player);
                 return;

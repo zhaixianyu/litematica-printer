@@ -22,6 +22,10 @@ import net.minecraft.core.Direction;
 import net.minecraft.world.phys.Vec3;
 import org.jetbrains.annotations.NotNull;
 import static me.aleksilassila.litematica.printer.printer.zxy.Utils.ZxyUtils.getEnchantmentLevel;
+//#if MC > 11904
+//#else
+import net.minecraft.world.level.material.Material;
+//#endif
 
 public class PrintWater {
 
@@ -41,9 +45,9 @@ public class PrintWater {
     private static void rightClickBlock(@NotNull LocalPlayer player, BlockPos pos,Printer printer) {
         PlayerAction.setShift(player, true);
         //#if MC > 11802
-        printer.client.gameMode.useItemOn(player, InteractionHand.MAIN_HAND, new BlockHitResult(Vec3.atCenterOf(pos), Direction.DOWN, pos, true));
+        //$$ printer.client.gameMode.useItemOn(player, InteractionHand.MAIN_HAND, new BlockHitResult(Vec3.atCenterOf(pos), Direction.DOWN, pos, true));
         //#else
-        //$$ printer.client.useItemOn(player, player.clientWorld, InteractionHand.MAIN_HAND, new BlockHitResult(Vec3.ofCenter(pos), Direction.DOWN, pos, true));
+        printer.client.gameMode.useItemOn(player, player.clientLevel, InteractionHand.MAIN_HAND, new BlockHitResult(Vec3.atCenterOf(pos), Direction.DOWN, pos, true));
         //#endif
         PlayerAction.setShift(player, true);
     }
@@ -63,12 +67,12 @@ public class PrintWater {
         Minecraft client = ZxyUtils.client;
         //冰碎后无法产生水
         //#if MC > 11904
-        BlockState material = client.level.getBlockState(pos.below());
+        //$$ BlockState material = client.level.getBlockState(pos.below());
         //#else
-        //$$ Material material = client.level.getBlockState(pos.down()).getMaterial();
+        Material material = client.level.getBlockState(pos.below()).getMaterial();
         //#endif
 
-        if (material.blocksMotion() || material.liquid()) {
+        if (material.blocksMotion() || material.isLiquid()) {
             return true;
         }else {
             Messager.actionBar("冰碎后无法产生水");

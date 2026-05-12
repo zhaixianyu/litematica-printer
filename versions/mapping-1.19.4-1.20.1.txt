@@ -1,0 +1,1 @@
+net.minecraft.world.level.material.Material isLiquid() net.minecraft.world.level.block.state.BlockState liquid()
