@@ -5,9 +5,9 @@ import me.aleksilassila.litematica.printer.printer.Printer;
 import me.aleksilassila.litematica.printer.printer.zxy.inventory.OpenInventoryPacket;
 import me.aleksilassila.litematica.printer.printer.zxy.Utils.Statistics;
 import me.aleksilassila.litematica.printer.printer.zxy.memory.MemoryUtils;
-import net.minecraft.client.MinecraftClient;
-import net.minecraft.client.network.ClientPlayerEntity;
-import net.minecraft.util.math.BlockPos;
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.player.LocalPlayer;
+import net.minecraft.core.BlockPos;
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
@@ -16,19 +16,18 @@ import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 import static me.aleksilassila.litematica.printer.printer.zxy.Utils.ZxyUtils.printerMemoryAdding;
-import static me.aleksilassila.litematica.printer.printer.zxy.Utils.ZxyUtils.*;
 
-@Mixin(ClientPlayerEntity.class)
+@Mixin(LocalPlayer.class)
 public class MixinClientPlayerEntity {
-    @Shadow @Final protected MinecraftClient client;
-    @Inject(at = @At("HEAD"), method = "closeScreen")
+    @Shadow @Final protected Minecraft minecraft;
+    @Inject(at = @At("HEAD"), method = "clientSideCloseContainer")
     public void closeScreen(CallbackInfo ci) {
         BlockPos pos = MemoryUtils.getLatestPos();
         if(Statistics.loadChestTracker && LitematicaMixinMod.INVENTORY.getBooleanValue() &&
                 (LitematicaMixinMod.TOGGLE_PRINTING_MODE.getBooleanValue() || LitematicaMixinMod.PRINT.getKeybind().isPressed() || printerMemoryAdding || Printer.printerMemorySync) &&(
                 pos != null || MemoryUtils.getMemoryPos() != null)){
-            if(!client.player.currentScreenHandler.equals(client.player.playerScreenHandler)){
-                MemoryUtils.handleItemsFromScreen(client.player.currentScreenHandler);
+            if(!minecraft.player.containerMenu.equals(minecraft.player.inventoryMenu)){
+                MemoryUtils.handleItemsFromScreen(minecraft.player.containerMenu);
             }
         }
         OpenInventoryPacket.reSet();

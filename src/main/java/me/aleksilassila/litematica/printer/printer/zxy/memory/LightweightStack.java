@@ -3,8 +3,8 @@ package me.aleksilassila.litematica.printer.printer.zxy.memory;
 //#if MC < 12001
 //$$ import net.fabricmc.api.EnvType;
 //$$ import net.fabricmc.api.Environment;
-//$$ import net.minecraft.item.Item;
-//$$ import net.minecraft.nbt.NbtCompound;
+//$$ import net.minecraft.nbt.CompoundTag;
+//$$ import net.minecraft.world.item.Item;
 //$$ import org.jetbrains.annotations.Nullable;
 //$$
 //$$ import java.util.Objects;
@@ -12,9 +12,9 @@ package me.aleksilassila.litematica.printer.printer.zxy.memory;
 //$$ @Environment(EnvType.CLIENT)
 //$$ public class LightweightStack {
 //$$     private final Item item;
-//$$     private final @Nullable NbtCompound tag;
+//$$     private final @Nullable CompoundTag tag;
 //$$
-//$$     public LightweightStack(Item item, @Nullable NbtCompound tag) {
+//$$     public LightweightStack(Item item, @Nullable CompoundTag tag) {
 //$$         this.item = item;
 //$$         this.tag = tag;
 //$$     }
@@ -23,7 +23,7 @@ package me.aleksilassila.litematica.printer.printer.zxy.memory;
 //$$         return this.item;
 //$$     }
 //$$
-//$$     public @Nullable NbtCompound getTag() {
+//$$     public @Nullable CompoundTag getTag() {
 //$$         return this.tag;
 //$$     }
 //$$

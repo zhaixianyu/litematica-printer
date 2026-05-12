@@ -9,11 +9,11 @@ import me.aleksilassila.litematica.printer.LitematicaMixinMod;
 import me.aleksilassila.litematica.printer.printer.zxy.memory.MemoryDatabase;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
-import net.minecraft.block.Block;
-import net.minecraft.block.BlockState;
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.world.World;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.core.BlockPos;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
@@ -26,14 +26,14 @@ public abstract class MixinBlock {
     }
 
     @Inject(
-            method = {"onBreak"},
+            method = {"playerWillDestroy"},
             at = {@At("TAIL")}
     )
-    private void chestTracker$handleBlockBreak(World world, BlockPos pos, BlockState state, PlayerEntity player, CallbackInfo ci) {
+    private void chestTracker$handleBlockBreak(Level world, BlockPos pos, BlockState state, Player player, CallbackInfo ci) {
         if(!LitematicaMixinMod.INVENTORY.getBooleanValue()) return;
         MemoryDatabase database = MemoryDatabase.getCurrent();
         if (database != null) {
-            database.removePos(world.getRegistryKey().getValue(), pos);
+            database.removePos(world.dimension().location(), pos);
         }
     }
 }

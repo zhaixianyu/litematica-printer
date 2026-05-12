@@ -1,10 +1,10 @@
 package me.aleksilassila.litematica.printer.mixin;
 
-import net.minecraft.network.packet.c2s.play.PlayerMoveC2SPacket;
+import net.minecraft.network.protocol.game.ServerboundMovePlayerPacket;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.gen.Accessor;
 
-@Mixin(PlayerMoveC2SPacket.class)
+@Mixin(ServerboundMovePlayerPacket.class)
 public interface PlayerMoveC2SPacketAccessor {
     @Accessor("x")
     public double getX();
@@ -15,12 +15,12 @@ public interface PlayerMoveC2SPacketAccessor {
     @Accessor("z")
     public double getZ();
 
-    @Accessor("yaw")
-    public float getYaw();
+    @Accessor("yRot")
+    public float getYRot();
 
     @Accessor("onGround")
     public boolean getOnGround();
 
-    @Accessor("changePosition")
+    @Accessor("hasPos")
     public boolean changePosition();
 }

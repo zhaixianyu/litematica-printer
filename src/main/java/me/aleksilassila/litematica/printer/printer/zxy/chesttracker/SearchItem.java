@@ -4,15 +4,15 @@ package me.aleksilassila.litematica.printer.printer.zxy.chesttracker;
 import fi.dy.masa.malilib.util.InventoryUtils;
 import me.aleksilassila.litematica.printer.printer.zxy.inventory.OpenInventoryPacket;
 import me.aleksilassila.litematica.printer.printer.zxy.Utils.ZxyUtils;
-import net.minecraft.block.Block;
-import net.minecraft.block.ShulkerBoxBlock;
-import net.minecraft.client.network.ClientPlayerEntity;
-import net.minecraft.item.ItemStack;
-import net.minecraft.registry.Registries;
-import net.minecraft.registry.RegistryKey;
-import net.minecraft.registry.RegistryKeys;
-import net.minecraft.util.Identifier;
-import net.minecraft.util.math.BlockPos;
+import net.minecraft.core.registries.BuiltInRegistries;
+import net.minecraft.core.registries.Registries;
+import net.minecraft.resources.ResourceKey;
+import net.minecraft.world.level.block.Block;
+import net.minecraft.client.player.LocalPlayer;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.resources.Identifier;
+import net.minecraft.core.BlockPos;
+import net.minecraft.world.level.block.ShulkerBoxBlock;
 import org.jetbrains.annotations.NotNull;
 import red.jackf.chesttracker.api.memory.CommonKeys;
 import red.jackf.chesttracker.api.memory.Memory;
@@ -44,7 +44,7 @@ public class SearchItem {
     }
     public static void openInventory(int p){
         if(currItems.isEmpty() || ZxyUtils.client.player == null || p < 0)return;
-        ZxyUtils.client.player.closeHandledScreen();
+        ZxyUtils.client.player.closeContainer();
         final int[] pageFix = {p};
         currItems.forEach((k,v) -> {
             if(OpenInventoryPacket.key!=null || v == null || k == null) return;
@@ -53,7 +53,7 @@ public class SearchItem {
                 pageFix[0] -= v.size();
             }else {
                 v.entrySet().stream().skip(pageFix[0]).findFirst().ifPresent((value) ->
-                        OpenInventoryPacket.sendOpenInventory(value.getKey(),RegistryKey.of(RegistryKeys.WORLD, k)));
+                        OpenInventoryPacket.sendOpenInventory(value.getKey(), ResourceKey.create(Registries.DIMENSION, k)));
             }
 //            v.forEach((k1,v1) -> {
 //                if(OpenInventoryPacket.key!=null) return;
@@ -98,7 +98,7 @@ public class SearchItem {
 
     public static Map<BlockPos,Memory> memoriesSearch(Identifier key, ItemStack itemStack, MemoryBankImpl memoryBank) {
         if (key == null || itemStack == null) return null;
-        ClientPlayerEntity player = ZxyUtils.client.player;
+        LocalPlayer player = ZxyUtils.client.player;
         if (player == null) return null;
         if (memoryBank != null && memoryBank.getMemories() != null &&
                 memoryBank.getMemories().get(key) != null &&
@@ -110,12 +110,12 @@ public class SearchItem {
 
             Map<BlockPos,Memory> itemsMap = new LinkedHashMap<>();
             for (Map.Entry<BlockPos, Memory> entry : memoryBank.getMemories().get(key).getMemories().entrySet()) {
-                if (entry.getKey().getSquaredDistance(player.getEyePos()) > rangeSquared && range != Integer.MAX_VALUE) continue;
+                if (entry.getKey().distToCenterSqr(player.getEyePosition()) > rangeSquared && range != Integer.MAX_VALUE) continue;
                 if (entry.getValue().items().stream()
                         .filter(item -> SearchRequest.check(item, searchRequest))
-                        .anyMatch(item -> !isPrinterMemory || !((Block.getBlockFromItem(item.getItem())) instanceof ShulkerBoxBlock))) {
+                        .anyMatch(item -> !isPrinterMemory || !((Block.byItem(item.getItem())) instanceof ShulkerBoxBlock))) {
                     if(isPrinterMemory){
-                        OpenInventoryPacket.sendOpenInventory(entry.getKey(), RegistryKey.of(RegistryKeys.WORLD, key));
+                        OpenInventoryPacket.sendOpenInventory(entry.getKey(), ResourceKey.create(Registries.DIMENSION, key));
                         hasItem.set(true);
                         return null;
                     }
@@ -134,16 +134,16 @@ public class SearchItem {
                             stack1.getName().getString().equals(mStack.getName().getString()) && InventoryUtils.areStacksEqual(stack1, mStack));
         } else */
 
-        if (Registries.ITEM.getId(stack1.getItem()).toString().contains("shulker_box") && Registries.ITEM.getId(memoryStack.getItem()).toString().contains("shulker_box")) {
-            return (InventoryUtils.getStoredItems(stack1).isEmpty() && InventoryUtils.getStoredItems(memoryStack).isEmpty() && stack1.getName().getString().equals(memoryStack.getName().getString())) ||
+        if (BuiltInRegistries.ITEM.getKey(stack1.getItem()).toString().contains("shulker_box") && BuiltInRegistries.ITEM.getKey(memoryStack.getItem()).toString().contains("shulker_box")) {
+            return (InventoryUtils.getStoredItems(stack1).isEmpty() && InventoryUtils.getStoredItems(memoryStack).isEmpty() && stack1.getItem().getName().getString().equals(memoryStack.getItem().getName().getString())) ||
                     (!InventoryUtils.getStoredItems(stack1).isEmpty() &&
                             !InventoryUtils.getStoredItems(memoryStack).isEmpty() &&
-                            stack1.getName().getString().equals(memoryStack.getName().getString()) &&
+                            stack1.getItem().getName().getString().equals(memoryStack.getItem().getName().getString()) &&
                             compArray(InventoryUtils.getStoredItems(stack1, -1), InventoryUtils.getStoredItems(memoryStack, -1)));
-        } else if (Registries.ITEM.getId(memoryStack.getItem()).toString().contains("shulker_box")) {
+        } else if (BuiltInRegistries.ITEM.getKey(memoryStack.getItem()).toString().contains("shulker_box")) {
             return true;
         }
-        return stack1.getName().getString().equals(memoryStack.getName().getString());
+        return stack1.getItem().getName().getString().equals(memoryStack.getItem().getName().getString());
 //                && (ignoreNbt || !stack1.hasNbt() && !stack2.hasNbt() || Objects.equals(stack1.getNbt(), stack2.getNbt()));
     }
 

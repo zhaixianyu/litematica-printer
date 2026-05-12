@@ -4,7 +4,7 @@ import fi.dy.masa.malilib.config.options.ConfigHotkey;
 import fi.dy.masa.malilib.hotkeys.IHotkeyCallback;
 import fi.dy.masa.malilib.hotkeys.IKeybind;
 import fi.dy.masa.malilib.hotkeys.KeyAction;
-import net.minecraft.client.MinecraftClient;
+import net.minecraft.client.Minecraft;
 
 
 import fi.dy.masa.malilib.config.IConfigOptionListEntry;
@@ -14,16 +14,16 @@ import me.aleksilassila.litematica.printer.printer.zxy.inventory.OpenInventoryPa
 
 //#if MC >= 12001
 import fi.dy.masa.malilib.util.GuiUtils;
-import net.minecraft.client.gui.screen.ingame.CreativeInventoryScreen;
-import net.minecraft.client.gui.screen.ingame.HandledScreen;
+import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
+import net.minecraft.client.gui.screens.inventory.CreativeModeInventoryScreen;
 import me.aleksilassila.litematica.printer.printer.zxy.chesttracker.MemoryUtils;
 import me.aleksilassila.litematica.printer.printer.zxy.chesttracker.SearchItem;
 import red.jackf.chesttracker.impl.memory.MemoryBankAccessImpl;
 import red.jackf.chesttracker.impl.memory.MemoryBankImpl;
 //#else
-//$$ import net.minecraft.text.Text;
-//$$ import net.minecraft.util.Identifier;
+//$$ import net.minecraft.network.chat.Component;
 //$$ import me.aleksilassila.litematica.printer.printer.zxy.memory.MemoryDatabase;
+//$$ import net.minecraft.resources.ResourceLocation;
 //#endif
 
 import static me.aleksilassila.litematica.printer.LitematicaMixinMod.*;
@@ -35,12 +35,12 @@ import static me.aleksilassila.litematica.printer.config.Configs.PRINTER;
 
 //监听按键
 public class HotkeysCallback implements IHotkeyCallback {
-    MinecraftClient client = MinecraftClient.getInstance();
+    Minecraft client = Minecraft.getInstance();
 
     //激活的热键会被key记录
     @Override
     public boolean onKeyAction(KeyAction action, IKeybind key) {
-        if (this.client.player == null || this.client.world == null) return false;
+        if (this.client.player == null || this.client.level == null) return false;
         if(key == TEST.getKeybind()){
             t1();
             return true;
@@ -65,17 +65,17 @@ public class HotkeysCallback implements IHotkeyCallback {
             //#else
             //$$ MemoryDatabase database = MemoryDatabase.getCurrent();
             //$$ if (database != null) {
-            //$$     for (Identifier dimension : database.getDimensions()) {
+            //$$     for (ResourceLocation dimension : database.getDimensions()) {
             //$$         database.clearDimension(dimension);
             //$$     }
             //$$ }
-            //$$ client.inGameHud.setOverlayMessage(Text.of("打印机库存已清空"), false);
+            //$$ client.gui.setOverlayMessage(Component.literal("打印机库存已清空"), false);
             //#endif
             return true;
         }
         //#if MC >= 12001
-        else if(GuiUtils.getCurrentScreen() instanceof HandledScreen<?> gui &&
-                !(GuiUtils.getCurrentScreen() instanceof CreativeInventoryScreen))
+        else if(GuiUtils.getCurrentScreen() instanceof AbstractContainerScreen<?> gui &&
+                !(GuiUtils.getCurrentScreen() instanceof CreativeModeInventoryScreen))
         {
             if(key == LAST.getKeybind()){
                 SearchItem.page = --SearchItem.page <= -1 ? SearchItem.maxPage-1 : SearchItem.page;
@@ -88,9 +88,9 @@ public class HotkeysCallback implements IHotkeyCallback {
             else if(key == DELETE.getKeybind()){
                 MemoryBankImpl memoryBank = MemoryBankAccessImpl.INSTANCE.getLoadedInternal().orElse(null);
                 if (memoryBank!= null && OpenInventoryPacket.key != null && client.player != null) {
-                    memoryBank.removeMemory(OpenInventoryPacket.key.getValue(),OpenInventoryPacket.pos);
+                    memoryBank.removeMemory(OpenInventoryPacket.key.identifier(),OpenInventoryPacket.pos);
                     OpenInventoryPacket.key = null;
-                    client.player.closeHandledScreen();
+                    client.player.closeContainer();
                 }
             }
         }

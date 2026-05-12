@@ -1,2 +1,1 @@
-net.minecraft.util.registry.RegistryKey net.minecraft.registry.RegistryKey
-net.minecraft.world.dimension.AreaHelper net.minecraft.world.dimension.NetherPortal
+net.minecraft.network.chat.Component nullToEmpty() literal()

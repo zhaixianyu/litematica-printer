@@ -1,68 +1,51 @@
 package me.aleksilassila.litematica.printer.printer.bedrockUtils;
 
 
-import net.minecraft.client.MinecraftClient;
+import net.minecraft.ChatFormatting;
+import net.minecraft.client.Minecraft;
 
-import net.minecraft.text.ClickEvent;
-import net.minecraft.text.HoverEvent;
-import net.minecraft.text.Text;
-import net.minecraft.util.Formatting;
+import net.minecraft.network.chat.*;
 import org.jetbrains.annotations.NotNull;
-import net.minecraft.text.MutableText;
 //#if MC >= 12105
 import java.net.URI;
 //#endif
 
 //#if MC > 11802
 //#else
-//$$ import net.minecraft.text.TranslatableText;
+//$$
 //#endif
 public class Messager {
     public static void actionBar(String message){
-        MinecraftClient minecraftClient = MinecraftClient.getInstance();
+        Minecraft minecraftClient = Minecraft.getInstance();
         //#if MC > 11802
-        MutableText translatable = Text.translatable(message);
+        MutableComponent translatable = Component.translatable(message);
         //#else
-        //$$ TranslatableText translatable = new TranslatableText(message);
+        //$$ Component translatable = new TranslatableComponent(message);
         //#endif
-        minecraftClient.inGameHud.setOverlayMessage(translatable,false);
+        minecraftClient.gui.setOverlayMessage(translatable,false);
     }
-    public static void rawactionBar(String message){
-        MinecraftClient minecraftClient = MinecraftClient.getInstance();
-        //#if MC > 11802
-        MutableText translatable = Text.translatable(message);
-        //#else
-        //$$ TranslatableText translatable = new TranslatableText(message);
-        //#endif
-        minecraftClient.inGameHud.setOverlayMessage(translatable,false);
-    }
+
 
     public static void chat(String message){
-        MinecraftClient minecraftClient = MinecraftClient.getInstance();
+        Minecraft minecraftClient = Minecraft.getInstance();
         //#if MC > 11802
-        MutableText translatable = Text.translatable(message);
+        MutableComponent translatable = Component.translatable(message);
         //#else
-        //$$ TranslatableText translatable = new TranslatableText(message);
+        //$$ Component translatable = new TranslatableComponent(message);
         //#endif
-        minecraftClient.inGameHud.getChatHud().addMessage(translatable);
+        minecraftClient.gui.getChat().addMessage(translatable);
     }
 
-    public static void rawchat(String message){
-        MinecraftClient minecraftClient = MinecraftClient.getInstance();
-//        Text text = new ofText(message);
-//        minecraftClient.inGameHud.addChatMessage(MessageType.SYSTEM,text, UUID.randomUUID());
-    }
-
-    public static @NotNull MutableText createOpenUrlText(String text, String url) {
-        MutableText bv = Text.of(text).copy();
-        bv.styled(style -> style.withColor(Formatting.GOLD));
-        bv.styled(style -> style.withUnderline(true));
+    public static @NotNull MutableComponent createOpenUrlText(String text, String url) {
+        MutableComponent bv = Component.literal(text).copy();
+        bv.withStyle(style -> style.withColor(ChatFormatting.GOLD));
+        bv.withStyle(style -> style.withUnderlined(true));
         //#if MC >= 12105
-        bv.styled(style -> style.withHoverEvent(new HoverEvent.ShowText(Text.of("点击打开："+url))));
-        bv.styled(style -> style.withClickEvent(new ClickEvent.OpenUrl(URI.create(url))));
+        bv.withStyle(style -> style.withHoverEvent(new HoverEvent.ShowText(Component.literal("点击打开："+url))));
+        bv.withStyle(style -> style.withClickEvent(new ClickEvent.OpenUrl(URI.create(url))));
         //#else
-        //$$ bv.styled(style -> style.withHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, Text.of("点击打开："+url))));
-        //$$ bv.styled(style -> style.withClickEvent(new ClickEvent(ClickEvent.Action.OPEN_URL, url)));
+        //$$ bv.withStyle(style -> style.withHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, Component.literal("点击打开："+url))));
+        //$$ bv.withStyle(style -> style.withClickEvent(new ClickEvent(ClickEvent.Action.OPEN_URL, url)));
         //#endif
         return bv;
     }

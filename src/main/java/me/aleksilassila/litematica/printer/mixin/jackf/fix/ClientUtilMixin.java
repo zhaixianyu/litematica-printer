@@ -4,7 +4,7 @@ import me.aleksilassila.litematica.printer.printer.zxy.Utils.Statistics;
 import me.aleksilassila.litematica.printer.printer.zxy.Utils.ZxyUtils;
 import me.aleksilassila.litematica.printer.printer.zxy.inventory.OpenInventoryPacket;
 import net.kyrptonaught.quickshulker.client.ClientUtil;
-import net.minecraft.item.ItemStack;
+import net.minecraft.world.item.ItemStack;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
@@ -22,7 +22,7 @@ public class ClientUtilMixin {
         ZxyUtils.getPlayer().ifPresent(player ->{
             if(Statistics.loadChestTracker){
                 //#if MC >= 12001
-                MemoryUtils.saveMemory(player.currentScreenHandler);
+                MemoryUtils.saveMemory(player.containerMenu);
                 OpenInventoryPacket.reSet();
                 //#endif
             }

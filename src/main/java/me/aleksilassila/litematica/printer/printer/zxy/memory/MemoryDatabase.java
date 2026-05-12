@@ -8,17 +8,17 @@ package me.aleksilassila.litematica.printer.printer.zxy.memory;
 //#if MC < 12001
 //$$ import com.google.gson.reflect.TypeToken;
 //$$ import com.google.gson.stream.JsonReader;
+//$$ import com.mojang.realmsclient.dto.RealmsServer;
 //$$ import net.fabricmc.api.EnvType;
 //$$ import net.fabricmc.api.Environment;
 //$$ import net.fabricmc.loader.api.FabricLoader;
-//$$ import net.minecraft.client.MinecraftClient;
-//$$ import net.minecraft.client.network.ClientPlayNetworkHandler;
-//$$ import net.minecraft.client.network.ClientPlayerEntity;
-//$$ import net.minecraft.client.realms.dto.RealmsServer;
-//$$ import net.minecraft.item.ItemStack;
-//$$ import net.minecraft.nbt.NbtCompound;
-//$$ import net.minecraft.util.Identifier;
-//$$ import net.minecraft.util.math.BlockPos;
+//$$ import net.minecraft.client.Minecraft;
+//$$ import net.minecraft.client.multiplayer.ClientPacketListener;
+//$$ import net.minecraft.client.player.LocalPlayer;
+//$$ import net.minecraft.nbt.CompoundTag;
+//$$ import net.minecraft.resources.ResourceLocation;
+//$$ import net.minecraft.world.item.ItemStack;
+//$$ import net.minecraft.core.BlockPos;
 //$$ import org.jetbrains.annotations.NotNull;
 //$$ import org.jetbrains.annotations.Nullable;
 //$$ import red.jackf.chesttracker.ChestTracker;
@@ -39,11 +39,11 @@ package me.aleksilassila.litematica.printer.printer.zxy.memory;
 //$$
 //$$ @Environment(EnvType.CLIENT)
 //$$ public class MemoryDatabase {
-//$$     private static final NbtCompound FULL_DURABILITY_TAG = new NbtCompound();
+//$$     private static final CompoundTag FULL_DURABILITY_TAG = new CompoundTag();
 //$$     private static @Nullable MemoryDatabase currentDatabase = null;
 //$$     private final transient String id;
-//$$     private ConcurrentMap<Identifier, ConcurrentMap<BlockPos, Memory>> locations = new ConcurrentHashMap();
-//$$     private transient ConcurrentMap<Identifier, ConcurrentMap<BlockPos, Memory>> namedLocations = new ConcurrentHashMap();
+//$$     private ConcurrentMap<ResourceLocation, ConcurrentMap<BlockPos, Memory>> locations = new ConcurrentHashMap();
+//$$     private transient ConcurrentMap<ResourceLocation, ConcurrentMap<BlockPos, Memory>> namedLocations = new ConcurrentHashMap();
 //$$
 //$$     private MemoryDatabase(String id) {
 //$$         this.id = id;
@@ -72,14 +72,14 @@ package me.aleksilassila.litematica.printer.printer.zxy.memory;
 //$$     }
 //$$
 //$$     public static @Nullable String getUsableId() {
-//$$         MinecraftClient mc = MinecraftClient.getInstance();
+//$$         Minecraft mc = Minecraft.getInstance();
 //$$         String id = null;
 //$$         String print = null;
-//$$         ClientPlayNetworkHandler cpnh = mc.getNetworkHandler();
+//$$         ClientPacketListener cpnh = mc.getConnection();
 //$$         String var10000;
-//$$         if (cpnh != null && cpnh.getConnection() != null && cpnh.getConnection().isOpen()) {
-//$$             if (mc.getServer() != null) {
-//$$                 id = "singleplayer-" + MemoryUtils.getSingleplayerName(((AccessorMinecraftServer)mc.getServer()).getSession());
+//$$         if (cpnh != null && cpnh.getConnection() != null && cpnh.getConnection().isConnected()) {
+//$$             if (mc.getSingleplayerServer() != null) {
+//$$                 id = "singleplayer-" + MemoryUtils.getSingleplayerName(((AccessorMinecraftServer)mc.getSingleplayerServer()).getSession());
 //$$             } else if (mc.isConnectedToRealms()) {
 //$$                 RealmsServer server = MemoryUtils.getLastRealmsServer();
 //$$                 if (server == null) {
@@ -89,16 +89,16 @@ package me.aleksilassila.litematica.printer.printer.zxy.memory;
 //$$                 var10000 = server.owner;
 //$$                 var10000 = MemoryUtils.makeFileSafe(var10000 + "-" + server.getName());
 //$$                 id = "realms-" + var10000;
-//$$             } else if (mc.getServer() == null && mc.getCurrentServerEntry() != null) {
-//$$                 var10000 = mc.getCurrentServerEntry().isLocal() ? "lan-" : "multiplayer-";
-//$$                 id = var10000 + MemoryUtils.makeFileSafe(mc.getCurrentServerEntry().address);
+//$$             } else if (mc.getSingleplayerServer() == null && mc.getCurrentServer() != null) {
+//$$                 var10000 = mc.getCurrentServer().isLan() ? "lan-" : "multiplayer-";
+//$$                 id = var10000 + MemoryUtils.makeFileSafe(mc.getCurrentServer().ip);
 //$$             }
 //$$         }
 //$$         id = "printer-litematica" + "-" + id;
 //$$         return id;
 //$$     }
 //$$
-//$$     public Set<Identifier> getDimensions() {
+//$$     public Set<ResourceLocation> getDimensions() {
 //$$         return this.locations.keySet();
 //$$     }
 //$$
@@ -132,7 +132,7 @@ package me.aleksilassila.litematica.printer.printer.zxy.memory;
 //$$         try {
 //$$             if (Files.exists(loadPath, new LinkOption[0])) {
 //$$                 FileReader reader = new FileReader(loadPath.toString(), StandardCharsets.UTF_8);
-//$$                 Map<Identifier, Map<BlockPos, Memory>> raw = (Map)GsonHandler.get().fromJson(new JsonReader(reader), (new TypeToken<Map<Identifier, Map<BlockPos, Memory>>>() {
+//$$                 Map<ResourceLocation, Map<BlockPos, Memory>> raw = (Map)GsonHandler.get().fromJson(new JsonReader(reader), (new TypeToken<Map<ResourceLocation, Map<BlockPos, Memory>>>() {
 //$$                 }).getType());
 //$$                 if (raw == null) {
 //$$                     this.locations = new ConcurrentHashMap();
@@ -142,8 +142,8 @@ package me.aleksilassila.litematica.printer.printer.zxy.memory;
 //$$                     Iterator var4 = raw.entrySet().iterator();
 //$$
 //$$                     while(var4.hasNext()) {
-//$$                         Map.Entry<Identifier, Map<BlockPos, Memory>> entry = (Map.Entry)var4.next();
-//$$                         this.locations.put((Identifier)entry.getKey(), new ConcurrentHashMap((Map)entry.getValue()));
+//$$                         Map.Entry<ResourceLocation, Map<BlockPos, Memory>> entry = (Map.Entry)var4.next();
+//$$                         this.locations.put((ResourceLocation)entry.getKey(), new ConcurrentHashMap((Map)entry.getValue()));
 //$$                     }
 //$$
 //$$                     this.generateNamedLocations();
@@ -159,11 +159,11 @@ package me.aleksilassila.litematica.printer.printer.zxy.memory;
 //$$     }
 //$$
 //$$     private void generateNamedLocations() {
-//$$         ConcurrentMap<Identifier, ConcurrentMap<BlockPos, Memory>> namedLocations = new ConcurrentHashMap();
+//$$         ConcurrentMap<ResourceLocation, ConcurrentMap<BlockPos, Memory>> namedLocations = new ConcurrentHashMap();
 //$$         Iterator var2 = this.locations.keySet().iterator();
 //$$
 //$$ //        while(var2.hasNext()) {
-//$$ //            Identifier worldId = (Identifier)var2.next();
+//$$ //            ResourceLocation worldId = (ResourceLocation)var2.next();
 //$$ //            ConcurrentMap<BlockPos, Memory> newMap = (ConcurrentMap)namedLocations.computeIfAbsent(worldId, (id) -> {
 //$$ //                return new ConcurrentHashMap();
 //$$ //            });
@@ -182,24 +182,24 @@ package me.aleksilassila.litematica.printer.printer.zxy.memory;
 //$$         return FabricLoader.getInstance().getGameDir().resolve("printer").resolve(this.id + ".json");
 //$$     }
 //$$
-//$$     public boolean positionExists(Identifier worldId, BlockPos pos) {
+//$$     public boolean positionExists(ResourceLocation worldId, BlockPos pos) {
 //$$         return this.locations.containsKey(worldId) && ((ConcurrentMap)this.locations.get(worldId)).containsKey(pos);
 //$$     }
 //$$
-//$$     public List<ItemStack> getItems(Identifier worldId) {
+//$$     public List<ItemStack> getItems(ResourceLocation worldId) {
 //$$         if (this.locations.containsKey(worldId)) {
 //$$             Map<LightweightStack, Integer> count = new HashMap();
 //$$             Map<BlockPos, Memory> location = (Map)this.locations.get(worldId);
 //$$             location.forEach((pos, memory) -> {
 //$$                 memory.getItems().forEach((stack) -> {
-//$$                     LightweightStack lightweightStack = new LightweightStack(stack.getItem(), stack.getNbt());
+//$$                     LightweightStack lightweightStack = new LightweightStack(stack.getItem(), stack.getTag());
 //$$                     count.merge(lightweightStack, stack.getCount(), Integer::sum);
 //$$                 });
 //$$             });
 //$$             List<ItemStack> results = new ArrayList();
 //$$             count.forEach((lightweightStack, integer) -> {
 //$$                 ItemStack stack = new ItemStack(lightweightStack.getItem(), integer);
-//$$                 stack.setNbt(lightweightStack.getTag());
+//$$                 stack.setTag(lightweightStack.getTag());
 //$$                 results.add(stack);
 //$$             });
 //$$             return results;
@@ -208,15 +208,15 @@ package me.aleksilassila.litematica.printer.printer.zxy.memory;
 //$$         }
 //$$     }
 //$$
-//$$     public Collection<Memory> getAllMemories(Identifier worldId) {
+//$$     public Collection<Memory> getAllMemories(ResourceLocation worldId) {
 //$$         return (Collection)(this.locations.containsKey(worldId) ? ((ConcurrentMap)this.locations.get(worldId)).values() : Collections.emptyList());
 //$$     }
 //$$
-//$$     public Collection<Memory> getNamedMemories(Identifier worldId) {
+//$$     public Collection<Memory> getNamedMemories(ResourceLocation worldId) {
 //$$         return (Collection)(this.namedLocations.containsKey(worldId) ? ((ConcurrentMap)this.namedLocations.get(worldId)).values() : Collections.emptyList());
 //$$     }
 //$$
-//$$     public void mergeItems(Identifier worldId, Memory memory, Collection<BlockPos> toRemove) {
+//$$     public void mergeItems(ResourceLocation worldId, Memory memory, Collection<BlockPos> toRemove) {
 //$$         if (!ChestTracker.CONFIG.miscOptions.rememberNewChests && !MemoryUtils.shouldForceNextMerge()) {
 //$$             if (!this.locations.containsKey(worldId)) {
 //$$                 return;
@@ -257,7 +257,7 @@ package me.aleksilassila.litematica.printer.printer.zxy.memory;
 //$$         this.mergeItems(worldId, memory);
 //$$     }
 //$$
-//$$     public void mergeItems(Identifier worldId, Memory memory) {
+//$$     public void mergeItems(ResourceLocation worldId, Memory memory) {
 //$$         if (memory.getItems().size() > 0 || memory.getTitle() != null /*|| !ChestTracker.CONFIG.miscOptions.rememberNewChests*/) {
 //$$             this.addItem(worldId, memory, this.locations);
 //$$             if (memory.getTitle() != null) {
@@ -267,14 +267,14 @@ package me.aleksilassila.litematica.printer.printer.zxy.memory;
 //$$
 //$$     }
 //$$
-//$$     private void addItem(Identifier worldId, Memory memory, ConcurrentMap<Identifier, ConcurrentMap<BlockPos, Memory>> map) {
+//$$     private void addItem(ResourceLocation worldId, Memory memory, ConcurrentMap<ResourceLocation, ConcurrentMap<BlockPos, Memory>> map) {
 //$$         ConcurrentMap<BlockPos, Memory> memoryMap = (ConcurrentMap)map.computeIfAbsent(worldId, (identifier) -> {
 //$$             return new ConcurrentHashMap();
 //$$         });
 //$$         memoryMap.put(memory.getPosition(), memory);
 //$$     }
 //$$
-//$$     public void removePos(Identifier worldId, BlockPos pos) {
+//$$     public void removePos(ResourceLocation worldId, BlockPos pos) {
 //$$         Map<BlockPos, Memory> location = (Map)this.locations.get(worldId);
 //$$         if (location != null) {
 //$$             location.remove(pos);
@@ -287,10 +287,10 @@ package me.aleksilassila.litematica.printer.printer.zxy.memory;
 //$$
 //$$     }
 //$$
-//$$     public List<Memory> findItems(ItemStack toFind, Identifier worldId) {
+//$$     public List<Memory> findItems(ItemStack toFind, ResourceLocation worldId) {
 //$$         List<Memory> found = new ArrayList();
 //$$         Map<BlockPos, Memory> location = (Map)this.locations.get(worldId);
-//$$         ClientPlayerEntity playerEntity = MinecraftClient.getInstance().player;
+//$$         LocalPlayer playerEntity = Minecraft.getInstance().player;
 //$$         if (location != null && playerEntity != null) {
 //$$             Iterator var6 = location.entrySet().iterator();
 //$$
@@ -307,7 +307,7 @@ package me.aleksilassila.litematica.printer.printer.zxy.memory;
 //$$                                 entry = (Map.Entry)var6.next();
 //$$                             } while(entry.getKey() == null);
 //$$                         } while(!((Memory)entry.getValue()).getItems().stream().anyMatch((candidate) -> {
-//$$                             return MemoryUtils.areStacksEquivalent(toFind, candidate, toFind.getNbt() == null || toFind.getNbt().equals(FULL_DURABILITY_TAG));
+//$$                             return MemoryUtils.areStacksEquivalent(toFind, candidate, toFind.getTags() == null || toFind.getTag().equals(FULL_DURABILITY_TAG));
 //$$                         }));
 //$$                         break;
 //$$ //                        if (MemoryUtils.checkExistsInWorld((Memory)entry.getValue())) {
@@ -327,7 +327,7 @@ package me.aleksilassila.litematica.printer.printer.zxy.memory;
 //$$         }
 //$$     }
 //$$
-//$$     public void clearDimension(Identifier currentWorldId) {
+//$$     public void clearDimension(ResourceLocation currentWorldId) {
 //$$         this.locations.remove(currentWorldId);
 //$$         this.namedLocations.remove(currentWorldId);
 //$$     }

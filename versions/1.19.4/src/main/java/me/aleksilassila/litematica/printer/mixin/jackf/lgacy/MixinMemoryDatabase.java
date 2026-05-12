@@ -1,12 +1,12 @@
 package me.aleksilassila.litematica.printer.mixin.jackf.lgacy;
 
 import me.aleksilassila.litematica.printer.printer.zxy.memory.MemoryUtils;
-import net.minecraft.client.MinecraftClient;
-import net.minecraft.client.network.ClientPlayerEntity;
-import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.NbtCompound;
-import net.minecraft.util.Identifier;
-import net.minecraft.util.math.BlockPos;
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.player.LocalPlayer;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.core.BlockPos;
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Overwrite;
@@ -32,11 +32,11 @@ import static me.aleksilassila.litematica.printer.printer.zxy.inventory.OpenInve
 public abstract class MixinMemoryDatabase {
 
     @Shadow(remap = false)
-    private ConcurrentMap<Identifier, ConcurrentMap<BlockPos, Memory>> locations = new ConcurrentHashMap<>();
+    private ConcurrentMap<ResourceLocation, ConcurrentMap<BlockPos, Memory>> locations = new ConcurrentHashMap<>();
 
-    @Shadow @Final private static NbtCompound FULL_DURABILITY_TAG;
+    @Shadow @Final private static CompoundTag FULL_DURABILITY_TAG;
     @Shadow(remap = false)
-    private transient ConcurrentMap<Identifier, ConcurrentMap<BlockPos, Memory>> namedLocations;
+    private transient ConcurrentMap<ResourceLocation, ConcurrentMap<BlockPos, Memory>> namedLocations;
 
     /**
      * @author 1
@@ -44,10 +44,10 @@ public abstract class MixinMemoryDatabase {
      */
 
     @Overwrite
-    public List<Memory> findItems(ItemStack toFind, Identifier worldId) {
+    public List<Memory> findItems(ItemStack toFind, ResourceLocation worldId) {
         List<Memory> found = new ArrayList();
         Map<BlockPos, Memory> location = locations.get(worldId);
-        ClientPlayerEntity playerEntity = MinecraftClient.getInstance().player;
+        LocalPlayer playerEntity = Minecraft.getInstance().player;
         if (location != null && playerEntity != null) {
             Iterator var6 = location.entrySet().iterator();
 
@@ -64,11 +64,11 @@ public abstract class MixinMemoryDatabase {
                                 entry = (Map.Entry)var6.next();
                             } while(entry.getKey() == null);
                         } while(!((Memory)entry.getValue()).getItems().stream().anyMatch((candidate) -> {
-                            return MemoryUtils.areStacksEquivalent(toFind, candidate, toFind.getNbt() == null || toFind.getNbt().equals(FULL_DURABILITY_TAG));
+                            return MemoryUtils.areStacksEquivalent(toFind, candidate, toFind.getTag() == null || toFind.getTag().equals(FULL_DURABILITY_TAG));
                         }));
                         break;
                     }
-                } while(((Memory)entry.getValue()).getPosition() != null && ChestTracker.getSquareSearchRange() != Integer.MAX_VALUE && !(((Memory)entry.getValue()).getPosition().getSquaredDistance(playerEntity.getBlockPos()) <= (double)ChestTracker.getSquareSearchRange()));
+                } while(((Memory)entry.getValue()).getPosition() != null && ChestTracker.getSquareSearchRange() != Integer.MAX_VALUE && !(((Memory)entry.getValue()).getPosition().distSqr(playerEntity.blockPosition()) <= (double)ChestTracker.getSquareSearchRange()));
                 found.add((Memory)entry.getValue());
             }
         } else {
@@ -80,10 +80,10 @@ public abstract class MixinMemoryDatabase {
      * @reason 2
      */
     @Overwrite
-    public void removePos(Identifier worldId, BlockPos pos) {
+    public void removePos(ResourceLocation worldId, BlockPos pos) {
 //        System.out.println(key);
 //        System.out.println(worldId);
-        if(key!=null) worldId = key.getValue();
+        if(key!=null) worldId = key.location();
 //        MinecraftClient.getInstance().player.closeHandledScreen();
         Map<BlockPos, Memory> location = (Map)this.locations.get(worldId);
         if (location != null) {
@@ -97,7 +97,7 @@ public abstract class MixinMemoryDatabase {
 
     }
     @Inject(at = @At("HEAD"),method = "getAllMemories")
-    public void getAllMemories(Identifier worldId, CallbackInfoReturnable<List<ItemStack>> cir) {
+    public void getAllMemories(ResourceLocation worldId, CallbackInfoReturnable<List<ItemStack>> cir) {
 //        System.out.println(worldId);
     }
 }

@@ -1,25 +1,25 @@
 package me.aleksilassila.litematica.printer.mixin.openinv;
 
 import me.aleksilassila.litematica.printer.printer.zxy.inventory.OpenInventoryPacket;
-import net.minecraft.network.ClientConnection;
-import net.minecraft.server.PlayerManager;
 //#if MC > 12001
-import net.minecraft.server.network.ConnectedClientData;
+import net.minecraft.server.network.CommonListenerCookie;
 //#endif
-import net.minecraft.server.network.ServerPlayerEntity;
+import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.network.Connection;
+import net.minecraft.server.players.PlayerList;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
-@Mixin(PlayerManager.class)
+@Mixin(PlayerList.class)
 public class PlayerManagerMixin {
-    @Inject(at = @At("TAIL"), method = "onPlayerConnect")
-    private void onPlayerConnect(ClientConnection connection, ServerPlayerEntity player,
+    @Inject(at = @At("TAIL"), method = "placeNewPlayer")
+    private void onPlayerConnect(Connection connection, ServerPlayer serverPlayer,
                                  //#if MC > 12001
-                                 ConnectedClientData clientData,
+                                 CommonListenerCookie commonListenerCookie,
                                  //#endif
                                  CallbackInfo ci) {
-        OpenInventoryPacket.helloRemote(player);
+        OpenInventoryPacket.helloRemote(serverPlayer);
     }
 }

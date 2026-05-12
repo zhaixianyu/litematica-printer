@@ -1,27 +1,24 @@
 package me.aleksilassila.litematica.printer.printer.bedrockUtils;
 
 //import net.fabricmc.fabric.api.event.client.player.ClientPickBlockCallback;
-//import net.minecraft.client.MinecraftClient;
+//import net.minecraft.client.Minecraft;
 
 import me.aleksilassila.litematica.printer.printer.Printer;
 import me.aleksilassila.litematica.printer.printer.zxy.inventory.InventoryUtils;
-import net.minecraft.block.BlockState;
-import net.minecraft.block.Blocks;
-import net.minecraft.client.MinecraftClient;
-import net.minecraft.client.network.ClientPlayNetworkHandler;
-import net.minecraft.enchantment.EnchantmentHelper;
-import net.minecraft.enchantment.Enchantments;
-import net.minecraft.entity.effect.StatusEffectUtil;
-import net.minecraft.entity.effect.StatusEffects;
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.entity.player.PlayerInventory;
-import net.minecraft.item.ItemConvertible;
-import net.minecraft.item.ItemStack;
-import net.minecraft.network.packet.c2s.play.UpdateSelectedSlotC2SPacket;
-import net.minecraft.registry.tag.FluidTags;
-import net.minecraft.screen.PlayerScreenHandler;
-import net.minecraft.screen.slot.Slot;
-import net.minecraft.screen.slot.SlotActionType;
+import net.minecraft.client.multiplayer.ClientPacketListener;
+import net.minecraft.client.player.LocalPlayer;
+import net.minecraft.tags.FluidTags;
+import net.minecraft.world.effect.MobEffectUtil;
+import net.minecraft.world.effect.MobEffects;
+import net.minecraft.world.inventory.AbstractContainerMenu;
+import net.minecraft.world.inventory.ClickType;
+import net.minecraft.world.item.enchantment.Enchantments;
+import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.block.Blocks;
+import net.minecraft.client.Minecraft;
+import net.minecraft.world.entity.player.Inventory;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.level.ItemLike;
 
 import static me.aleksilassila.litematica.printer.printer.bedrockUtils.TargetBlock.switchPickaxe;
 import static me.aleksilassila.litematica.printer.printer.zxy.Utils.ZxyUtils.getEnchantmentLevel;
@@ -30,8 +27,8 @@ import static me.aleksilassila.litematica.printer.printer.zxy.Utils.ZxyUtils.get
 public class InventoryManager {
     public static void refresh()
     {
-        MinecraftClient mc = MinecraftClient.getInstance();
-        ClientPlayNetworkHandler networkHandler = mc.getNetworkHandler();
+        Minecraft mc = Minecraft.getInstance();
+        ClientPacketListener networkHandler = mc.getConnection();
         if (networkHandler != null && mc.player != null)
         {
 //            ItemStack uniqueItem = new ItemStack(Items.STONE);
@@ -39,7 +36,7 @@ public class InventoryManager {
 //			networkHandler.sendPacket(new ClickWindowC2SPacket(
 //					mc.player.container.syncId,
 //					//#if MC >= 11700
-//					//$$ mc.player.currentScreenHandler.getRevision(),
+//					//$$ mc.player.containerMenu.getRevision(),
 //					//#endif
 //					-999, 2,
 //					SlotActionType.QUICK_CRAFT,
@@ -51,13 +48,13 @@ public class InventoryManager {
 //					mc.player.container.getNextActionId(mc.player.inventory)
 //					//#endif
 //			));
-            mc.interactionManager.clickSlot(mc.player.currentScreenHandler.syncId, -999, 2, SlotActionType.QUICK_CRAFT, mc.player);
+            mc.gameMode.handleInventoryMouseClick(mc.player.containerMenu.containerId, -999, 2, ClickType.QUICK_CRAFT, mc.player);
 
 //			InfoUtils.printActionbarMessage("tweakermore.impl.refreshInventory.refreshed");
         }
     }
     static int i = 0;
-    public static boolean switchToItem(ItemConvertible item) {
+    public static boolean switchToItem(ItemLike item) {
 
 //        Item tm;
 //        if (item instanceof Item) {
@@ -65,12 +62,12 @@ public class InventoryManager {
 //        } else {
 //            tm = item.asItem();
 //        }
-//        Printer.getPrinter().switchToItems(MinecraftClient.getInstance().player,new Item[]{tm});
+//        Printer.getPrinter().switchToItems(Minecraft.getInstance().player,new Item[]{tm});
 
-        MinecraftClient minecraftClient = MinecraftClient.getInstance();
-        PlayerInventory playerInventory = minecraftClient.player.getInventory();
+        Minecraft minecraftClient = Minecraft.getInstance();
+        Inventory playerInventory = minecraftClient.player.getInventory();
 
-        int i = playerInventory.getSlotWithStack(new ItemStack(item));
+        int i = playerInventory.getSlotWithRemainingSpace(new ItemStack(item));
         if(item.toString().contains("pickaxe")){
             String string = item.toString();
             int a = 1;
@@ -78,22 +75,22 @@ public class InventoryManager {
         if ("diamond_pickaxe".equals(item.toString()) || "minecraft:diamond_pickaxe".equals(item.toString())) {
             i = getEfficientTool();
         }else switchPickaxe = false;
-        PlayerScreenHandler sc = minecraftClient.player.playerScreenHandler;
+        AbstractContainerMenu sc = minecraftClient.player.inventoryMenu;
         if (i != -1) {
             if(!item.toString().contains("pickaxe")){
                 for (int i1 = 0; i1 < sc.slots.size(); i1++) {
-                    if (ItemStack.areItemsEqual(sc.slots.get(i1).getStack(),new ItemStack(item))) i = i1;
+                    if (ItemStack.isSameItem(sc.slots.get(i1).getItem(),new ItemStack(item))) i = i1;
                 }
-                minecraftClient.interactionManager.clickSlot(sc.syncId, i, 40, SlotActionType.SWAP, minecraftClient.player);
+                minecraftClient.gameMode.handleInventoryMouseClick(sc.containerId, i, 40, ClickType.SWAP, minecraftClient.player);
                 refresh();
             }else{
-                if (PlayerInventory.isValidHotbarIndex(i)) {
+                if (Inventory.isHotbarSlot(i)) {
                     InventoryUtils.setSelectedSlot(i);
                 } else {
                     {
 //                        minecraftClient.interactionManager.pickFromInventory(i);
 //                        minecraftClient.getNetworkHandler().sendPacket(new UpdateSelectedSlotC2SPacket(playerInventory.selectedSlot));
-                        minecraftClient.interactionManager.clickSlot(sc.syncId, i, InventoryUtils.getSelectedSlot(), SlotActionType.SWAP, minecraftClient.player);
+                        minecraftClient.gameMode.handleInventoryMouseClick(sc.containerId, i, InventoryUtils.getSelectedSlot(), ClickType.SWAP, minecraftClient.player);
                         refresh();
                     }
                 }
@@ -105,7 +102,7 @@ public class InventoryManager {
 
     private static int getEfficientTool() {
         for (int i = 0; i < InventoryUtils.getMainStacks().size(); ++i) {
-            if (getBlockBreakingSpeed(Blocks.PISTON.getDefaultState(), i) > 45f) {
+            if (getBlockBreakingSpeed(Blocks.PISTON.defaultBlockState(), i) > 45f) {
                 return i;
             }
         }
@@ -113,11 +110,11 @@ public class InventoryManager {
     }
 
     public static boolean canInstantlyMinePiston() {
-        MinecraftClient minecraftClient = MinecraftClient.getInstance();
-        PlayerInventory playerInventory = minecraftClient.player.getInventory();
+        Minecraft minecraftClient = Minecraft.getInstance();
+        Inventory playerInventory = minecraftClient.player.getInventory();
 
-        for (int i = 0; i < playerInventory.size(); i++) {
-            if (getBlockBreakingSpeed(Blocks.PISTON.getDefaultState(), i) > 45f) {
+        for (int i = 0; i < playerInventory.getContainerSize(); i++) {
+            if (getBlockBreakingSpeed(Blocks.PISTON.defaultBlockState(), i) > 45f) {
                 return true;
             }
         }
@@ -125,26 +122,26 @@ public class InventoryManager {
     }
 
     private static float getBlockBreakingSpeed(BlockState block, int slot) {
-        MinecraftClient minecraftClient = MinecraftClient.getInstance();
-        PlayerEntity player = minecraftClient.player;
-        ItemStack stack = player.getInventory().getStack(slot);
+        Minecraft minecraftClient = Minecraft.getInstance();
+        LocalPlayer player = minecraftClient.player;
+        ItemStack stack = player.getInventory().getItem(slot);
 
-        float f = stack.getMiningSpeedMultiplier(block);
+        float f = stack.getDestroySpeed(block);
         if (f > 1.0F) {
-            int i = getEnchantmentLevel(stack,Enchantments.EFFICIENCY);
-            ItemStack itemStack = player.getInventory().getStack(slot);
+            int i = getEnchantmentLevel(stack, Enchantments.EFFICIENCY);
+            ItemStack itemStack = player.getInventory().getItem(slot);
             if (i > 0 && !itemStack.isEmpty()) {
                 f += (float) (i * i + 1);
             }
         }
 
-        if (StatusEffectUtil.hasHaste(player)) {
-            f *= 1.0F + (float) (StatusEffectUtil.getHasteAmplifier(player) + 1) * 0.2F;
+        if (MobEffectUtil.hasDigSpeed(player)) {
+            f *= 1.0F + (float) (MobEffectUtil.getDigSpeedAmplification(player) + 1) * 0.2F;
         }
 
-        if (player.hasStatusEffect(StatusEffects.MINING_FATIGUE)) {
+        if (player.hasEffect(MobEffects.MINING_FATIGUE)) {
             float k;
-            switch (player.getStatusEffect(StatusEffects.MINING_FATIGUE).getAmplifier()) {
+            switch (player.getEffect(MobEffects.MINING_FATIGUE).getAmplifier()) {
                 case 0:
                     k = 0.3F;
                     break;
@@ -162,26 +159,26 @@ public class InventoryManager {
             f *= k;
         }
 
-        if (player.isSubmergedIn(FluidTags.WATER) && getEnchantmentLevel(stack, Enchantments.AQUA_AFFINITY) <= 0) {
+        if (player.isEyeInFluid(FluidTags.WATER) && getEnchantmentLevel(stack, Enchantments.AQUA_AFFINITY) <= 0) {
             f /= 5.0F;
         }
 
-        if (!player.isOnGround()) {
+        if (!player.onGround()) {
             f /= 5.0F;
         }
 
         return f;
     }
 
-    public static int getInventoryItemCount(ItemConvertible item) {
-        MinecraftClient minecraftClient = MinecraftClient.getInstance();
-        PlayerInventory playerInventory = minecraftClient.player.getInventory();
-        return playerInventory.count(item.asItem());
+    public static int getInventoryItemCount(ItemLike item) {
+        Minecraft minecraftClient = Minecraft.getInstance();
+        Inventory playerInventory = minecraftClient.player.getInventory();
+        return playerInventory.countItem(item.asItem());
     }
 
     public static String warningMessage() {
-        MinecraftClient minecraftClient = MinecraftClient.getInstance();
-        if (minecraftClient.interactionManager.getCurrentGameMode().isCreative()) {
+        Minecraft minecraftClient = Minecraft.getInstance();
+        if (minecraftClient.gameMode.getPlayerMode().isCreative()) {
             return "bedrockminer.fail.missing.survival";
         }
 

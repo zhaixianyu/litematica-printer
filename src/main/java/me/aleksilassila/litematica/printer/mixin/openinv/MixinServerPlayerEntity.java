@@ -5,11 +5,11 @@ import com.llamalad7.mixinextras.injector.wrapoperation.WrapOperation;
 import com.mojang.authlib.GameProfile;
 import me.aleksilassila.litematica.printer.printer.zxy.inventory.OpenInventoryPacket;
 import me.aleksilassila.litematica.printer.printer.zxy.inventory.TickList;
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.screen.ScreenHandler;
-import net.minecraft.server.network.ServerPlayerEntity;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.world.World;
+import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.inventory.AbstractContainerMenu;
+import net.minecraft.core.BlockPos;
+import net.minecraft.world.level.Level;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.Unique;
@@ -26,55 +26,39 @@ import static me.aleksilassila.litematica.printer.printer.zxy.inventory.OpenInve
 
 //#if MC == 11902
 //$$ import org.jetbrains.annotations.Nullable;
-//$$ import net.minecraft.network.encryption.PlayerPublicKey;
 //#endif
 
-@Mixin(ServerPlayerEntity.class)
+@Mixin(ServerPlayer.class)
 public abstract class MixinServerPlayerEntity{
 
-//    public MixinServerPlayerEntity(World world, BlockPos pos, float yaw, GameProfile profile
-//    //#if MC == 11902
-//    //$$ , @Nullable PlayerPublicKey publicKey) { super(world, pos, yaw, profile, publicKey);
-//    //#elseif MC > 12105
-//    ) {super(world,  profile);
-//    //#else
-//    //$$ ) {super(world, pos, yaw, profile);
-//    //#endif
-//    }
-//
-//
-    //#if MC < 11904
-    //$$ @Inject(at = @At("HEAD"), method = "closeScreenHandler")
-    //#else
-    @Inject(at = @At("HEAD"), method = "onHandledScreenClosed")
-    //#endif
+    @Inject(at = @At("HEAD"), method = "doCloseContainer")
     public void onHandledScreenClosed(CallbackInfo ci) {
         deletePlayerList();
     }
-    @Inject(at = @At("HEAD"), method = "onDisconnect")
+    @Inject(at = @At("HEAD"), method = "disconnect")
     public void onDisconnect(CallbackInfo ci) {
         deletePlayerList();
     }
 
     @Unique
     private UUID getUuid1(){
-        return ((ServerPlayerEntity)(Object)this).getUuid();
+        return ((ServerPlayer)(Object)this).getUUID();
     }
     @Unique
     private void deletePlayerList(){
-        playerlist.removeIf(player -> player.getUuid().equals(getUuid1()));
-        List<Map.Entry<ServerPlayerEntity, TickList>> list = tickMap.entrySet().stream().filter(k -> k.getKey().getUuid().equals(getUuid1())).toList();
-        for (Map.Entry<ServerPlayerEntity, TickList> serverPlayerEntityTickListEntry : list) {
+        playerlist.removeIf(player -> player.getUUID().equals(getUuid1()));
+        List<Map.Entry<ServerPlayer, TickList>> list = tickMap.entrySet().stream().filter(k -> k.getKey().getUUID().equals(getUuid1())).toList();
+        for (Map.Entry<ServerPlayer, TickList> serverPlayerEntityTickListEntry : list) {
             tickMap.remove(serverPlayerEntityTickListEntry.getKey());
         }
     }
-    @WrapOperation(at = @At(value = "INVOKE", target = "Lnet/minecraft/screen/ScreenHandler;canUse(Lnet/minecraft/entity/player/PlayerEntity;)Z"),method = "tick")
-    public boolean onTick(ScreenHandler instance, PlayerEntity playerEntity, Operation<Boolean> original){
-        if (playerEntity instanceof ServerPlayerEntity) {
-            for (ServerPlayerEntity serverPlayerEntity : OpenInventoryPacket.playerlist) {
-                if (serverPlayerEntity.equals(playerEntity)) return true;
+    @WrapOperation(at = @At(value = "INVOKE", target = "Lnet/minecraft/world/inventory/AbstractContainerMenu;stillValid(Lnet/minecraft/world/entity/player/Player;)Z"),method = "tick")
+    public boolean onTick(AbstractContainerMenu instance, Player player, Operation<Boolean> original){
+        if (player instanceof ServerPlayer) {
+            for (ServerPlayer serverPlayerEntity : OpenInventoryPacket.playerlist) {
+                if (serverPlayerEntity.equals(player)) return true;
             }
         }
-        return instance.canUse(playerEntity);
+        return instance.stillValid(player);
     }
 }

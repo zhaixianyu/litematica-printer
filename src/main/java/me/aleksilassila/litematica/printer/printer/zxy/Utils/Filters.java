@@ -1,11 +1,11 @@
 package me.aleksilassila.litematica.printer.printer.zxy.Utils;
 
-import net.minecraft.block.Block;
-import net.minecraft.block.BlockState;
-import net.minecraft.item.ItemStack;
-import net.minecraft.registry.Registries;
-import net.minecraft.registry.tag.TagKey;
-import net.minecraft.util.math.BlockPos;
+import net.minecraft.core.registries.BuiltInRegistries;
+import net.minecraft.tags.TagKey;
+import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.core.BlockPos;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -47,7 +47,7 @@ public class Filters {
         }else return false;
 
         String originId = block != null ?
-                Registries.BLOCK.getId(block).toString() : Registries.ITEM.getId(itemStack.getItem()).toString();
+                BuiltInRegistries.BLOCK.getKey(block).toString() : BuiltInRegistries.ITEM.getKey(itemStack.getItem()).toString();
         String[] args = blockName.split(",");
         String oName = args[0];
         if(args.length > 1){
@@ -56,11 +56,11 @@ public class Filters {
         boolean b = Arrays.stream(args).noneMatch("!"::equals);
         if (Filters.filters(originId,oName,args)) return b;
         try {
-           return block != null ? getTag(block.getRegistryEntry().streamTags(),blockName,args) : getTag(itemStack.streamTags(),blockName,args);
+           return block != null ? getTag(block.builtInRegistryHolder().tags(),blockName,args) : getTag(itemStack.getTags(),blockName,args);
         }catch (Exception ignored){}
 
         //中文 、 拼音
-        String name = block != null ?  block.getName().getString() : itemStack.getName().getString();
+        String name = block != null ?  block.getName().getString() : itemStack.getItem().getName().getString();
         if (Filters.filters(name,oName,args)) return b;
 
         ArrayList<String> pinYin = PinYinSearch.getPinYin(name);
@@ -75,7 +75,7 @@ public class Filters {
             AtomicBoolean theLabelIsTheSame = new AtomicBoolean(false);
             String fix1 = name.split("#")[1];
             t.forEach(tag -> {
-                String tagName = tag.id().toString();
+                String tagName = tag.location().toString();
                 if (Filters.filters(tagName,fix1, tags)) {
                     theLabelIsTheSame.set(true);
                 }

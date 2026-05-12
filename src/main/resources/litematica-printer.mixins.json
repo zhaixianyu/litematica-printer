@@ -11,6 +11,7 @@
     "masa.MixinInventoryUtils",
     "masa.WorldUtilsAccessor",
     "masa.WorldUtilsMixin",
+    "openinv.ChunkTicketTypeMixin",
     "openinv.ClientPlayNetworkHandlerMixin",
     "openinv.InventoryMixin",
     "openinv.MixinGenericContainerScreenHandler",
@@ -18,14 +19,15 @@
     "openinv.MixinPlayerEntity",
     "openinv.MixinServerPlayerEntity",
     "openinv.MixinServerWorld",
-    "openinv.PlayerManagerMixin"
+    "openinv.PlayerManagerMixin",
+    "openinv.ShulkerBoxBlockAccessor"
   ],
   "client": [
     "ClientCommonNetworkHandlerMixin",
     "FlowerPotBlockAccessor",
+    "MixinClientPacketListener",
     "MixinClientPlayerEntity",
     "MixinClientPlayerInteractionManager",
-    "MixinClientPlayNetworkHandler",
     "PlayerMoveC2SPacketAccessor",
     "jackf.ChestTrackerScreenMixin",
     "jackf.EditMemoryBankScreenMixin",
@@ -50,7 +52,7 @@
     "masa.litematicaSetConfig.ConfigsMixin",
     "masa.litematicaSetConfig.GuiConfigsMixin",
     "masa.litematicaSetConfig.InputHandlerMixin",
-    "openinv.MixinMinecraftClient",
+    "openinv.MixinMinecraft",
     "verify.MixinClientConnection"
   ],
   "injectors": {

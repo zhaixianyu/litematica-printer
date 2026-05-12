@@ -3,10 +3,10 @@ package me.aleksilassila.litematica.printer.printer.zxy.memory;
 //#if MC < 12001
 //$$ import net.fabricmc.api.EnvType;
 //$$ import net.fabricmc.api.Environment;
-//$$ import net.minecraft.item.ItemStack;
-//$$ import net.minecraft.text.Text;
-//$$ import net.minecraft.util.math.BlockPos;
-//$$ import net.minecraft.util.math.Vec3d;
+//$$ import net.minecraft.world.item.ItemStack;
+//$$ import net.minecraft.network.chat.Component;
+//$$ import net.minecraft.core.BlockPos;
+//$$ import net.minecraft.world.phys.Vec3;
 //$$ import org.jetbrains.annotations.Nullable;
 //$$
 //$$ import java.util.List;
@@ -15,20 +15,20 @@ package me.aleksilassila.litematica.printer.printer.zxy.memory;
 //$$ public class Memory {
 //$$     private final @Nullable BlockPos position;
 //$$     private final List<ItemStack> items;
-//$$     private final @Nullable Vec3d nameOffset;
-//$$     private @Nullable Text title;
+//$$     private final @Nullable Vec3 nameOffset;
+//$$     private @Nullable Component title;
 //$$     private Boolean manualTitle = false;
 //$$
-//$$     private Memory(@Nullable BlockPos position, List<ItemStack> items, @Nullable Text title, @Nullable Vec3d nameOffset) {
+//$$     private Memory(@Nullable BlockPos position, List<ItemStack> items, @Nullable Component title, @Nullable Vec3 nameOffset) {
 //$$         this.position = position;
 //$$         this.items = items;
 //$$         this.title = title;
 //$$         this.nameOffset = nameOffset;
 //$$     }
 //$$
-//$$     public static Memory of(@Nullable BlockPos pos, List<ItemStack> items, @Nullable Text title, @Nullable Vec3d nameOffset) {
+//$$     public static Memory of(@Nullable BlockPos pos, List<ItemStack> items, @Nullable Component title, @Nullable Vec3 nameOffset) {
 //$$ //        System.out.println("of" + items);
-//$$         return new Memory(pos == null ? null : pos.toImmutable(), items, title, nameOffset);
+//$$         return new Memory(pos, items, title, nameOffset);
 //$$     }
 //$$
 //$$     public @Nullable BlockPos getPosition() {
@@ -39,11 +39,11 @@ package me.aleksilassila.litematica.printer.printer.zxy.memory;
 //$$         return this.items;
 //$$     }
 //$$
-//$$     public @Nullable Text getTitle() {
+//$$     public @Nullable Component getTitle() {
 //$$         return this.title;
 //$$     }
 //$$
-//$$     public void setTitle(@Nullable Text title) {
+//$$     public void setTitle(@Nullable Component title) {
 //$$         this.title = title;
 //$$     }
 //$$
@@ -51,7 +51,7 @@ package me.aleksilassila.litematica.printer.printer.zxy.memory;
 //$$         return "Memory{position=" + this.position + ", items=" + this.items + ", title=" + this.title + "}";
 //$$     }
 //$$
-//$$     public @Nullable Vec3d getNameOffset() {
+//$$     public @Nullable Vec3 getNameOffset() {
 //$$         return this.nameOffset;
 //$$     }
 //$$

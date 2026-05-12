@@ -183,7 +183,9 @@ dependencies {
 
     // To change the versions see the gradle.properties file
     minecraft "com.mojang:minecraft:${project.minecraft_version}"
-    if (mcVersion <= 12111) mappings "net.fabricmc:yarn:${project.yarn_mappings}:v2"
+    if(useMappings){
+        mappings loom.officialMojangMappings()
+    }
 
     autoImplementation "net.fabricmc:fabric-loader:${project.loader_version}"
     autoImplementation "net.fabricmc.fabric-api:fabric-api:${project.fabric_api_version}"
@@ -210,7 +212,7 @@ dependencies {
             autoImplementation files(dependencyNotation)
         } else if (mode == 6){
             def file = downloadMod(dependencyNotation, "${project.property("${id}")}")
-            if (file == null) return;
+            if (file == null) return
             autoImplementation files(file)
         }
     }
@@ -295,7 +297,6 @@ group = project.mod_maven_group
 base {
     archivesName.set("${project.mod_archives_base_name}-${project.minecraft_version}")
 }
-
 
 loom {
     interfaceInjection {
@@ -477,6 +478,16 @@ publishing {
             credentials {
                 username = System.getenv("GITHUB_USERNAME") // GitHub 用户名
                 password = System.getenv("GITHUB_TOKEN")     // GitHub Personal Access Token (PAT)
+            }
+        }
+    }
+}
+
+gradle.taskGraph.whenReady { taskGraph ->
+    if (taskGraph.allTasks.any { task -> task.name == 'setCoreVersion'}) {
+        tasks.withType(JavaCompile).tap {
+            configureEach {
+                options.failOnError = false
             }
         }
     }

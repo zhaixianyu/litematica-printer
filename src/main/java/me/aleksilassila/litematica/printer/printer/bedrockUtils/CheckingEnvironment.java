@@ -1,91 +1,91 @@
 package me.aleksilassila.litematica.printer.printer.bedrockUtils;
 
-import net.minecraft.block.Blocks;
-import net.minecraft.client.world.ClientWorld;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.Direction;
+import net.minecraft.client.multiplayer.ClientLevel;
+import net.minecraft.world.level.block.Blocks;
+import net.minecraft.core.BlockPos;
+import net.minecraft.core.Direction;
 
 import java.util.ArrayList;
 
 import static me.aleksilassila.litematica.printer.printer.PlacementGuide.Action.isReplaceable;
-import static net.minecraft.block.Block.sideCoversSmallSquare;
+import static net.minecraft.world.level.block.Block.canSupportCenter;
 
 public class CheckingEnvironment {
 
-    public static BlockPos findNearbyFlatBlockToPlaceRedstoneTorch(ClientWorld world, BlockPos blockPos) {
+    public static BlockPos findNearbyFlatBlockToPlaceRedstoneTorch(ClientLevel world, BlockPos blockPos) {
 
-        if ((sideCoversSmallSquare(world, blockPos.east(), Direction.UP) && (isReplaceable(world.getBlockState(blockPos.east().up()))) || world.getBlockState(blockPos.east().up()).isOf(Blocks.REDSTONE_TORCH) && !world.getBlockState(blockPos.east()).isAir())) {
+        if ((canSupportCenter(world, blockPos.east(), Direction.UP) && (isReplaceable(world.getBlockState(blockPos.east().above()))) || world.getBlockState(blockPos.east().above()).is(Blocks.REDSTONE_TORCH) && !world.getBlockState(blockPos.east()).isAir())) {
             return blockPos.east();
-        } else if ((sideCoversSmallSquare(world, blockPos.west(), Direction.UP) && (isReplaceable(world.getBlockState(blockPos.west().up()))) || world.getBlockState(blockPos.west().up()).isOf(Blocks.REDSTONE_TORCH) && !world.getBlockState(blockPos.west()).isAir())) {
+        } else if ((canSupportCenter(world, blockPos.west(), Direction.UP) && (isReplaceable(world.getBlockState(blockPos.west().above()))) || world.getBlockState(blockPos.west().above()).is(Blocks.REDSTONE_TORCH) && !world.getBlockState(blockPos.west()).isAir())) {
             return blockPos.west();
-        } else if ((sideCoversSmallSquare(world, blockPos.north(), Direction.UP) && (isReplaceable(world.getBlockState(blockPos.north().up())))  || world.getBlockState(blockPos.north().up()).isOf(Blocks.REDSTONE_TORCH) && !world.getBlockState(blockPos.north()).isAir())) {
+        } else if ((canSupportCenter(world, blockPos.north(), Direction.UP) && (isReplaceable(world.getBlockState(blockPos.north().above())))  || world.getBlockState(blockPos.north().above()).is(Blocks.REDSTONE_TORCH) && !world.getBlockState(blockPos.north()).isAir())) {
             return blockPos.north();
-        } else if ((sideCoversSmallSquare(world, blockPos.south(), Direction.UP) && (isReplaceable(world.getBlockState(blockPos.south().up())))  || world.getBlockState(blockPos.south().up()).isOf(Blocks.REDSTONE_TORCH) && !world.getBlockState(blockPos.south()).isAir())) {
+        } else if ((canSupportCenter(world, blockPos.south(), Direction.UP) && (isReplaceable(world.getBlockState(blockPos.south().above())))  || world.getBlockState(blockPos.south().above()).is(Blocks.REDSTONE_TORCH) && !world.getBlockState(blockPos.south()).isAir())) {
             return blockPos.south();
         }
         return null;
     }
 
-    public static BlockPos findPossibleSlimeBlockPos(ClientWorld world, BlockPos blockPos) {
-        if (isReplaceable(world.getBlockState(blockPos.east().up())) && (isReplaceable(world.getBlockState(blockPos.east().up())))) {
+    public static BlockPos findPossibleSlimeBlockPos(ClientLevel world, BlockPos blockPos) {
+        if (isReplaceable(world.getBlockState(blockPos.east().above())) && (isReplaceable(world.getBlockState(blockPos.east().above())))) {
             return blockPos.east();
-        } else if (isReplaceable(world.getBlockState(blockPos.west().up())) && (isReplaceable(world.getBlockState(blockPos.west().up())))) {
+        } else if (isReplaceable(world.getBlockState(blockPos.west().above())) && (isReplaceable(world.getBlockState(blockPos.west().above())))) {
             return blockPos.west();
-        } else if (isReplaceable(world.getBlockState(blockPos.south().up())) && (isReplaceable(world.getBlockState(blockPos.south().up())))) {
+        } else if (isReplaceable(world.getBlockState(blockPos.south().above())) && (isReplaceable(world.getBlockState(blockPos.south().above())))) {
             return blockPos.south();
-        } else if (isReplaceable(world.getBlockState(blockPos.north().up())) && (isReplaceable(world.getBlockState(blockPos.north().up())))) {
+        } else if (isReplaceable(world.getBlockState(blockPos.north().above())) && (isReplaceable(world.getBlockState(blockPos.north().above())))) {
             return blockPos.north();
         }
         return null;
     }
 
-    public static boolean has2BlocksOfPlaceToPlacePiston(ClientWorld world, BlockPos blockPos) {
-        if (world.getBlockState(blockPos.up()).getHardness(world, blockPos.up()) == 0) {
-            BlockBreaker.breakBlock(world, blockPos.up());
+    public static boolean has2BlocksOfPlaceToPlacePiston(ClientLevel world, BlockPos blockPos) {
+        if (world.getBlockState(blockPos.above()).getDestroySpeed(world, blockPos.above()) == 0) {
+            BlockBreaker.breakBlock(world, blockPos.above());
         }
-        return isReplaceable(world.getBlockState(blockPos.up())) && isReplaceable(world.getBlockState(blockPos.up().up()));
+        return isReplaceable(world.getBlockState(blockPos.above())) && isReplaceable(world.getBlockState(blockPos.above().above()));
     }
 
-    public static ArrayList<BlockPos> findNearbyRedstoneTorch(ClientWorld world, BlockPos pistonBlockPos) {
+    public static ArrayList<BlockPos> findNearbyRedstoneTorch(ClientLevel world, BlockPos pistonBlockPos) {
         ArrayList<BlockPos> list = new ArrayList<>();
-        if (world.getBlockState(pistonBlockPos.east()).isOf(Blocks.REDSTONE_TORCH)) {
+        if (world.getBlockState(pistonBlockPos.east()).is(Blocks.REDSTONE_TORCH)) {
             list.add(pistonBlockPos.east());
         }
-        if (world.getBlockState(pistonBlockPos.west()).isOf(Blocks.REDSTONE_TORCH)) {
+        if (world.getBlockState(pistonBlockPos.west()).is(Blocks.REDSTONE_TORCH)) {
             list.add(pistonBlockPos.west());
         }
-        if (world.getBlockState(pistonBlockPos.south()).isOf(Blocks.REDSTONE_TORCH)) {
+        if (world.getBlockState(pistonBlockPos.south()).is(Blocks.REDSTONE_TORCH)) {
             list.add(pistonBlockPos.south());
         }
-        if (world.getBlockState(pistonBlockPos.north()).isOf(Blocks.REDSTONE_TORCH)) {
+        if (world.getBlockState(pistonBlockPos.north()).is(Blocks.REDSTONE_TORCH)) {
             list.add(pistonBlockPos.north());
         }
 
-        pistonBlockPos = pistonBlockPos.up();
-        if (world.getBlockState(pistonBlockPos.east()).isOf(Blocks.REDSTONE_TORCH)) {
+        pistonBlockPos = pistonBlockPos.below();
+        if (world.getBlockState(pistonBlockPos.east()).is(Blocks.REDSTONE_TORCH)) {
             list.add(pistonBlockPos.east());
         }
-        if (world.getBlockState(pistonBlockPos.west()).isOf(Blocks.REDSTONE_TORCH)) {
+        if (world.getBlockState(pistonBlockPos.west()).is(Blocks.REDSTONE_TORCH)) {
             list.add(pistonBlockPos.west());
         }
-        if (world.getBlockState(pistonBlockPos.south()).isOf(Blocks.REDSTONE_TORCH)) {
+        if (world.getBlockState(pistonBlockPos.south()).is(Blocks.REDSTONE_TORCH)) {
             list.add(pistonBlockPos.south());
         }
-        if (world.getBlockState(pistonBlockPos.north()).isOf(Blocks.REDSTONE_TORCH)) {
+        if (world.getBlockState(pistonBlockPos.north()).is(Blocks.REDSTONE_TORCH)) {
             list.add(pistonBlockPos.north());
         }
 
-        pistonBlockPos = pistonBlockPos.down(2);
-        if (world.getBlockState(pistonBlockPos.east()).isOf(Blocks.REDSTONE_TORCH)) {
+        pistonBlockPos = pistonBlockPos.below(2);
+        if (world.getBlockState(pistonBlockPos.east()).is(Blocks.REDSTONE_TORCH)) {
             list.add(pistonBlockPos.east());
         }
-        if (world.getBlockState(pistonBlockPos.west()).isOf(Blocks.REDSTONE_TORCH)) {
+        if (world.getBlockState(pistonBlockPos.west()).is(Blocks.REDSTONE_TORCH)) {
             list.add(pistonBlockPos.west());
         }
-        if (world.getBlockState(pistonBlockPos.south()).isOf(Blocks.REDSTONE_TORCH)) {
+        if (world.getBlockState(pistonBlockPos.south()).is(Blocks.REDSTONE_TORCH)) {
             list.add(pistonBlockPos.south());
         }
-        if (world.getBlockState(pistonBlockPos.north()).isOf(Blocks.REDSTONE_TORCH)) {
+        if (world.getBlockState(pistonBlockPos.north()).is(Blocks.REDSTONE_TORCH)) {
             list.add(pistonBlockPos.north());
         }
         return list;

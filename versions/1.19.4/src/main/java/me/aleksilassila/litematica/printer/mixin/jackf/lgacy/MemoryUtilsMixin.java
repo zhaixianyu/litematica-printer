@@ -2,20 +2,20 @@ package me.aleksilassila.litematica.printer.mixin.jackf.lgacy;
 
 
  import me.aleksilassila.litematica.printer.LitematicaMixinMod;
- import net.minecraft.block.Block;
- import net.minecraft.block.BlockState;
- import net.minecraft.block.Blocks;
- import net.minecraft.block.entity.BlockEntity;
- import net.minecraft.client.MinecraftClient;
- import net.minecraft.client.gui.screen.ingame.HandledScreen;
- import net.minecraft.item.ItemStack;
- import net.minecraft.registry.Registries;
- import net.minecraft.screen.ScreenHandler;
- import net.minecraft.screen.slot.Slot;
- import net.minecraft.text.Text;
- import net.minecraft.util.math.BlockPos;
- import net.minecraft.util.math.Vec3d;
- import net.minecraft.world.World;
+ import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
+ import net.minecraft.core.registries.BuiltInRegistries;
+ import net.minecraft.network.chat.Component;
+ import net.minecraft.world.inventory.AbstractContainerMenu;
+ import net.minecraft.world.inventory.Slot;
+ import net.minecraft.world.level.Level;
+ import net.minecraft.world.level.block.Block;
+ import net.minecraft.world.level.block.Blocks;
+ import net.minecraft.world.level.block.entity.BlockEntity;
+ import net.minecraft.world.level.block.state.BlockState;
+ import net.minecraft.client.Minecraft;
+ import net.minecraft.world.item.ItemStack;
+ import net.minecraft.core.BlockPos;
+ import net.minecraft.world.phys.Vec3;
  import org.jetbrains.annotations.NotNull;
  import org.jetbrains.annotations.Nullable;
  import org.spongepowered.asm.mixin.Mixin;
@@ -37,7 +37,7 @@ package me.aleksilassila.litematica.printer.mixin.jackf.lgacy;
  @Mixin(MemoryUtils.class)
  public abstract class MemoryUtilsMixin {
      @Shadow
-     private static <T extends ScreenHandler> boolean validScreenToTrack(HandledScreen<T> screen) {
+     private static <T extends AbstractContainerMenu> boolean validScreenToTrack(AbstractContainerScreen<T> screen) {
          return false;
      }
 
@@ -50,17 +50,17 @@ package me.aleksilassila.litematica.printer.mixin.jackf.lgacy;
 
      @Shadow
      @Nullable
-     private static Text getTitleFromScreen(HandledScreen<?> screen, @Nullable BlockEntity blockEntity) {
+     private static Component getTitleFromScreen(AbstractContainerScreen<?> screen, @Nullable BlockEntity blockEntity) {
          return null;
      }
 
      @Shadow
-     public static Collection<BlockPos> getConnected(@NotNull World world, BlockPos pos) {
+     public static Collection<BlockPos> getConnected(@NotNull Level world, BlockPos pos) {
          return null;
      }
 
      @Shadow
-     private static Vec3d getAveragePos(BlockPos basePos, Collection<BlockPos> connected) {
+     private static Vec3 getAveragePos(BlockPos basePos, Collection<BlockPos> connected) {
          return null;
      }
 
@@ -75,10 +75,10 @@ package me.aleksilassila.litematica.printer.mixin.jackf.lgacy;
       */
      @Overwrite
      public static boolean areStacksEquivalent(@NotNull ItemStack stack1, @NotNull ItemStack stack2, boolean ignoreNbt) {
-         return stack1.getItem() == stack2.getItem() && (ignoreNbt || !stack1.hasNbt() && !stack2.hasNbt() || Objects.equals(stack1.getNbt(), stack2.getNbt()))
+         return stack1.getItem() == stack2.getItem() && (ignoreNbt || !stack1.hasTag() && !stack2.hasTag() || Objects.equals(stack1.getTag(), stack2.getTag()))
                  ||
                  fi.dy.masa.malilib.util.InventoryUtils.getStoredItems(stack2, -1).stream().anyMatch((candidate) -> {
-                     return me.aleksilassila.litematica.printer.printer.zxy.memory.MemoryUtils.areStacksEquivalent(stack1, candidate, stack1.getNbt() == null);
+                     return me.aleksilassila.litematica.printer.printer.zxy.memory.MemoryUtils.areStacksEquivalent(stack1, candidate, stack1.getTag() == null);
                  });
 
      }
@@ -89,23 +89,23 @@ package me.aleksilassila.litematica.printer.mixin.jackf.lgacy;
       * @reason 2
       */
      @Overwrite
-     public static <T extends ScreenHandler> void handleItemsFromScreen(@NotNull HandledScreen<T> screen) {
+     public static <T extends AbstractContainerMenu> void handleItemsFromScreen(@NotNull AbstractContainerScreen<T> screen) {
  //        if (!ignoreNextMerge) {
          if (validScreenToTrack(screen)) {
  //            System.out.println("========================1");
-             MinecraftClient mc = MinecraftClient.getInstance();
-             checkValidCycle(mc.world);
+             Minecraft mc = Minecraft.getInstance();
+             checkValidCycle(mc.level);
              MemoryDatabase database = MemoryDatabase.getCurrent();
              if (pos != null) latestPos = pos;
              if (latestPos == null) return;
-             BlockState state = mc.world.getBlockState(latestPos);
+             BlockState state = mc.level.getBlockState(latestPos);
              if (key == null) {
-                 key = mc.world.getRegistryKey();
+                 key = mc.level.dimension();
                  Block block = state.getBlock();
  //                System.out.println(state);
                  boolean k = true;
                  for (String string : LitematicaMixinMod.INVENTORY_LIST.getStrings()) {
-                     if (Registries.BLOCK.getId(block).toString().contains(string)) {
+                     if (BuiltInRegistries.BLOCK.getKey(block).toString().contains(string)) {
                          k = false;
                          break;
                      }
@@ -115,19 +115,19 @@ package me.aleksilassila.litematica.printer.mixin.jackf.lgacy;
 
  //                System.out.println("latestPos "+latestPos +"   "+ key);
              if (database != null && latestPos != null && key != null) {
-                 List<ItemStack> stacks = condenseItems(screen.getScreenHandler().slots.stream().filter(me.aleksilassila.litematica.printer.printer.zxy.memory.MemoryUtils::isValidSlot).map(Slot::getStack).collect(Collectors.toList()));
+                 List<ItemStack> stacks = condenseItems(screen.getMenu().slots.stream().filter(me.aleksilassila.litematica.printer.printer.zxy.memory.MemoryUtils::isValidSlot).map(Slot::getItem).collect(Collectors.toList()));
                  if (state.getBlock() == Blocks.ENDER_CHEST) {
-                     database.mergeItems(MemoryUtils.ENDER_CHEST_ID, red.jackf.chesttracker.memory.Memory.of(BlockPos.ORIGIN, stacks, null, null), Collections.emptyList());
+                     database.mergeItems(MemoryUtils.ENDER_CHEST_ID, red.jackf.chesttracker.memory.Memory.of(BlockPos.ZERO, stacks, null, null), Collections.emptyList());
                  } else {
-                     Text title = getTitleFromScreen(screen, mc.world.getBlockEntity(latestPos));
-                     Collection<BlockPos> connected = getConnected(mc.world, latestPos);
+                     Component title = getTitleFromScreen(screen, mc.level.getBlockEntity(latestPos));
+                     Collection<BlockPos> connected = getConnected(mc.level, latestPos);
  //                    System.out.println(stacks);
  //                    System.out.println("Save" + key.getValue() + latestPos);
-                     database.mergeItems(key.getValue(), red.jackf.chesttracker.memory.Memory.of(latestPos, stacks, title, connected.size() > 0 ? getAveragePos(latestPos, connected) : null), connected);
+                     database.mergeItems(key.location(), red.jackf.chesttracker.memory.Memory.of(latestPos, stacks, title, connected.size() > 0 ? getAveragePos(latestPos, connected) : null), connected);
                  }
              }
              if (ChestTracker.CONFIG.miscOptions.printGuiClassNames)
-                 ChestTracker.sendDebugMessage(Text.of(screen.getClass().getSimpleName()));
+                 ChestTracker.sendDebugMessage(Component.literal(screen.getClass().getSimpleName()));
          }
  //    } else {
  //            ignoreNextMerge = false;
