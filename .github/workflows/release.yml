@@ -27,12 +27,11 @@ jobs:
         uses: actions/checkout@v4
 
       # 步骤2：设置 Java 环境
-      # Fabric 开发通常需要 Java 17 或 21，根据你的项目实际情况调整
       - name: Setup Java
         uses: actions/setup-java@v4
         with:
           distribution: 'temurin' # 使用 Eclipse Temurin 发行版
-          java-version: '21'      # 根据你项目使用的 Java 版本修改
+          java-version: '25'      # 根据你项目使用的 Java 版本修改
           cache: 'gradle'          # 缓存 Gradle 依赖，加快构建速度
 
       # 步骤3：赋予 Gradle 包装器执行权限
