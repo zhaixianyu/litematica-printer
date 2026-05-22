@@ -2,9 +2,9 @@ int mcVersion = project.mcVersion
 boolean useMappings = mcVersion < 26_00_00
 
 apply(plugin: useMappings ? "net.fabricmc.fabric-loom-remap" : "net.fabricmc.fabric-loom")
+//apply(plugin: "net.fabricmc.fabric-loom-remap")
 apply(plugin: "maven-publish")
 apply(plugin: "com.replaymod.preprocess")
-apply(plugin: "com.github.breadmoirai.github-release")
 
 
 repositories {

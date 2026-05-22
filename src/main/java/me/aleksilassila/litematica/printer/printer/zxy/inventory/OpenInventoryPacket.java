@@ -254,7 +254,11 @@ public class OpenInventoryPacket {
         BlockState blockState = world.getBlockState(pos);
         if (blockState == null) {
             //#if MC > 12104
-            world.getChunkSource().addTicketWithRadius(OPEN_TICKET, new ChunkPos(pos), 2);
+                //#if MC >= 260100
+                //$$ world.getChunkSource().addTicketWithRadius(OPEN_TICKET, ChunkPos.containing(pos), 2);
+                //#else
+                world.getChunkSource().addTicketWithRadius(OPEN_TICKET, new ChunkPos(pos), 2);
+                //#endif
             //#else
             //$$ world.getChunkSource().addRegionTicket(OPEN_TICKET, new ChunkPos(pos), 2, new ChunkPos(pos));
             //#endif
@@ -350,17 +354,12 @@ public class OpenInventoryPacket {
             if (key != null) {
                 //#if MC < 11904
                 //$$ String translationKey = key.location().toString();
-                //$$ String translate = StringUtils.translate(translationKey);
-                //$$ if (client.player != null) client.player.displayClientMessage(Component.literal("打开容器失败 \n位于"+ translate+"  "+pos.toString()),false);
                 //#else
                 String translationKey = key.identifier().toLanguageKey();
-                String translate = StringUtils.translate(translationKey);
-                    //#if MC > 12101
-                    if (client.player != null) client.player.displayClientMessage(Component.literal("打开容器失败 \n位于"+ translate+"  "+pos.getCenter().toString()),false);
-                    //#else
-                    //$$ if (client.player != null) client.player.displayClientMessage(Component.literal("打开容器失败 \n位于"+ translate+"  "+pos.getCenter().toString()),false);
-                    //#endif
                 //#endif
+
+                String translate = StringUtils.translate(translationKey);
+                Messager.chat("打开容器失败 \n位于"+ translate+"  "+pos.toShortString());
 
                 //#if MC >= 12001
                 MemoryUtils.PRINTER_MEMORY.removeMemory(key.identifier(), pos);

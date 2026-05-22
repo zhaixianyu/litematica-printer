@@ -21,6 +21,8 @@ import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 import red.jackf.chesttracker.impl.util.ItemStacks;
 
+import static me.aleksilassila.litematica.printer.printer.zxy.inventory.InventoryUtils.getItemName;
+
 //#if MC > 12004
 import net.minecraft.world.item.enchantment.ItemEnchantments;
 //#endif
@@ -110,7 +112,7 @@ public class ItemStackUtilMixin {
 
     @Inject(at = @At("HEAD"), method = "namePredicate", cancellable = true)
     private static void stackNameFilter(ItemStack stack, String filter, CallbackInfoReturnable<Boolean> cir) {
-        boolean b = PinYinSearch.hasPinYin(stack.getItem().getName().getString(), filter);
+        boolean b = PinYinSearch.hasPinYin(getItemName(stack), filter);
         if (b) cir.setReturnValue(true);
     }
 }

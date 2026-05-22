@@ -27,6 +27,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.atomic.AtomicBoolean;
 
+import static me.aleksilassila.litematica.printer.printer.zxy.inventory.InventoryUtils.getItemName;
+
 public class SearchItem {
     static AtomicBoolean hasItem = new AtomicBoolean(false);
     static boolean isPrinterMemory = false;
@@ -133,17 +135,17 @@ public class SearchItem {
                     InventoryUtils.getStoredItems(memoryStack).stream().anyMatch(mStack ->
                             stack1.getName().getString().equals(mStack.getName().getString()) && InventoryUtils.areStacksEqual(stack1, mStack));
         } else */
-
+        // 什么东西??? 看不懂了哦
         if (BuiltInRegistries.ITEM.getKey(stack1.getItem()).toString().contains("shulker_box") && BuiltInRegistries.ITEM.getKey(memoryStack.getItem()).toString().contains("shulker_box")) {
-            return (InventoryUtils.getStoredItems(stack1).isEmpty() && InventoryUtils.getStoredItems(memoryStack).isEmpty() && stack1.getItem().getName().getString().equals(memoryStack.getItem().getName().getString())) ||
+            return (InventoryUtils.getStoredItems(stack1).isEmpty() && InventoryUtils.getStoredItems(memoryStack).isEmpty() && getItemName(stack1).equals(getItemName(memoryStack))) ||
                     (!InventoryUtils.getStoredItems(stack1).isEmpty() &&
                             !InventoryUtils.getStoredItems(memoryStack).isEmpty() &&
-                            stack1.getItem().getName().getString().equals(memoryStack.getItem().getName().getString()) &&
+                            getItemName(stack1).equals(getItemName(memoryStack)) &&
                             compArray(InventoryUtils.getStoredItems(stack1, -1), InventoryUtils.getStoredItems(memoryStack, -1)));
         } else if (BuiltInRegistries.ITEM.getKey(memoryStack.getItem()).toString().contains("shulker_box")) {
             return true;
         }
-        return stack1.getItem().getName().getString().equals(memoryStack.getItem().getName().getString());
+        return getItemName(stack1).equals(getItemName(memoryStack));
 //                && (ignoreNbt || !stack1.hasNbt() && !stack2.hasNbt() || Objects.equals(stack1.getNbt(), stack2.getNbt()));
     }
 

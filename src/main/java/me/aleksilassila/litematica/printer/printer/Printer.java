@@ -28,6 +28,7 @@ import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.registries.BuiltInRegistries;
+import net.minecraft.network.chat.Component;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
@@ -250,7 +251,7 @@ public class Printer extends PrinterUtils {
 
                     if ((!entry.getValue().holdRequired || entry.getValue().itemList.stream().anyMatch(item -> hasItem(item))) &&
                             ("all".equals(blockName) || equalsBlockName(blockName, currentState, finalPos)) &&
-                            entry.getValue().itemList.stream().noneMatch(item -> equalsBlockName(item.getName().getString(), currentState, finalPos))) {
+                            entry.getValue().itemList.stream().noneMatch(item -> equalsBlockName(getItemName(item.getDefaultInstance()), currentState, finalPos))) {
                         if (((Predicate<List<Item>>) items -> {
                             action.set(guide.buildAction(client.level, Blocks.AIR.defaultBlockState(), currentState, finalPos, guide.getClassHook(currentState)));
                             if (excavateBlock(finalPos) == null) {

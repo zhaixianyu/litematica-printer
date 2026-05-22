@@ -48,7 +48,7 @@ public class InventoryManager {
 //					mc.player.container.getNextActionId(mc.player.inventory)
 //					//#endif
 //			));
-            mc.gameMode.handleInventoryMouseClick(mc.player.containerMenu.containerId, -999, 2, ClickType.QUICK_CRAFT, mc.player);
+            mc.player.containerMenu.clicked(-999, 2, ClickType.QUICK_CRAFT, mc.player);
 
 //			InfoUtils.printActionbarMessage("tweakermore.impl.refreshInventory.refreshed");
         }
@@ -81,7 +81,7 @@ public class InventoryManager {
                 for (int i1 = 0; i1 < sc.slots.size(); i1++) {
                     if (ItemStack.isSameItem(sc.slots.get(i1).getItem(),new ItemStack(item))) i = i1;
                 }
-                minecraftClient.gameMode.handleInventoryMouseClick(sc.containerId, i, 40, ClickType.SWAP, minecraftClient.player);
+                sc.clicked(i, 40, ClickType.SWAP, minecraftClient.player);
                 refresh();
             }else{
                 if (Inventory.isHotbarSlot(i)) {
@@ -90,7 +90,7 @@ public class InventoryManager {
                     {
 //                        minecraftClient.interactionManager.pickFromInventory(i);
 //                        minecraftClient.getNetworkHandler().sendPacket(new UpdateSelectedSlotC2SPacket(playerInventory.selectedSlot));
-                        minecraftClient.gameMode.handleInventoryMouseClick(sc.containerId, i, InventoryUtils.getSelectedSlot(), ClickType.SWAP, minecraftClient.player);
+                        sc.clicked(i, InventoryUtils.getSelectedSlot(), ClickType.SWAP, minecraftClient.player);
                         refresh();
                     }
                 }

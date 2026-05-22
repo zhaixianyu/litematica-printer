@@ -164,7 +164,11 @@ public class Configs implements IConfigHandler {
     public void load() {
         File settingFile = new File(FILE_PATH);
         if (settingFile.isFile() && settingFile.exists()) {
-            JsonElement jsonElement = JsonUtils.parseJsonFile(settingFile);
+            JsonElement jsonElement = JsonUtils.parseJsonFile(settingFile
+                    //#if MC > 12111
+                    //$$         .toPath()
+                    //#endif
+            );
             if (jsonElement != null && jsonElement.isJsonObject()) {
                 JsonObject obj = jsonElement.getAsJsonObject();
                 ConfigUtils.readConfigBase(obj, MOD_ID, addAllConfigs());
@@ -177,7 +181,11 @@ public class Configs implements IConfigHandler {
         if ((CONFIG_DIR.exists() && CONFIG_DIR.isDirectory()) || CONFIG_DIR.mkdirs()) {
             JsonObject configRoot = new JsonObject();
             ConfigUtils.writeConfigBase(configRoot, MOD_ID, addAllConfigs());
-            JsonUtils.writeJsonToFile(configRoot, new File(FILE_PATH));
+            JsonUtils.writeJsonToFile(configRoot, new File(FILE_PATH)
+                            //#if MC > 12111
+                            //$$ .toPath()
+                            //#endif
+            );
         }
     }
 

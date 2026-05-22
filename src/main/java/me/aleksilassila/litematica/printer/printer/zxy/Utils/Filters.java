@@ -1,6 +1,7 @@
 package me.aleksilassila.litematica.printer.printer.zxy.Utils;
 
 import net.minecraft.core.registries.BuiltInRegistries;
+import net.minecraft.network.chat.Component;
 import net.minecraft.tags.TagKey;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.state.BlockState;
@@ -11,6 +12,8 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.stream.Stream;
+
+import static me.aleksilassila.litematica.printer.printer.zxy.inventory.InventoryUtils.getItemName;
 
 public class Filters {
     //包含/比较
@@ -60,7 +63,7 @@ public class Filters {
         }catch (Exception ignored){}
 
         //中文 、 拼音
-        String name = block != null ?  block.getName().getString() : itemStack.getItem().getName().getString();
+        String name = block != null ?  block.getName().getString() : getItemName(itemStack);
         if (Filters.filters(name,oName,args)) return b;
 
         ArrayList<String> pinYin = PinYinSearch.getPinYin(name);

@@ -1,1 +1,2 @@
 net.minecraft.network.chat.Component nullToEmpty() literal()
+net.minecraft.core.BlockPos toShortString() getCenter()

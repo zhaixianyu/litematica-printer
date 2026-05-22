@@ -191,9 +191,8 @@ public class InventoryUtils {
                             player.closeContainer();
                             //刷新濳影盒
                             if (shulkerBoxSlot != -1) {
-                                AbstractContainerMenu handler = client.player.containerMenu;
-                                client.gameMode.handleInventoryMouseClick(handler.containerId, shulkerBoxSlot, 0, ClickType.PICKUP, client.player);
-                                client.gameMode.handleInventoryMouseClick(handler.containerId, shulkerBoxSlot, 0, ClickType.PICKUP, client.player);
+                                client.player.containerMenu.clicked(shulkerBoxSlot, 0, ClickType.PICKUP, client.player);
+                                client.player.containerMenu.clicked(shulkerBoxSlot, 0, ClickType.PICKUP, client.player);
                             }
                             shulkerBoxSlot = -1;
                             isOpenHandler = false;
@@ -313,5 +312,13 @@ public class InventoryUtils {
             }
         }
         return false;
+    }
+
+    public static String getItemName(ItemStack itemStack){
+        //#if MC > 12101
+        return itemStack.getItemName().getString();
+        //#else
+        //$$ return itemStack.getDescriptionId();
+        //#endif
     }
 }

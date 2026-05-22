@@ -126,18 +126,18 @@ public class SwitchItem {
                 //检查记录的槽位是否有物品
                 ItemStack stack = sc.slots.get(slot1).getItem();
                 if(sc.slots.get(slot1).getItem().isEmpty()){
-                    client.gameMode.handleInventoryMouseClick(sc.containerId, i, 0, ClickType.PICKUP, client.player);
-                    client.gameMode.handleInventoryMouseClick(sc.containerId, slot1, 0, ClickType.PICKUP, client.player);
+                    sc.clicked(i, 0, ClickType.PICKUP, client.player);
+                    sc.clicked(slot1, 0, ClickType.PICKUP, client.player);
                     reInv = true;
                 } else {
                     int count = reSwitchItem.getCount();
-                    client.gameMode.handleInventoryMouseClick(sc.containerId, i, 0, ClickType.PICKUP, client.player);
+                    sc.clicked(i, 0, ClickType.PICKUP, client.player);
                     for (Integer integer : sameItem) {
                         int count1 = sc.slots.get(integer).getItem().getCount();
                         int maxCount = sc.slots.get(integer).getItem().getMaxStackSize();
                         int i1 = maxCount - count1;
                         count -= i1;
-                        client.gameMode.handleInventoryMouseClick(sc.containerId, integer, 0, ClickType.PICKUP, client.player);
+                        sc.clicked(integer, 0, ClickType.PICKUP, client.player);
                         if (count<=0) reInv = true;
                     }
                 }
@@ -148,7 +148,7 @@ public class SwitchItem {
                 if(!reInv) {
                     client.gui.setOverlayMessage(Component.literal("复原库存物品失败"),false);
                 }
-                client.gameMode.handleInventoryMouseClick(sc.containerId, i, 0, ClickType.PICKUP, client.player);
+                sc.clicked(i, 0, ClickType.PICKUP, client.player);
                 return;
             }
         }

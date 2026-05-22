@@ -264,12 +264,12 @@ public class ZxyUtils {
                     if (same) {
                         //有多
                         while (currNum > tarNum) {
-                            client.gameMode.handleInventoryMouseClick(sc.containerId, i, 0, ClickType.THROW, client.player);
+                            sc.clicked(i, 0, ClickType.THROW, client.player);
                             currNum--;
                         }
                     } else {
                         //不同直接扔出
-                        client.gameMode.handleInventoryMouseClick(sc.containerId, i, 1, ClickType.THROW, client.player);
+                        sc.clicked(i, 1, ClickType.THROW, client.player);
                         times++;
                     }
                     boolean thereAreItems = false;
@@ -281,12 +281,12 @@ public class ZxyUtils {
                         boolean same2 = thereAreItems = ItemStack.isSameItemSameComponents(item2,stack);
                         if (same2 && !stack.isEmpty()) {
                             int i2 = stack.getCount();
-                            client.gameMode.handleInventoryMouseClick(sc.containerId, i1, 0, ClickType.PICKUP, client.player);
+                            sc.clicked(i1, 0, ClickType.PICKUP, client.player);
                             for (; currNum < tarNum && i2 > 0; i2--) {
-                                client.gameMode.handleInventoryMouseClick(sc.containerId, i, 1, ClickType.PICKUP, client.player);
+                                sc.clicked(i, 1, ClickType.PICKUP, client.player);
                                 currNum++;
                             }
-                            client.gameMode.handleInventoryMouseClick(sc.containerId, i1, 0, ClickType.PICKUP, client.player);
+                            sc.clicked(i1, 0, ClickType.PICKUP, client.player);
                         }
                         //这里判断没啥用，因为一个游戏刻操作背包太多次.getStack().getCount()获取的数量不准确 下次一定优化，
                         if (currNum != tarNum) times++;
