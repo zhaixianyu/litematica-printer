@@ -268,7 +268,7 @@ public class Printer extends PrinterUtils {
                                         return true;
                                     }
                                     if (action.get() != null) {
-                                        action.get().queueAction(finalPos, false);
+                                        action.get().queueAction(finalPos);
                                         action.get().sendQueue(client.player);
                                     } else if (action.get() == null) {
                                         ((IClientPlayerInteractionManager) client.gameMode).rightClickBlock(finalPos, Direction.UP, Vec3.atLowerCornerOf(finalPos));
@@ -580,69 +580,52 @@ public class Printer extends PrinterUtils {
                 else continue;
             }
             PlacementGuide.Action action = guide.getAction(world, worldSchematic, pos);
-            if (action == null || action.side == null) continue;
-            if (playerHasAccessToItems(pEntity, action.clickItems)) {
-                // Handle shift and chest placement
-                // Won't be required if clickAction
-                boolean useShift = false;
-                if (requiredState.hasProperty(ChestBlock.TYPE)) {
-                    switch (requiredState.getValue(ChestBlock.TYPE)) {
-                        case SINGLE:
-                        case RIGHT: {
-                            useShift = true;
-                            break ;
-                        }
-                        case LEFT: {
-                            if(world.getBlockState(pos.offset(requiredState.getValue(ChestBlock.FACING).getUnitVec3i())).isAir()) continue;
-                            action.side = requiredState.getValue(ChestBlock.FACING).getClockWise().getOpposite();
-                            useShift = true;
-                            break ;
-                        }
-                    }
-                } else if (Implementation.isInteractive(world.getBlockState(pos.relative(action.side)).getBlock())) {
-                    useShift = true;
-                }
-
-                if (!easyModeBooleanValue && isFacingBlock(requiredState) && currentAction != null) {
-                    continue;
-                }
-                Direction lookDir = action.getLookDirection();
-                //确认侦测器看向方块是否正确
-                if (requiredState.is(Blocks.OBSERVER) && PUT_TESTING.getBooleanValue()) {
-                    BlockPos offset = pos.relative(lookDir);
-                    if (isSchematicBlock(offset)) {
-                        BlockState state1 = world.getBlockState(offset);
-                        BlockState state2 = worldSchematic.getBlockState(offset);
-                        State state = State.get(state1, state2);
-                        if (state != State.CORRECT) continue;
-                    }
-                }
-                if(forcedPlacementBooleanValue) useShift = true;
-                //发送放置准备
-                action.sendPlacementPreparation(pEntity);
-                action.queueAction(pos, useShift);
-
-                Vec3 hitModifier = usePrecisionPlacement(pos, requiredState);
-                if(hitModifier != null) {
-                    action.hitModifier = hitModifier;
-                    action.usePrecisionPlacement = true;
-                }
-
-                if (tickRate == 0) {
-                    //处理不能快速放置的方块
-                    if (hitModifier == null && isFacingBlock(requiredState)) {
-                        facingTimeOut = 0;
-                        currentAction = action;
-                        continue;
-                    }
-
-                    action.sendQueue(pEntity);
-                    continue;
-                }
-                facingTimeOut = 0;
-                currentAction = action;
-                return;
+            if (action == null || action.side == null || !playerHasAccessToItems(pEntity, action.clickItems)) continue;
+            // Handle shift and chest placement
+            // Won't be required if clickAction
+            if (Implementation.isInteractive(world.getBlockState(pos.relative(action.side)).getBlock())) {
+                action.shift = true;
             }
+
+            if (!easyModeBooleanValue && isFacingBlock(requiredState) && currentAction != null) {
+                continue;
+            }
+            Direction lookDir = action.getLookDirection();
+            //确认侦测器看向方块是否正确
+            if (requiredState.is(Blocks.OBSERVER) && PUT_TESTING.getBooleanValue()) {
+                BlockPos offset = pos.relative(lookDir);
+                if (isSchematicBlock(offset)) {
+                    BlockState state1 = world.getBlockState(offset);
+                    BlockState state2 = worldSchematic.getBlockState(offset);
+                    State state = State.get(state1, state2);
+                    if (state != State.CORRECT) continue;
+                }
+            }
+            if (forcedPlacementBooleanValue) action.shift = true;
+            //发送放置准备
+            action.sendPlacementPreparation(pEntity);
+            action.queueAction(pos);
+
+            Vec3 hitModifier = usePrecisionPlacement(pos, requiredState);
+            if (hitModifier != null) {
+                action.hitModifier = hitModifier;
+                action.usePrecisionPlacement = true;
+            }
+
+            if (tickRate == 0) {
+                //处理不能快速放置的方块
+                if (hitModifier == null && isFacingBlock(requiredState)) {
+                    facingTimeOut = 0;
+                    currentAction = action;
+                    continue;
+                }
+
+                action.sendQueue(pEntity);
+                continue;
+            }
+            facingTimeOut = 0;
+            currentAction = action;
+            return;
         }
     }
     public boolean isFacingBlock(BlockState state){

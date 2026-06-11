@@ -2,6 +2,7 @@ package me.aleksilassila.litematica.printer.printer;
 
 import fi.dy.masa.litematica.world.WorldSchematic;
 import me.aleksilassila.litematica.printer.LitematicaMixinMod;
+import me.aleksilassila.litematica.printer.interfaces.IClientPlayerInteractionManager;
 import me.aleksilassila.litematica.printer.interfaces.Implementation;
 import me.aleksilassila.litematica.printer.mixin.FlowerPotBlockAccessor;
 import me.aleksilassila.litematica.printer.printer.zxy.Utils.PlayerAction;
@@ -208,12 +209,12 @@ public class PlacementGuide extends PrinterUtils {
                     Action action = new Action().setSides(requiredState.getValue(RotatedPillarBlock.AXIS));
 
                     // If is stripped log && should use normal log instead
-                    if (AxeItemAccessor.getStrippedBlocks().containsValue(requiredState.getBlock()) &&
+                    if (AxeItemAccessor.getStrippables().containsValue(requiredState.getBlock()) &&
                             LitematicaMixinMod.STRIP_LOGS.getBooleanValue()) {
                         Block stripped = requiredState.getBlock();
 
-                        for (Block log : AxeItemAccessor.getStrippedBlocks().keySet()) {
-                            if (AxeItemAccessor.getStrippedBlocks().get(log) != stripped) continue;
+                        for (Block log : AxeItemAccessor.getStrippables().keySet()) {
+                            if (AxeItemAccessor.getStrippables().get(log) != stripped) continue;
 
                             if (!playerHasAccessToItem(client.player, stripped.asItem()) &&
                                     playerHasAccessToItem(client.player, log.asItem())) {
@@ -387,6 +388,23 @@ public class PlacementGuide extends PrinterUtils {
                     if (requiredState.getBlock().equals(Blocks.DIRT_PATH) && !playerHasAccessToItem(client.player, requiredState.getBlock().asItem())) {
                         placement.setItem(Items.DIRT);
                     }
+
+                    if (requiredState.hasProperty(ChestBlock.TYPE)) {
+                        switch (requiredState.getValue(ChestBlock.TYPE)) {
+                            case SINGLE:
+                            case RIGHT: {
+                                placement.side = requiredState.getValue(ChestBlock.FACING).getClockWise();
+                                placement.shift = true;
+                                break;
+                            }
+                            case LEFT: {
+                                placement.side = requiredState.getValue(ChestBlock.FACING).getCounterClockWise();
+                                placement.shift = true;
+                                break;
+                            }
+                        }
+                    }
+
                     return placement;
                 }
             }
@@ -522,7 +540,7 @@ public class PlacementGuide extends PrinterUtils {
                     break;
                 }
                 case PILLAR: {
-                    Block stripped = AxeItemAccessor.getStrippedBlocks().get(currentState.getBlock());
+                    Block stripped = AxeItemAccessor.getStrippables().get(currentState.getBlock());
                     if (stripped != null && stripped == requiredState.getBlock()) {
                         return new ClickAction().setItems(Implementation.AXES);
                     }
@@ -750,10 +768,9 @@ public class PlacementGuide extends PrinterUtils {
             return directions[0];
         }
 
-        public void queueAction(BlockPos center, boolean useShift) {
+        public void queueAction(BlockPos center) {
 //            System.out.println("Queued click?: " + center.relative(side).toString() + ", side: " + side.getOpposite());
 
-            shift = useShift;
             if (LitematicaMixinMod.PRINT_IN_AIR.getBooleanValue() && !this.requiresSupport) {
                 target = center;
             } else {
@@ -820,9 +837,8 @@ public class PlacementGuide extends PrinterUtils {
 
     public static class ClickAction extends Action {
         @Override
-        public void queueAction(BlockPos center, boolean useShift) {
-//            System.out.println("Queued click?: " + center.toString() + ", side: " + side);
-            super.queueAction(center, false);
+        public void queueAction(BlockPos center) {
+            super.queueAction(center);
         }
 
         @Override
@@ -883,7 +899,7 @@ public class PlacementGuide extends PrinterUtils {
         LEVER(LeverBlock.class),
 
         // Other
-        FARMLAND(FarmBlock.class),
+        FARMLAND(FarmlandBlock.class),
         DIRT_PATH(DirtPathBlock.class),
         SKIP(SkullBlock.class, GrindstoneBlock.class, SignBlock.class, VineBlock.class,EndPortalBlock.class),
         FLUID(LiquidBlock.class),

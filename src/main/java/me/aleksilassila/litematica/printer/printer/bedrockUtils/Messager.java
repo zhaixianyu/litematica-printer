@@ -33,7 +33,7 @@ public class Messager {
         //#else
         //$$ Component translatable = new TranslatableComponent(message);
         //#endif
-        minecraftClient.gui.getChat().addMessage(translatable);
+        minecraftClient.gui.getChat().addClientSystemMessage(translatable);
     }
 
     public static @NotNull MutableComponent createOpenUrlText(String text, String url) {

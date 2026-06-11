@@ -18,7 +18,8 @@ public enum State {
                 (LitematicaMixinMod.REPLACE.getBooleanValue() &&
                         (LitematicaMixinMod.REPLACEABLE_LIST.getStrings().stream()
                                 .anyMatch(string ->
-                                        !Filters.equalsBlockName(string, schematicBlockState.getBlock()) &&
+                                        PlacementGuide.Action.isReplaceable(currentBlockState) &&
+                                        //!Filters.equalsBlockName(string, schematicBlockState.getBlock()) &&
                                                 Filters.equalsBlockName(string, currentBlockState.getBlock()))
                         ))))
             return State.MISSING_BLOCK;

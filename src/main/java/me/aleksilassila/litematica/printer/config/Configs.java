@@ -6,7 +6,7 @@ import com.google.gson.JsonObject;
 import fi.dy.masa.malilib.config.*;
 import fi.dy.masa.malilib.config.options.ConfigHotkey;
 import fi.dy.masa.malilib.event.InputEventHandler;
-import fi.dy.masa.malilib.util.JsonUtils;
+import fi.dy.masa.malilib.util.data.json.JsonUtils;
 import me.aleksilassila.litematica.printer.printer.State;
 import net.fabricmc.loader.api.FabricLoader;
 
@@ -166,7 +166,7 @@ public class Configs implements IConfigHandler {
         if (settingFile.isFile() && settingFile.exists()) {
             JsonElement jsonElement = JsonUtils.parseJsonFile(settingFile
                     //#if MC > 12111
-                    //$$         .toPath()
+                            .toPath()
                     //#endif
             );
             if (jsonElement != null && jsonElement.isJsonObject()) {
@@ -183,7 +183,7 @@ public class Configs implements IConfigHandler {
             ConfigUtils.writeConfigBase(configRoot, MOD_ID, addAllConfigs());
             JsonUtils.writeJsonToFile(configRoot, new File(FILE_PATH)
                             //#if MC > 12111
-                            //$$ .toPath()
+                            .toPath()
                             //#endif
             );
         }

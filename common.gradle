@@ -147,7 +147,7 @@ def mod_dependencies = [
         ["maven.modrinth:item-scroller", "item_scrolle", 1],
         ["maven.modrinth:tweakeroo", "tweakeroo", 1],
         ["maven.modrinth:litematica", "litematica", 1],
-        [(mcVersion > 12004 ? "curse.maven:carpet-349239" : "maven.modrinth:carpet"), "carpet", 1],
+        [(mcVersion > 12004 ? "curse.maven:carpet-349239" : "maven.modrinth:carpet"), "carpet", mcVersion < 260100 ? 1 : 4],
         [getQuiShulkerBox(), "quick_shulker", mcVersion == 12006 ? 6 : 10,"*"],
         ["net.kyrptonaught:kyrptconfig", "kyrptconfig", mcVersion > 12004 ? 0 : 1],
         ["net.kyrptonaught:shulkerutils", "shulkerutils", mcVersion > 12004 ? 0 : 1],
@@ -244,6 +244,7 @@ def downloadMod(String repo, String version) {
 
 
     def apiUrl = "https://api.github.com/repos/${repo}/releases/tags/${version}"
+
     def conn = new URL(apiUrl).openConnection() as HttpURLConnection
     conn.setRequestProperty("Accept", "application/vnd.github.v3+json")
     conn.setRequestProperty("User-Agent", "Gradle")
@@ -382,7 +383,7 @@ tasks.withType(JavaCompile).configureEach {
 def MIXIN_CONFIG_PATHS = ['litematica-printer.mixins.json']
 JavaVersion JAVA_COMPATIBILITY
 if (mcVersion >= 260100) {
-    JAVA_COMPATIBILITY = JavaVersion.VERSION_21
+    JAVA_COMPATIBILITY = JavaVersion.VERSION_25
 } else if (mcVersion >= 12005) {
     JAVA_COMPATIBILITY = JavaVersion.VERSION_21
 } else if (mcVersion >= 11800) {

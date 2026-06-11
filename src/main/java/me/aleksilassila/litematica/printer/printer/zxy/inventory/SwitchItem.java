@@ -5,7 +5,7 @@ import me.aleksilassila.litematica.printer.printer.zxy.Utils.Statistics;
 import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.world.entity.player.Inventory;
-import net.minecraft.world.inventory.ClickType;
+import net.minecraft.world.inventory.ContainerInput;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.inventory.AbstractContainerMenu;
 import net.minecraft.world.inventory.Slot;
@@ -63,7 +63,7 @@ public class SwitchItem {
 //                        Class quickShulker = Class.forName("net.kyrptonaught.quickshulker.client.ClientUtil");
 //                        Method checkAndSend = quickShulker.getDeclaredMethod("CheckAndSend",ItemStack.class,int.class);
 //                        checkAndSend.invoke(checkAndSend,sc.slots.get(itemStatistics.shulkerBoxSlot).getStack(),itemStatistics.shulkerBoxSlot);
-                        client.player.containerMenu.clicked(itemStatistics.shulkerBoxSlot,1, ClickType.PICKUP,client.player);
+                        client.player.containerMenu.clicked(itemStatistics.shulkerBoxSlot,1, ContainerInput.PICKUP,client.player);
                         Statistics.closeScreen++;
                     } catch (Exception ignored){
                         removeItem(reSwitchItem);
@@ -126,18 +126,18 @@ public class SwitchItem {
                 //检查记录的槽位是否有物品
                 ItemStack stack = sc.slots.get(slot1).getItem();
                 if(sc.slots.get(slot1).getItem().isEmpty()){
-                    sc.clicked(i, 0, ClickType.PICKUP, client.player);
-                    sc.clicked(slot1, 0, ClickType.PICKUP, client.player);
+                    sc.clicked(i, 0, ContainerInput.PICKUP, client.player);
+                    sc.clicked(slot1, 0, ContainerInput.PICKUP, client.player);
                     reInv = true;
                 } else {
                     int count = reSwitchItem.getCount();
-                    sc.clicked(i, 0, ClickType.PICKUP, client.player);
+                    sc.clicked(i, 0, ContainerInput.PICKUP, client.player);
                     for (Integer integer : sameItem) {
                         int count1 = sc.slots.get(integer).getItem().getCount();
                         int maxCount = sc.slots.get(integer).getItem().getMaxStackSize();
                         int i1 = maxCount - count1;
                         count -= i1;
-                        sc.clicked(integer, 0, ClickType.PICKUP, client.player);
+                        sc.clicked(integer, 0, ContainerInput.PICKUP, client.player);
                         if (count<=0) reInv = true;
                     }
                 }
@@ -148,7 +148,7 @@ public class SwitchItem {
                 if(!reInv) {
                     client.gui.setOverlayMessage(Component.literal("复原库存物品失败"),false);
                 }
-                sc.clicked(i, 0, ClickType.PICKUP, client.player);
+                sc.clicked(i, 0, ContainerInput.PICKUP, client.player);
                 return;
             }
         }

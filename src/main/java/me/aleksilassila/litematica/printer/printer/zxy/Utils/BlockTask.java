@@ -108,7 +108,22 @@ public class BlockTask {
         return predicateMap.get(predicateName).test(this);
     }
 
+    public Map<String,Boolean> runAllPredicate() {
+        Map<String,Boolean> b = new HashMap<>();
+        predicateMap.forEach((k, v) -> b.put(k,v.test(this)));
+        return b;
+    }
+
+    public void runAutoPredicate(){
+        predicateMap.forEach((k, v) -> {
+            if (k.toLowerCase().contains("auto")) {
+                v.test(this);
+            }
+        } );
+    }
+
     public boolean tick() {
+        runAutoPredicate();
         if (runTask()) return true;
         return done();
     }

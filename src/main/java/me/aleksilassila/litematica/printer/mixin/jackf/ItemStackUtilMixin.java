@@ -93,7 +93,7 @@ public class ItemStackUtilMixin {
 
     @Inject(at = @At("HEAD"), method = "tagPredicate", cancellable = true)
     private static void stackTagFilter(ItemStack stack, String filter, CallbackInfoReturnable<Boolean> cir) {
-        if (stack.getItemHolder().tags().anyMatch(tag ->
+        if (stack.typeHolder().tags().anyMatch(tag ->
                 PinYinSearch.hasPinYin(tag.location().getPath(), filter)))
             cir.setReturnValue(true);
     }

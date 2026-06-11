@@ -59,7 +59,13 @@ public class Filters {
         boolean b = Arrays.stream(args).noneMatch("!"::equals);
         if (Filters.filters(originId,oName,args)) return b;
         try {
-           return block != null ? getTag(block.builtInRegistryHolder().tags(),blockName,args) : getTag(itemStack.getTags(),blockName,args);
+           return block != null ? getTag(block.builtInRegistryHolder().tags(),blockName,args) : getTag(itemStack.
+                   //#if MC > 12111
+                   tags()
+                   //#else
+                   //$$ getTags()
+                   //#endif
+                   ,blockName,args);
         }catch (Exception ignored){}
 
         //中文 、 拼音

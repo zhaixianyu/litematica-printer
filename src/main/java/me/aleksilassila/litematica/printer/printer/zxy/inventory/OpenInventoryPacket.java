@@ -39,6 +39,7 @@ import org.jetbrains.annotations.NotNull;
 import me.aleksilassila.litematica.printer.printer.zxy.chesttracker.MemoryUtils;
 import net.minecraft.world.phys.Vec3;
 import red.jackf.chesttracker.api.providers.InteractionTracker;
+import red.jackf.chesttracker.impl.memory.MemoryBankAccessImpl;
 //#endif
 
 //#if MC < 11904
@@ -58,6 +59,7 @@ import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
 import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.network.codec.StreamCodec;
 import net.fabricmc.fabric.api.networking.v1.PayloadTypeRegistry;
+
 import static me.aleksilassila.litematica.printer.printer.zxy.inventory.OpenInventoryPacket.HelloPackage.HELLO_REMOTE_INTERACTIONS_ID;
 import static me.aleksilassila.litematica.printer.printer.zxy.inventory.OpenInventoryPacket.OpenPackage.OPEN_INVENTORY_ID;
 import static me.aleksilassila.litematica.printer.printer.zxy.inventory.OpenInventoryPacket.ReturnPackage.OPEN_RETURN_ID;
@@ -203,12 +205,12 @@ public class OpenInventoryPacket {
     }
     public static void init(){
         //#if MC > 12004
-        PayloadTypeRegistry.playC2S().register(OPEN_INVENTORY_ID, OpenPackage.CODEC);
-        PayloadTypeRegistry.playC2S().register(OPEN_RETURN_ID, ReturnPackage.CODEC);
-        PayloadTypeRegistry.playC2S().register(HELLO_REMOTE_INTERACTIONS_ID, HelloPackage.CODEC);
-        PayloadTypeRegistry.playS2C().register(OPEN_INVENTORY_ID, OpenPackage.CODEC);
-        PayloadTypeRegistry.playS2C().register(OPEN_RETURN_ID, ReturnPackage.CODEC);
-        PayloadTypeRegistry.playS2C().register(HELLO_REMOTE_INTERACTIONS_ID, HelloPackage.CODEC);
+        PayloadTypeRegistry.clientboundPlay().register(OPEN_INVENTORY_ID, OpenPackage.CODEC);
+        PayloadTypeRegistry.clientboundPlay().register(OPEN_RETURN_ID, ReturnPackage.CODEC);
+        PayloadTypeRegistry.clientboundPlay().register(HELLO_REMOTE_INTERACTIONS_ID, HelloPackage.CODEC);
+        PayloadTypeRegistry.serverboundPlay().register(OPEN_INVENTORY_ID, OpenPackage.CODEC);
+        PayloadTypeRegistry.serverboundPlay().register(OPEN_RETURN_ID, ReturnPackage.CODEC);
+        PayloadTypeRegistry.serverboundPlay().register(HELLO_REMOTE_INTERACTIONS_ID, HelloPackage.CODEC);
         //#endif
     }
 
@@ -255,9 +257,9 @@ public class OpenInventoryPacket {
         if (blockState == null) {
             //#if MC > 12104
                 //#if MC >= 260100
-                //$$ world.getChunkSource().addTicketWithRadius(OPEN_TICKET, ChunkPos.containing(pos), 2);
+                world.getChunkSource().addTicketWithRadius(OPEN_TICKET, ChunkPos.containing(pos), 2);
                 //#else
-                world.getChunkSource().addTicketWithRadius(OPEN_TICKET, new ChunkPos(pos), 2);
+                //$$ world.getChunkSource().addTicketWithRadius(OPEN_TICKET, new ChunkPos(pos), 2);
                 //#endif
             //#else
             //$$ world.getChunkSource().addRegionTicket(OPEN_TICKET, new ChunkPos(pos), 2, new ChunkPos(pos));
@@ -363,6 +365,7 @@ public class OpenInventoryPacket {
 
                 //#if MC >= 12001
                 MemoryUtils.PRINTER_MEMORY.removeMemory(key.identifier(), pos);
+                MemoryBankAccessImpl.INSTANCE.getLoadedInternal().ifPresent(memoryBank -> memoryBank.removeMemory(key.identifier(),pos));
                 //#else
                 //$$ red.jackf.chesttracker.memory.MemoryDatabase.getCurrent().removePos(key.location() , pos);
                 //$$ me.aleksilassila.litematica.printer.printer.zxy.memory.MemoryDatabase.getCurrent().removePos(key.location() , pos);

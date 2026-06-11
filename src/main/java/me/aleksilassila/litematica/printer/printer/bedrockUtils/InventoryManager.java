@@ -11,7 +11,7 @@ import net.minecraft.tags.FluidTags;
 import net.minecraft.world.effect.MobEffectUtil;
 import net.minecraft.world.effect.MobEffects;
 import net.minecraft.world.inventory.AbstractContainerMenu;
-import net.minecraft.world.inventory.ClickType;
+import net.minecraft.world.inventory.ContainerInput;
 import net.minecraft.world.item.enchantment.Enchantments;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.Blocks;
@@ -48,7 +48,7 @@ public class InventoryManager {
 //					mc.player.container.getNextActionId(mc.player.inventory)
 //					//#endif
 //			));
-            mc.player.containerMenu.clicked(-999, 2, ClickType.QUICK_CRAFT, mc.player);
+            mc.player.containerMenu.clicked(-999, 2, ContainerInput.QUICK_CRAFT, mc.player);
 
 //			InfoUtils.printActionbarMessage("tweakermore.impl.refreshInventory.refreshed");
         }
@@ -81,7 +81,7 @@ public class InventoryManager {
                 for (int i1 = 0; i1 < sc.slots.size(); i1++) {
                     if (ItemStack.isSameItem(sc.slots.get(i1).getItem(),new ItemStack(item))) i = i1;
                 }
-                sc.clicked(i, 40, ClickType.SWAP, minecraftClient.player);
+                sc.clicked(i, 40, ContainerInput.SWAP, minecraftClient.player);
                 refresh();
             }else{
                 if (Inventory.isHotbarSlot(i)) {
@@ -90,7 +90,7 @@ public class InventoryManager {
                     {
 //                        minecraftClient.interactionManager.pickFromInventory(i);
 //                        minecraftClient.getNetworkHandler().sendPacket(new UpdateSelectedSlotC2SPacket(playerInventory.selectedSlot));
-                        sc.clicked(i, InventoryUtils.getSelectedSlot(), ClickType.SWAP, minecraftClient.player);
+                        sc.clicked(i, InventoryUtils.getSelectedSlot(), ContainerInput.SWAP, minecraftClient.player);
                         refresh();
                     }
                 }

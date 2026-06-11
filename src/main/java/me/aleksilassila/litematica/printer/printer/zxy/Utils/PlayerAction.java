@@ -38,11 +38,11 @@ public class PlayerAction {
                 //$$ client.level,
                 //#endif
                 hand, new BlockHitResult(vec3d, direction, pos, insideBlock));
-        client.gameMode.useItem(client.player,
-                //#if MC < 11902
-                //$$ client.level,
-                //#endif
-                hand);
+        // client.gameMode.useItem(client.player,
+        //         //#if MC < 11902
+        //         //$$ client.level,
+        //         //#endif
+        //         hand);
         if (useShift) setShift(client.player, false);
     }
 
