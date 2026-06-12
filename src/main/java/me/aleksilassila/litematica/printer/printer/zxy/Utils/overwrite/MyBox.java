@@ -2,6 +2,7 @@ package me.aleksilassila.litematica.printer.printer.zxy.Utils.overwrite;
 
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Vec3i;
+import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
 import org.jetbrains.annotations.NotNull;
 
@@ -14,12 +15,12 @@ public class MyBox implements Iterable<BlockPos> {
     public BlockPos center;
     public int range;
 
-    public int minX;
-    public int minY;
-    public int minZ;
-    public int maxX;
-    public int maxY;
-    public int maxZ;
+    public double minX;
+    public double minY;
+    public double minZ;
+    public double maxX;
+    public double maxY;
+    public double maxZ;
 
     public MyBox(int x1, int y1, int z1, int x2, int y2, int z2) {
         minX = Math.min(x1, x2);
@@ -31,7 +32,7 @@ public class MyBox implements Iterable<BlockPos> {
     }
 
     public MyBox(fi.dy.masa.litematica.selection.Box box) {
-        this(Vec3.atCenterOf(box.getPos1()), Vec3.atCenterOf(box.getPos2()));
+        this(Vec3.atLowerCornerOf(box.getPos1()), Vec3.atLowerCornerOf(box.getPos2()));
     }
 
     public MyBox(BlockPos pos) {
@@ -57,15 +58,18 @@ public class MyBox implements Iterable<BlockPos> {
     }
 
     //因原方法最大值比较时使用的是 < 而不是 <= 因此 最小边界能被覆盖 而最大边界不能
+    public boolean contains(Vec3 vec) {
+        return this.contains(vec.x(), vec.y(), vec.z());
+    }
     public boolean contains(Vec3i vec) {
         return this.contains(vec.getX(), vec.getY(), vec.getZ());
     }
 
-    public boolean contains(int x, int y, int z) {
+    public boolean contains(double x, double y, double z) {
         return x >= this.minX && x <= this.maxX && y >= this.minY && y <= this.maxY && z >= this.minZ && z <= this.maxZ;
     }
 
-    public MyBox expand(int x, int y, int z) {
+    public MyBox expand(double x, double y, double z) {
         this.minX -= x;
         this.minY -= y;
         this.minZ -= z;
@@ -138,7 +142,7 @@ public class MyBox implements Iterable<BlockPos> {
                         z = getZNode(y);
                         x = getXNode(z, y);
                         if (yIncrement ? y > maxY : y < minY) {
-                            y = (yIncrement ? minY : maxY);
+                            y = (int) (yIncrement ? minY : maxY);
                             z = getZNode(y);
                             x = getXNode(z, y);
                         }
@@ -148,7 +152,7 @@ public class MyBox implements Iterable<BlockPos> {
                 return currPos;
             }
             public int getZNode(int y){
-                if (!sphereMode) return minZ;
+                if (!sphereMode) return (int) minZ;
                 y = y - center.getY();
                 int i = (range * range - y * y);
                 int node = (int) Math.sqrt(i);
@@ -157,7 +161,7 @@ public class MyBox implements Iterable<BlockPos> {
                 return sphereMinZ;
             }
             public int getXNode(int z, int y) {
-                if (!sphereMode) return minX;
+                if (!sphereMode) return (int) minX;
                 z = z - center.getZ();
                 y = y - center.getY();
                 int x = center.getX();
@@ -167,9 +171,9 @@ public class MyBox implements Iterable<BlockPos> {
                 return sphereMinX;
             }
             public void initCurrPos() {
-                currPos = new BlockPos(minX, (yIncrement ? minY : maxY), minZ);
+                currPos = new BlockPos((int) minX, (int) (yIncrement ? minY : maxY), (int) minZ);
                 if (sphereMode) {
-                    int z = getZNode(minY);
+                    int z = getZNode((int) minY);
                     int x = getXNode(z, currPos.getY());
                     currPos = new BlockPos(x, currPos.getY(), z);
                 }

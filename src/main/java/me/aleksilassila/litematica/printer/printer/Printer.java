@@ -115,7 +115,7 @@ public class Printer extends PrinterUtils {
             box1 = box1.expand(p);
             //因为麻将的Box.contains方法内部用的 x >= this.minX && x < this.maxX ... 最小边界能被覆盖，但是最大边界不行
             //因此 重写了该方法
-            return box1.contains(pos);
+            return box1.contains(Vec3.atLowerCornerOf(pos));
         }
     }
     public static boolean isEnablePrinter(){
