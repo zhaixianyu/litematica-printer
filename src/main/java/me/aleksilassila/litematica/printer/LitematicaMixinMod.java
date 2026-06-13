@@ -9,6 +9,7 @@ import fi.dy.masa.malilib.config.options.*;
 import fi.dy.masa.malilib.hotkeys.KeyAction;
 import fi.dy.masa.malilib.hotkeys.KeybindSettings;
 import fi.dy.masa.malilib.util.restrictions.UsageRestriction;
+import me.aleksilassila.litematica.printer.config.SuperConfig;
 import me.aleksilassila.litematica.printer.mixin.masa.litematicaSetConfig.ConfigGuiTabAccessor;
 import me.aleksilassila.litematica.printer.printer.State;
 import me.aleksilassila.litematica.printer.printer.UpdateChecker;
@@ -41,7 +42,7 @@ public class LitematicaMixinMod implements ModInitializer, ClientModInitializer 
 	public static final ConfigBoolean RENDER_LAYER_LIMIT = new ConfigBoolean("渲染层数限制",false, "替换，破基岩，挖掘模式 是否受渲染层数限制");
 	public static final ConfigBoolean PRINT_IN_AIR = new ConfigBoolean("凭空放置",true, "Whether or not the printer should place blocks without anything to build on.\nBe aware that some anti-cheat plugins might notice this.");
 	public static final ConfigBooleanHotkeyed PRINT_WATER_LOGGED_BLOCK = new ConfigBooleanHotkeyed("打印含水方块",  false,"","启用后会自动放置冰,破坏冰来使方块含水");
-	public static final ConfigBooleanHotkeyed BREAK_ERROR_BLOCK = new ConfigBooleanHotkeyed("破坏错误方块",  false,"","打印过程中自动破坏投影中错误的方块");
+	public static final ConfigOptionList BREAK_ERROR_BLOCK = new ConfigOptionList("破坏错误方块",  State.BreakSchematicBlockType.NOT,"打印过程中自动破坏投影中错误的方块类型");
 	public static final ConfigBoolean EASY_MODE = new ConfigBoolean("精准放置",false, "根据投影的设置使用对应的协议");
 	public static final ConfigBooleanHotkeyed USE_EASY_MODE = new ConfigBooleanHotkeyed("轻松放置模式",false,"", "打印模式下放置方块将由投影轻松放置接管");
 	public static final ConfigBoolean FORCED_PLACEMENT = new ConfigBoolean("强制潜行",false, "打印时会强制潜行避免一些方块的交互");
@@ -80,6 +81,7 @@ public class LitematicaMixinMod implements ModInitializer, ClientModInitializer 
 	public static final ConfigStringList REPLACEABLE_LIST = new ConfigStringList("可覆盖方块",
 			ImmutableList.of("minecraft:snow","minecraft:lava","minecraft:water","minecraft:bubble_column","minecraft:short_grass"), "打印时将忽略这些错误方块 直接替换。");
 	public static final ConfigHotkey TEST = new ConfigHotkey("test", "","测试用的，别乱设置");
+	public static final SuperConfig<ConfigHotkey> TEST1 = new SuperConfig<>(TEST,INVENTORY,INVENTORY_LIST);
 
 	public static ImmutableList<IConfigBase> getConfigList() {
 		List<IConfigBase> list = new java.util.ArrayList<>(Configs.Generic.OPTIONS);

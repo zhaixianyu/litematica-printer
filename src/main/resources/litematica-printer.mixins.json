@@ -6,6 +6,7 @@
   "mixins": [
     "jackf.fix.ClientUtilMixin",
     "masa.BlockItemMixin",
+    "masa.ButtonGenericAccessor",
     "masa.KeyCallbackToggleBooleanConfigWithMessageMixin",
     "masa.Litematica_InventoryUtilsMixin",
     "masa.MixinInventoryUtils",

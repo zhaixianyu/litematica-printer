@@ -104,6 +104,7 @@ public class Configs implements IConfigHandler {
             //#endif
         }
         if(FabricLoader.getInstance().isDevelopmentEnvironment()) list.add(TEST);
+        if(FabricLoader.getInstance().isDevelopmentEnvironment()) list.add(TEST1);
 
         return ImmutableList.copyOf(list);
     }
@@ -143,7 +144,6 @@ public class Configs implements IConfigHandler {
         list.add(BEDROCK_SWITCH);
         list.add(EXCAVATE);
         list.add(REPLACE_BLOCK);
-        list.add(BREAK_ERROR_BLOCK);
         list.add(PRINT_WATER_LOGGED_BLOCK);
         list.add(USE_EASY_MODE);
 

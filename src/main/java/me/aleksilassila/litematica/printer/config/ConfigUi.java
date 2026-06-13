@@ -8,6 +8,7 @@ import fi.dy.masa.malilib.gui.button.IButtonActionListener;
 import me.aleksilassila.litematica.printer.LitematicaMixinMod;
 import net.fabricmc.loader.api.FabricLoader;
 
+import java.util.ArrayList;
 import java.util.List;
 import static me.aleksilassila.litematica.printer.config.ConfigUi.Tab.*;
 import static me.aleksilassila.litematica.printer.config.Configs.addGeneral;
@@ -53,7 +54,7 @@ public class ConfigUi extends GuiConfigsBase {
 //        }
 //        else if (tab == Tab.GENERAL)
 //        {
-//            return 60;
+//            return 60;-+
 //        }
 //        return 260;
 //    }
@@ -79,7 +80,20 @@ public class ConfigUi extends GuiConfigsBase {
         } else {
             configs = Configs.addAllConfigs();
         }
-        return ConfigOptionWrapper.createFor(configs);
+        
+        List<IConfigBase> processedConfigs = new ArrayList<>();
+        for (IConfigBase config : configs) {
+            if (config instanceof SuperConfig<?> superConfig) {
+                processedConfigs.add(superConfig);
+                if (superConfig.expand) {
+                    processedConfigs.addAll(superConfig.subConfigs);
+                }
+            } else {
+                processedConfigs.add(config);
+            }
+        }
+        
+        return ConfigOptionWrapper.createFor(processedConfigs);
     }
 
     private static class ButtonListener implements IButtonActionListener {

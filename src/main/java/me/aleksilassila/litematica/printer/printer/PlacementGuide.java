@@ -1,6 +1,8 @@
 package me.aleksilassila.litematica.printer.printer;
 
 import fi.dy.masa.litematica.world.WorldSchematic;
+import fi.dy.masa.malilib.config.IConfigOptionListEntry;
+import fi.dy.masa.malilib.config.options.ConfigOptionList;
 import me.aleksilassila.litematica.printer.LitematicaMixinMod;
 import me.aleksilassila.litematica.printer.interfaces.IClientPlayerInteractionManager;
 import me.aleksilassila.litematica.printer.interfaces.Implementation;
@@ -544,13 +546,14 @@ public class PlacementGuide extends PrinterUtils {
                     if (stripped != null && stripped == requiredState.getBlock()) {
                         return new ClickAction().setItems(Implementation.AXES);
                     }
+                    excavateErrorSchematicBlock(pos,requiredState);
                     break;
                 }
                 case FLUID:{
 
                 }
                 default: {
-                    if(isSchematicBlock(pos) && canBreakBlock(pos) && LitematicaMixinMod.BREAK_ERROR_BLOCK.getBooleanValue()) excavateBlock(pos);
+                    excavateErrorSchematicBlock(pos,requiredState);
                     return null;
                 }
             }
@@ -558,6 +561,21 @@ public class PlacementGuide extends PrinterUtils {
         }
 
         return null;
+    }
+    public static void excavateErrorSchematicBlock(BlockPos pos, BlockState requiredState){
+        IConfigOptionListEntry optionListValue = LitematicaMixinMod.BREAK_ERROR_BLOCK.getOptionListValue();
+        
+        boolean shouldBreak = switch ((State.BreakSchematicBlockType) optionListValue) {
+            case NOT -> false;
+            case ALL -> true;
+            case ERROR_BLOCK -> Printer.isSchematicBlock(pos) && !requiredState.isAir();
+            case EXCESS_BLOCKS -> Printer.isSchematicBlock(pos) && requiredState.isAir();
+            default -> throw new IllegalStateException("Unexpected value: " + optionListValue);
+        };
+        
+        if (shouldBreak && canBreakBlock(pos)) {
+            excavateBlock(pos);
+        }
     }
 
     public static class Action {
