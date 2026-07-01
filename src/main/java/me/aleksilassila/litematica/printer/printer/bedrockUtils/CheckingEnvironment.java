@@ -61,7 +61,7 @@ public class CheckingEnvironment {
             list.add(pistonBlockPos.north());
         }
 
-        pistonBlockPos = pistonBlockPos.below();
+        pistonBlockPos = pistonBlockPos.above();
         if (world.getBlockState(pistonBlockPos.east()).is(Blocks.REDSTONE_TORCH)) {
             list.add(pistonBlockPos.east());
         }

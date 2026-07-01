@@ -22,7 +22,12 @@ public class Messager {
         //#else
         //$$ Component translatable = new TranslatableComponent(message);
         //#endif
-        minecraftClient.gui.setOverlayMessage(translatable,false);
+
+        //#if MC > 260100
+        minecraftClient.gui.hud.setOverlayMessage(translatable,false);
+        //#else
+        //$$ minecraftClient.gui.setOverlayMessage(translatable,false);
+        //#endif
     }
 
 
@@ -33,7 +38,12 @@ public class Messager {
         //#else
         //$$ Component translatable = new TranslatableComponent(message);
         //#endif
-        minecraftClient.gui.getChat().addMessage(translatable);
+
+        //#if MC > 260100
+        minecraftClient.gui.hud.getChat().addClientSystemMessage(translatable);
+        //#else
+        //$$ minecraftClient.gui.getChat().addClientSystemMessage(translatable);
+        //#endif
     }
 
     public static @NotNull MutableComponent createOpenUrlText(String text, String url) {

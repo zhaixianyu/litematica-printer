@@ -10,6 +10,7 @@ import fi.dy.masa.malilib.config.options.ConfigHotkey;
 import fi.dy.masa.malilib.gui.GuiConfigsBase;
 import me.aleksilassila.litematica.printer.LitematicaMixinMod;
 import me.aleksilassila.litematica.printer.config.ConfigUi;
+import me.aleksilassila.litematica.printer.printer.zxy.Utils.ZxyUtils;
 import net.fabricmc.loader.api.FabricLoader;
 import net.fabricmc.loader.api.Version;
 import net.fabricmc.loader.api.VersionParsingException;
@@ -60,7 +61,7 @@ public abstract class GuiConfigsMixin {
     private void getConfigs(CallbackInfoReturnable<List<GuiConfigsBase.ConfigOptionWrapper>> cir) {
         GuiConfigs.ConfigGuiTab tab = DataManager.getConfigGuiTab();
         if (LitematicaMixinMod.PRINTER_TAB_KEY.equals(tab)) {
-            client.setScreen(new ConfigUi());
+            ZxyUtils.setClientScreen(new ConfigUi());
             DataManager.setConfigGuiTab(tempTab);
             cir.setReturnValue(GuiConfigsBase.ConfigOptionWrapper.createFor(Collections.emptyList()));
         } else tempTab = tab;

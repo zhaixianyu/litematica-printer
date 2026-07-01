@@ -11,7 +11,8 @@ import net.minecraft.tags.FluidTags;
 import net.minecraft.world.effect.MobEffectUtil;
 import net.minecraft.world.effect.MobEffects;
 import net.minecraft.world.inventory.AbstractContainerMenu;
-import net.minecraft.world.inventory.ClickType;
+import net.minecraft.world.inventory.ContainerInput;
+import net.minecraft.world.inventory.InventoryMenu;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.item.enchantment.Enchantments;
 import net.minecraft.world.level.block.state.BlockState;
@@ -67,7 +68,7 @@ public class InventoryManager {
                     csh.getStateId(),
                     //#endif
                     (short)-999, (byte)2,
-                    ClickType.QUICK_CRAFT,
+                    ContainerInput.QUICK_CRAFT,
                     //#if MC < 12105
                     //$$ uniqueItem,
                     //#endif
@@ -100,29 +101,23 @@ public class InventoryManager {
         Inventory playerInventory = minecraftClient.player.getInventory();
 
         int i = playerInventory.findSlotMatchingItem(new ItemStack(item));
-        if(item.toString().contains("pickaxe")){
-            String string = item.toString();
-            int a = 1;
-        }
         if ("diamond_pickaxe".equals(item.toString()) || "minecraft:diamond_pickaxe".equals(item.toString())) {
             i = getEfficientTool();
         }else switchPickaxe = false;
-        AbstractContainerMenu sc = minecraftClient.player.inventoryMenu;
+        InventoryMenu sc = minecraftClient.player.inventoryMenu;
         if (i != -1) {
             if(!item.toString().contains("pickaxe")){
                 for (int i1 = 0; i1 < sc.slots.size(); i1++) {
                     if (ItemStack.isSameItem(sc.slots.get(i1).getItem(),new ItemStack(item))) i = i1;
                 }
-                sc.clicked(i, 40, ClickType.SWAP, minecraftClient.player);
+                minecraftClient.gameMode.handleContainerInput(sc.containerId, i, 40, ContainerInput.SWAP, minecraftClient.player);
 //                refresh();
             } else {
                 if (Inventory.isHotbarSlot(i)) {
                     InventoryUtils.setSelectedSlot(i);
                 } else {
                     {
-//                        minecraftClient.interactionManager.pickFromInventory(i);
-//                        minecraftClient.getNetworkHandler().sendPacket(new UpdateSelectedSlotC2SPacket(playerInventory.selectedSlot));
-                        sc.clicked(i, InventoryUtils.getSelectedSlot(), ClickType.SWAP, minecraftClient.player);
+                        minecraftClient.gameMode.handleContainerInput(sc.containerId, i, InventoryUtils.getSelectedSlot(), ContainerInput.SWAP, minecraftClient.player);
 //                        refresh();
                     }
                 }

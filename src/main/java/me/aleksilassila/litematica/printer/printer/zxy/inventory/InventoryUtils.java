@@ -6,11 +6,12 @@ import me.aleksilassila.litematica.printer.interfaces.Implementation;
 import me.aleksilassila.litematica.printer.mixin.masa.Litematica_InventoryUtilsMixin;
 import me.aleksilassila.litematica.printer.mixin.openinv.ShulkerBoxBlockAccessor;
 import me.aleksilassila.litematica.printer.printer.Printer;
+import me.aleksilassila.litematica.printer.printer.bedrockUtils.Messager;
 import me.aleksilassila.litematica.printer.printer.zxy.Utils.ZxyUtils;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.world.InteractionHand;
-import net.minecraft.world.inventory.ClickType;
+import net.minecraft.world.inventory.ContainerInput;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.core.NonNullList;
 import net.minecraft.world.entity.monster.Shulker;
@@ -174,7 +175,7 @@ public class InventoryUtils {
                             int c = Integer.parseInt(s) - 1;
                             if (BuiltInRegistries.ITEM.getKey(player.getInventory().getItem(c).getItem()).toString().contains("shulker_box") &&
                                     LitematicaMixinMod.QUICKSHULKER.getBooleanValue()) {
-                                Minecraft.getInstance().gui.setOverlayMessage(Component.literal("濳影盒占用了预选栏"), false);
+                                Messager.actionBar("濳影盒占用了预选栏");
                                 continue;
                             }
 
@@ -191,8 +192,8 @@ public class InventoryUtils {
                             player.closeContainer();
                             //刷新濳影盒
                             if (shulkerBoxSlot != -1) {
-                                client.player.containerMenu.clicked(shulkerBoxSlot, 0, ClickType.PICKUP, client.player);
-                                client.player.containerMenu.clicked(shulkerBoxSlot, 0, ClickType.PICKUP, client.player);
+                                client.player.containerMenu.clicked(shulkerBoxSlot, 0, ContainerInput.PICKUP, client.player);
+                                client.player.containerMenu.clicked(shulkerBoxSlot, 0, ContainerInput.PICKUP, client.player);
                             }
                             shulkerBoxSlot = -1;
                             isOpenHandler = false;

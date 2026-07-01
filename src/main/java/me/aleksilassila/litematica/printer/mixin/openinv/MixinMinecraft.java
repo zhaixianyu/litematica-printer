@@ -41,19 +41,22 @@ public abstract class MixinMinecraft {
     @Nullable
     public ClientLevel level;
 
-    @Inject(method = {"setScreen"}, at = {@At(value = "HEAD")}, cancellable = true)
-    public void setScreen(@Nullable Screen screen, CallbackInfo ci) {
-        if(closeScreen > 0 && /*screen != null &&*/ screen instanceof AbstractContainerScreen<?>){
-            closeScreen--;
-            ci.cancel();
-        }
-    }
+    //#if MC <= 260100
+    //$$ @Inject(method = {"setScreen"}, at = {@At(value = "HEAD")}, cancellable = true)
+    //$$ public void setScreen(@Nullable Screen screen, CallbackInfo ci) {
+    //$$     if(closeScreen > 0 && /*screen != null &&*/ screen instanceof AbstractContainerScreen<?>){
+    //$$         closeScreen--;
+    //$$         ci.cancel();
+    //$$     }
+    //$$ }
+    //#endif
+
     //鼠标中键从打印机库存或通过快捷濳影盒 取出对应物品
     //#if MC > 12101
         //#if MC > 12111
-        //$$ @WrapOperation(method = "pickBlockOrEntity",at = @At(value = "INVOKE", target = "Lnet/minecraft/client/multiplayer/MultiPlayerGameMode;handlePickItemFromBlock(Lnet/minecraft/core/BlockPos;Z)V" ))
+        @WrapOperation(method = "pickBlockOrEntity",at = @At(value = "INVOKE", target = "Lnet/minecraft/client/multiplayer/MultiPlayerGameMode;handlePickItemFromBlock(Lnet/minecraft/core/BlockPos;Z)V" ))
         //#else
-        @WrapOperation(method = "pickBlock",at = @At(value = "INVOKE", target = "Lnet/minecraft/client/multiplayer/MultiPlayerGameMode;handlePickItemFromBlock(Lnet/minecraft/core/BlockPos;Z)V" ))
+        //$$ @WrapOperation(method = "pickBlock",at = @At(value = "INVOKE", target = "Lnet/minecraft/client/multiplayer/MultiPlayerGameMode;handlePickItemFromBlock(Lnet/minecraft/core/BlockPos;Z)V" ))
         //#endif
     private void doItemPick(MultiPlayerGameMode instance, BlockPos blockPos, boolean bl, Operation<Void> original) {
         if(level == null) {

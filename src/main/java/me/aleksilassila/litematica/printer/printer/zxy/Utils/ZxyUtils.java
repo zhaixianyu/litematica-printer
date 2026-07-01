@@ -10,6 +10,7 @@ import me.aleksilassila.litematica.printer.printer.bedrockUtils.Messager;
 import me.aleksilassila.litematica.printer.printer.zxy.inventory.InventoryUtils;
 import me.aleksilassila.litematica.printer.printer.zxy.inventory.OpenInventoryPacket;
 import me.aleksilassila.litematica.printer.printer.zxy.inventory.SwitchItem;
+import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.client.multiplayer.ClientPacketListener;
 import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.core.*;
@@ -27,7 +28,7 @@ import net.minecraft.world.level.block.Block;
 import net.minecraft.client.Minecraft;
 import net.minecraft.world.inventory.AbstractContainerMenu;
 import net.minecraft.world.inventory.Slot;
-import net.minecraft.world.inventory.ClickType;
+import net.minecraft.world.inventory.ContainerInput;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.core.BlockPos;
@@ -94,10 +95,10 @@ public class ZxyUtils {
         if (printerMemoryAdding && !openIng && OpenInventoryPacket.key == null) {
             if (invBlockList.isEmpty()) {
                 printerMemoryAdding = false;
-                client.gui.setOverlayMessage(Component.literal("打印机库存添加完成"), false);
+                Messager.actionBar("打印机库存添加完成");
                 return;
             }
-            client.gui.setOverlayMessage(Component.literal("添加库存中"), false);
+            Messager.actionBar("添加库存中");
             for (BlockPos pos : invBlockList) {
                 if (client.level != null) {
                     //#if MC < 12001
@@ -160,7 +161,7 @@ public class ZxyUtils {
             syncPosList = new LinkedList<>();
             if (client.player != null) client.player.clientSideCloseContainer();
             num = 0;
-            client.gui.setOverlayMessage(Component.literal("已取消同步"), false);
+            Messager.actionBar("已取消同步");
         }
     }
     public static boolean openInv(BlockPos pos,boolean ignoreThePrompt){
@@ -169,7 +170,7 @@ public class ZxyUtils {
             return true;
         } else {
             if (client.player != null && !canInteracted(5,Vec3.atCenterOf(pos))) {
-                if(!ignoreThePrompt) client.gui.setOverlayMessage(Component.literal("距离过远无法打开容器"), false);
+                if(!ignoreThePrompt) Messager.actionBar("距离过远无法打开容器");;
                 return false;
             }
             if (client.gameMode != null){
@@ -222,7 +223,7 @@ public class ZxyUtils {
                 //打开列表中的容器 只要容器同步列表不为空 就会一直执行此处
                 if (client.player == null) return;
                 playerItemsCount = new HashMap<>();
-                client.gui.setOverlayMessage(Component.literal("剩余 " + syncPosList.size() + " 个容器. 再次按下快捷键取消同步"), false);
+                Messager.actionBar("剩余 " + syncPosList.size() + " 个容器. 再次按下快捷键取消同步");
                 if (!client.player.containerMenu.equals(client.player.inventoryMenu)) return;
                 NonNullList<Slot> slots = client.player.inventoryMenu.slots;
                 slots.forEach(slot -> itemsCount(playerItemsCount,slot.getItem()));
@@ -243,7 +244,7 @@ public class ZxyUtils {
                 }
                 if (syncPosList.isEmpty()) {
                     num = 0;
-                    client.gui.setOverlayMessage(Component.literal("同步完成"), false);
+                    Messager.actionBar("同步完成");
                 }
             }
             case 3 -> {
@@ -264,12 +265,12 @@ public class ZxyUtils {
                     if (same) {
                         //有多
                         while (currNum > tarNum) {
-                            sc.clicked(i, 0, ClickType.THROW, client.player);
+                            client.gameMode.handleContainerInput(sc.containerId,i, 0, ContainerInput.THROW, client.player);
                             currNum--;
                         }
                     } else {
                         //不同直接扔出
-                        sc.clicked(i, 1, ClickType.THROW, client.player);
+                        client.gameMode.handleContainerInput(sc.containerId,i, 1, ContainerInput.THROW, client.player);
                         times++;
                     }
                     boolean thereAreItems = false;
@@ -281,12 +282,12 @@ public class ZxyUtils {
                         boolean same2 = thereAreItems = ItemStack.isSameItemSameComponents(item2,stack);
                         if (same2 && !stack.isEmpty()) {
                             int i2 = stack.getCount();
-                            sc.clicked(i1, 0, ClickType.PICKUP, client.player);
+                            client.gameMode.handleContainerInput(sc.containerId,i1, 0, ContainerInput.PICKUP, client.player);
                             for (; currNum < tarNum && i2 > 0; i2--) {
-                                sc.clicked(i, 1, ClickType.PICKUP, client.player);
+                                client.gameMode.handleContainerInput(sc.containerId,i, 1, ContainerInput.PICKUP, client.player);
                                 currNum++;
                             }
-                            sc.clicked(i1, 0, ClickType.PICKUP, client.player);
+                            client.gameMode.handleContainerInput(sc.containerId,i1, 0, ContainerInput.PICKUP, client.player);
                         }
                         //这里判断没啥用，因为一个游戏刻操作背包太多次.getStack().getCount()获取的数量不准确 下次一定优化，
                         if (currNum != tarNum) times++;
@@ -319,7 +320,7 @@ public class ZxyUtils {
             LitematicaMixinMod.TOGGLE_PRINTING_MODE.setBooleanValue(false);
             LitematicaMixinMod.PRINTER_MODE.setOptionListValue(State.PrintModeType.PRINTER);
             Printer.currentAction = null;
-            client.gui.setOverlayMessage(Component.literal("已关闭全部模式"), false);
+            Messager.actionBar("已关闭全部模式");
         }
         OpenInventoryPacket.tick();
         test();
@@ -421,7 +422,7 @@ public class ZxyUtils {
                 player.containerMenu.containerId,
                 player.containerMenu.getStateId(),
                 (short) -999, (byte) 2,
-                ClickType.QUICK_CRAFT,
+                ContainerInput.QUICK_CRAFT,
                 //#if MC < 12105
                 //$$ uniqueItem,
                 //$$ new Int2ObjectOpenHashMap<>()
@@ -469,6 +470,13 @@ public class ZxyUtils {
         }
     }
 
+    public static void setClientScreen(Screen screen){
+        client
+                //#if MC > 260100
+                .gui
+                //#endif
+                .setScreen(screen);
+    }
     //右键单击
 //              client.gameMode.handleInventoryMouseClick(sc.containerId, i, 1, ClickType.PICKUP, client.player);
     //左键单击

@@ -14,7 +14,6 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.core.FrontAndTop;
-import net.minecraft.util.Tuple;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
@@ -211,12 +210,12 @@ public class PlacementGuide extends PrinterUtils {
                     Action action = new Action().setSides(requiredState.getValue(RotatedPillarBlock.AXIS));
 
                     // If is stripped log && should use normal log instead
-                    if (AxeItemAccessor.getStrippedBlocks().containsValue(requiredState.getBlock()) &&
+                    if (AxeItemAccessor.getStrippables().containsValue(requiredState.getBlock()) &&
                             LitematicaMixinMod.STRIP_LOGS.getBooleanValue()) {
                         Block stripped = requiredState.getBlock();
 
-                        for (Block log : AxeItemAccessor.getStrippedBlocks().keySet()) {
-                            if (AxeItemAccessor.getStrippedBlocks().get(log) != stripped) continue;
+                        for (Block log : AxeItemAccessor.getStrippables().keySet()) {
+                            if (AxeItemAccessor.getStrippables().get(log) != stripped) continue;
 
                             if (!playerHasAccessToItem(client.player, stripped.asItem()) &&
                                     playerHasAccessToItem(client.player, log.asItem())) {
@@ -542,7 +541,7 @@ public class PlacementGuide extends PrinterUtils {
                     break;
                 }
                 case PILLAR: {
-                    Block stripped = AxeItemAccessor.getStrippedBlocks().get(currentState.getBlock());
+                    Block stripped = AxeItemAccessor.getStrippables().get(currentState.getBlock());
                     if (stripped != null && stripped == requiredState.getBlock()) {
                         return new ClickAction().setItems(Implementation.AXES);
                     }
@@ -630,16 +629,6 @@ public class PlacementGuide extends PrinterUtils {
             this.sides.put(side, modifier);
         }
 
-        /**
-         * {@link Action#Action(Direction, Vec3)}
-         */
-        @SafeVarargs
-        public Action(Tuple<Direction, Vec3>... sides) {
-            this.sides = new HashMap<>();
-            for (Tuple<Direction, Vec3> side : sides) {
-                this.sides.put(side.getA(), side.getB());
-            }
-        }
 
         public Action(Direction.Axis axis) {
             this.sides = new HashMap<>();
@@ -917,7 +906,7 @@ public class PlacementGuide extends PrinterUtils {
         LEVER(LeverBlock.class),
 
         // Other
-        FARMLAND(FarmBlock.class),
+        FARMLAND(FarmlandBlock.class),
         DIRT_PATH(DirtPathBlock.class),
         SKIP(SkullBlock.class, GrindstoneBlock.class, SignBlock.class, VineBlock.class,EndPortalBlock.class),
         FLUID(LiquidBlock.class),

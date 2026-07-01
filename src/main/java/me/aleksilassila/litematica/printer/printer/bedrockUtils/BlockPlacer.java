@@ -70,9 +70,11 @@ public class BlockPlacer {
                         pitch = 90f;
                         break;
                 }
-                yaw = player.getViewYRot(1);
-                BlockPlacer.pitch = player.getViewXRot(1);
-                sendLookPacket(player.getViewYRot(1), pitch);
+//                yaw = player.getViewYRot(1);
+//                BlockPlacer.pitch = player.getViewXRot(1);
+                yaw = player.getYRot();
+                BlockPlacer.pitch = player.getXRot();
+                sendLookPacket(player.getViewYRot(1.0f), pitch);
                 break;
         }
 
@@ -89,13 +91,8 @@ public class BlockPlacer {
         LocalPlayer player = minecraftClient.player;
         ItemStack itemStack = player.getItemInHand(InteractionHand.OFF_HAND);
 
-        PlayerAction.interactBlock(InteractionHand.OFF_HAND,
-                //#if MC > 11902
-                hitResult.getBlockPos().getCenter()
-                //#else
-                //$$ Vec3.atCenterOf(hitResult.getBlockPos())
-                //#endif
-                ,hitResult.getDirection(),hitResult.getBlockPos(),hitResult.isInside(),false);
+        PlayerAction.interactBlock(InteractionHand.OFF_HAND,hitResult.getLocation(),hitResult.getDirection(),hitResult.getBlockPos(),hitResult.isInside(),false);
+
         if (!itemStack.isEmpty() && !player.getCooldowns().isOnCooldown(
                 //#if MC > 12101
                 itemStack

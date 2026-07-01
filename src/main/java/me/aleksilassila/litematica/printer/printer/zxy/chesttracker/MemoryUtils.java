@@ -3,6 +3,7 @@ package me.aleksilassila.litematica.printer.printer.zxy.chesttracker;
 //#if MC >= 12001
 import me.aleksilassila.litematica.printer.LitematicaMixinMod;
 import me.aleksilassila.litematica.printer.printer.Printer;
+import me.aleksilassila.litematica.printer.printer.bedrockUtils.Messager;
 import me.aleksilassila.litematica.printer.printer.zxy.inventory.OpenInventoryPacket;
 import me.aleksilassila.litematica.printer.printer.zxy.Utils.ZxyUtils;
 import net.fabricmc.fabric.api.client.networking.v1.ClientPlayConnectionEvents;
@@ -62,7 +63,7 @@ public class MemoryUtils {
             Storage.delete(id);
             createPrinterMemory();
         }
-        ZxyUtils.client.gui.setOverlayMessage(Component.literal("打印机库存已清空"), false);
+        Messager.actionBar("打印机库存已清空");
     }
 
     public static void setup() {

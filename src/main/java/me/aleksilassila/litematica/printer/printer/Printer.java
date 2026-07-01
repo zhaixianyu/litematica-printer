@@ -48,8 +48,6 @@ import java.util.concurrent.atomic.AtomicReference;
 import java.util.function.Predicate;
 
 import static fi.dy.masa.litematica.selection.SelectionMode.NORMAL;
-import static fi.dy.masa.litematica.util.WorldUtils.applyCarpetProtocolHitVec;
-import static fi.dy.masa.litematica.util.WorldUtils.applyPlacementProtocolV3;
 import static fi.dy.masa.tweakeroo.config.Configs.Lists.BLOCK_TYPE_BREAK_RESTRICTION_BLACKLIST;
 import static fi.dy.masa.tweakeroo.config.Configs.Lists.BLOCK_TYPE_BREAK_RESTRICTION_WHITELIST;
 import static fi.dy.masa.tweakeroo.tweaks.PlacementTweaks.BLOCK_TYPE_BREAK_RESTRICTION;
@@ -67,6 +65,15 @@ import static net.minecraft.world.level.block.state.properties.ChestType.*;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+//#if MC > 260100
+import static fi.dy.masa.litematica.util.EasyPlaceUtils.applyCarpetProtocolHitVec;
+import static fi.dy.masa.litematica.util.EasyPlaceUtils.applyPlacementProtocolV3;
+//#else
+//$$ import static fi.dy.masa.litematica.util.WorldUtils.applyCarpetProtocolHitVec;
+//$$ import static fi.dy.masa.litematica.util.WorldUtils.applyPlacementProtocolV3;
+//#endif
+
 //#if MC >= 12001
     //#if MC > 12105
 
@@ -648,7 +655,7 @@ public class Printer extends PrinterUtils {
         //#endif
 
         for (SchematicPlacementManager.PlacementPart placementPart : allPlacementsTouchingChunk) {
-            if (placementPart.getBox().containsPos(offset)) {
+            if (placementPart.getBox().contains(offset)) {
                 return true;
             }
         }

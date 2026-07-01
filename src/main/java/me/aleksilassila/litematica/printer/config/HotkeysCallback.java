@@ -4,6 +4,7 @@ import fi.dy.masa.malilib.config.options.ConfigHotkey;
 import fi.dy.masa.malilib.hotkeys.IHotkeyCallback;
 import fi.dy.masa.malilib.hotkeys.IKeybind;
 import fi.dy.masa.malilib.hotkeys.KeyAction;
+import me.aleksilassila.litematica.printer.printer.zxy.Utils.ZxyUtils;
 import net.minecraft.client.Minecraft;
 
 
@@ -46,7 +47,7 @@ public class HotkeysCallback implements IHotkeyCallback {
             return true;
         }
         if(key == PRINTER.getKeybind()){
-            client.setScreen(new ConfigUi());
+            ZxyUtils.setClientScreen(new ConfigUi());
             return true;
         }else if(key == SYNC_INVENTORY.getKeybind()){
             startOrOffSyncInventory();

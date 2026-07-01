@@ -53,6 +53,7 @@
     "masa.litematicaSetConfig.ConfigsMixin",
     "masa.litematicaSetConfig.GuiConfigsMixin",
     "masa.litematicaSetConfig.InputHandlerMixin",
+    "openinv.GuiMixin",
     "openinv.MixinMinecraft",
     "verify.MixinClientConnection"
   ],
