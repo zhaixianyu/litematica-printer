@@ -1,17 +1,18 @@
 package me.aleksilassila.litematica.printer.printer.bedrockUtils;
 
-//import net.fabricmc.fabric.api.event.client.player.ClientPickBlockCallback;
-//import net.minecraft.client.Minecraft;
 
-import me.aleksilassila.litematica.printer.printer.Printer;
+
+import fi.dy.masa.malilib.util.InfoUtils;
 import me.aleksilassila.litematica.printer.printer.zxy.inventory.InventoryUtils;
 import net.minecraft.client.multiplayer.ClientPacketListener;
 import net.minecraft.client.player.LocalPlayer;
+import net.minecraft.network.protocol.game.ServerboundContainerClickPacket;
 import net.minecraft.tags.FluidTags;
 import net.minecraft.world.effect.MobEffectUtil;
 import net.minecraft.world.effect.MobEffects;
 import net.minecraft.world.inventory.AbstractContainerMenu;
-import net.minecraft.world.inventory.ContainerInput;
+import net.minecraft.world.inventory.ClickType;
+import net.minecraft.world.item.Items;
 import net.minecraft.world.item.enchantment.Enchantments;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.Blocks;
@@ -22,7 +23,21 @@ import net.minecraft.world.level.ItemLike;
 
 import static me.aleksilassila.litematica.printer.printer.bedrockUtils.TargetBlock.switchPickaxe;
 import static me.aleksilassila.litematica.printer.printer.zxy.Utils.ZxyUtils.getEnchantmentLevel;
-//import net.minecraft.tag.FluidTags;
+
+
+//#if MC >= 12105
+import net.minecraft.network.HashedStack;
+//#endif
+
+//#if MC >= 12006
+import net.minecraft.core.component.DataComponents;
+import net.minecraft.world.item.component.CustomData;
+import net.minecraft.nbt.CompoundTag;
+//#endif
+
+//#if MC >= 11700
+import it.unimi.dsi.fastutil.ints.Int2ObjectOpenHashMap;
+//#endif
 
 public class InventoryManager {
     public static void refresh()
@@ -31,26 +46,43 @@ public class InventoryManager {
         ClientPacketListener networkHandler = mc.getConnection();
         if (networkHandler != null && mc.player != null)
         {
-//            ItemStack uniqueItem = new ItemStack(Items.STONE);
-//            uniqueItem.getOrCreateTag().putDouble("force_resync", Double.NaN);  // Tags with NaN are not equal
-//			networkHandler.sendPacket(new ClickWindowC2SPacket(
-//					mc.player.container.syncId,
-//					//#if MC >= 11700
-//					//$$ mc.player.containerMenu.getRevision(),
-//					//#endif
-//					-999, 2,
-//					SlotActionType.QUICK_CRAFT,
-//					uniqueItem,
-//
-//					//#if MC >= 11700
-//					//$$ new Int2ObjectOpenHashMap<>()
-//					//#else
-//					mc.player.container.getNextActionId(mc.player.inventory)
-//					//#endif
-//			));
-            mc.player.containerMenu.clicked(-999, 2, ContainerInput.QUICK_CRAFT, mc.player);
+            ItemStack uniqueItem = new ItemStack(Items.STONE);
 
-//			InfoUtils.printActionbarMessage("tweakermore.impl.refreshInventory.refreshed");
+            // Tags with NaN are not equal, so the server will find an inventory desync and send an inventory refresh to the client
+            //#if MC >= 12006
+            var nbt = new CompoundTag();
+            nbt.putDouble("force_sync", Double.NaN);
+            CustomData.set(DataComponents.CUSTOM_DATA, uniqueItem, nbt);
+            //#else
+            //$$ uniqueItem.getOrCreateTag().putDouble("force_resync", Double.NaN);
+            //#endif
+
+            AbstractContainerMenu csh = mc.player.containerMenu;
+            //#if MC >= 12105
+            HashedStack itemStackHash = HashedStack.create(uniqueItem, networkHandler.decoratedHashOpsGenenerator());
+            //#endif
+            networkHandler.send(new ServerboundContainerClickPacket(
+                    csh.containerId,
+                    //#if MC >= 11700
+                    csh.getStateId(),
+                    //#endif
+                    (short)-999, (byte)2,
+                    ClickType.QUICK_CRAFT,
+                    //#if MC < 12105
+                    //$$ uniqueItem,
+                    //#endif
+
+                    //#if MC >= 11700
+                    new Int2ObjectOpenHashMap<>()
+                        //#if MC >= 12105
+                         , itemStackHash
+                        //#endif
+                    //#else
+                    //$$ csh.backup(mc.player.inventory)
+                    //#endif
+            ));
+
+            InfoUtils.printActionbarMessage("tweakermore.impl.refreshInventory.refreshed");
         }
     }
     static int i = 0;
@@ -67,7 +99,7 @@ public class InventoryManager {
         Minecraft minecraftClient = Minecraft.getInstance();
         Inventory playerInventory = minecraftClient.player.getInventory();
 
-        int i = playerInventory.getSlotWithRemainingSpace(new ItemStack(item));
+        int i = playerInventory.findSlotMatchingItem(new ItemStack(item));
         if(item.toString().contains("pickaxe")){
             String string = item.toString();
             int a = 1;
@@ -81,17 +113,17 @@ public class InventoryManager {
                 for (int i1 = 0; i1 < sc.slots.size(); i1++) {
                     if (ItemStack.isSameItem(sc.slots.get(i1).getItem(),new ItemStack(item))) i = i1;
                 }
-                sc.clicked(i, 40, ContainerInput.SWAP, minecraftClient.player);
-                refresh();
-            }else{
+                sc.clicked(i, 40, ClickType.SWAP, minecraftClient.player);
+//                refresh();
+            } else {
                 if (Inventory.isHotbarSlot(i)) {
                     InventoryUtils.setSelectedSlot(i);
                 } else {
                     {
 //                        minecraftClient.interactionManager.pickFromInventory(i);
 //                        minecraftClient.getNetworkHandler().sendPacket(new UpdateSelectedSlotC2SPacket(playerInventory.selectedSlot));
-                        sc.clicked(i, InventoryUtils.getSelectedSlot(), ContainerInput.SWAP, minecraftClient.player);
-                        refresh();
+                        sc.clicked(i, InventoryUtils.getSelectedSlot(), ClickType.SWAP, minecraftClient.player);
+//                        refresh();
                     }
                 }
             }

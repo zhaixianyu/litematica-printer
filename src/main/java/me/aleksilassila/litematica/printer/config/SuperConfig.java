@@ -3,13 +3,13 @@ package me.aleksilassila.litematica.printer.config;
 import com.google.gson.JsonElement;
 import fi.dy.masa.malilib.config.ConfigType;
 import fi.dy.masa.malilib.config.IConfigBase;
+import fi.dy.masa.malilib.gui.LeftRight;
 import fi.dy.masa.malilib.gui.MaLiLibIcons;
 import fi.dy.masa.malilib.gui.button.ButtonGeneric;
 import fi.dy.masa.malilib.gui.interfaces.IGuiIcon;
 import fi.dy.masa.malilib.hotkeys.IHotkey;
 import fi.dy.masa.malilib.hotkeys.IKeybind;
-import me.aleksilassila.litematica.printer.mixin.masa.ButtonGenericAccessor;
-import me.aleksilassila.litematica.printer.mixin.masa.IButtonGenericAccessor;
+import me.aleksilassila.litematica.printer.interfaces.IButtonGenericAccessor;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Arrays;
@@ -19,6 +19,7 @@ public class SuperConfig <T extends IConfigBase> implements IConfigBase, IHotkey
     /*
     * 在配置按钮左侧占用一部分位置创建一个展开按钮
     * 缩减时图标为+展开时图标为-
+    * 找到创建按钮方式
     * */
     public T mainConfig;
     public LinkedList<IConfigBase> subConfigs = new LinkedList<>();
@@ -31,7 +32,9 @@ public class SuperConfig <T extends IConfigBase> implements IConfigBase, IHotkey
         subConfigs.addAll(Arrays.stream(args).toList());
         icon = MaLiLibIcons.PLUS;
         expand = false;
-        expandButton = new ButtonGeneric(0, 0, icon);
+//        expandButton = new ButtonGeneric(0, 0, icon);
+//        expandButton.setIconAlignment(LeftRight.CENTER);
+//        expandButton.setActionListener((buttonBase, i) -> switchExpand());
     }
 
     public void switchExpand() {

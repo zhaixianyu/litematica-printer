@@ -10,6 +10,7 @@ import net.minecraft.network.protocol.game.ServerboundMovePlayerPacket;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.Items;
 import net.minecraft.world.item.context.UseOnContext;
 import net.minecraft.world.level.ItemLike;
 import net.minecraft.world.level.block.Blocks;
@@ -69,16 +70,15 @@ public class BlockPlacer {
                         pitch = 90f;
                         break;
                 }
-                yaw = player.getYRot();
-                BlockPlacer.pitch = player.getXRot();
-                BlockPlacer.pitch = player.getVoicePitch();
-                sendLookPacket(player.getYRot(), pitch);
+                yaw = player.getViewYRot(1);
+                BlockPlacer.pitch = player.getViewXRot(1);
+                sendLookPacket(player.getViewYRot(1), pitch);
                 break;
         }
 
         Vec3 vec3d = new Vec3(x, pos.getY(), pos.getZ());
 
-        InventoryManager.switchToItem(Blocks.PISTON);
+        InventoryManager.switchToItem(Items.PISTON);
         BlockHitResult hitResult = new BlockHitResult(vec3d, Direction.UP, pos, false);
 //        minecraftClient.interactionManager.interactBlock(minecraftClient.player, minecraftClient.world, InteractionHand.MAIN_HAND, hitResult);
         placeBlockWithoutInteractingBlock(minecraftClient, hitResult);
@@ -105,7 +105,6 @@ public class BlockPlacer {
         )) {
             UseOnContext itemUsageContext = new UseOnContext(player, InteractionHand.OFF_HAND, hitResult);
             itemStack.useOn(itemUsageContext);
-
         }
     }
 }

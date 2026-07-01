@@ -1,4 +1,4 @@
-package me.aleksilassila.litematica.printer.mixin.masa;
+package me.aleksilassila.litematica.printer.interfaces;
 
 
 import fi.dy.masa.malilib.gui.interfaces.IGuiIcon;

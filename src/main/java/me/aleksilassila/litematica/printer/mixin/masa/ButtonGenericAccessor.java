@@ -3,6 +3,7 @@ package me.aleksilassila.litematica.printer.mixin.masa;
 
 import fi.dy.masa.malilib.gui.button.ButtonGeneric;
 import fi.dy.masa.malilib.gui.interfaces.IGuiIcon;
+import me.aleksilassila.litematica.printer.interfaces.IButtonGenericAccessor;
 import org.jetbrains.annotations.Nullable;
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;

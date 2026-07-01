@@ -135,9 +135,9 @@ public class SearchItem {
                     InventoryUtils.getStoredItems(memoryStack).stream().anyMatch(mStack ->
                             stack1.getName().getString().equals(mStack.getName().getString()) && InventoryUtils.areStacksEqual(stack1, mStack));
         } else */
-        // 什么东西??? 看不懂了哦
+        // 比较潜影盒
         if (BuiltInRegistries.ITEM.getKey(stack1.getItem()).toString().contains("shulker_box") && BuiltInRegistries.ITEM.getKey(memoryStack.getItem()).toString().contains("shulker_box")) {
-            return (InventoryUtils.getStoredItems(stack1).isEmpty() && InventoryUtils.getStoredItems(memoryStack).isEmpty() && getItemName(stack1).equals(getItemName(memoryStack))) ||
+            return (InventoryUtils.getStoredItems(stack1).isEmpty() && InventoryUtils.getStoredItems(memoryStack).isEmpty() && stack1.is(memoryStack.getItem())) ||
                     (!InventoryUtils.getStoredItems(stack1).isEmpty() &&
                             !InventoryUtils.getStoredItems(memoryStack).isEmpty() &&
                             getItemName(stack1).equals(getItemName(memoryStack)) &&
