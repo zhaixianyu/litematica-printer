@@ -61,9 +61,9 @@ public class Filters {
         try {
            return block != null ? getTag(block.builtInRegistryHolder().tags(),blockName,args) : getTag(itemStack.
                    //#if MC > 12111
-                   tags()
+                   //$$ tags()
                    //#else
-                   //$$ getTags()
+                   getTags()
                    //#endif
                    ,blockName,args);
         }catch (Exception ignored){}

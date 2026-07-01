@@ -10,7 +10,7 @@ import me.aleksilassila.litematica.printer.printer.zxy.Utils.ZxyUtils;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.world.InteractionHand;
-import net.minecraft.world.inventory.ContainerInput;
+import net.minecraft.world.inventory.ClickType;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.core.NonNullList;
 import net.minecraft.world.entity.monster.Shulker;
@@ -191,8 +191,8 @@ public class InventoryUtils {
                             player.closeContainer();
                             //刷新濳影盒
                             if (shulkerBoxSlot != -1) {
-                                client.player.containerMenu.clicked(shulkerBoxSlot, 0, ContainerInput.PICKUP, client.player);
-                                client.player.containerMenu.clicked(shulkerBoxSlot, 0, ContainerInput.PICKUP, client.player);
+                                client.player.containerMenu.clicked(shulkerBoxSlot, 0, ClickType.PICKUP, client.player);
+                                client.player.containerMenu.clicked(shulkerBoxSlot, 0, ClickType.PICKUP, client.player);
                             }
                             shulkerBoxSlot = -1;
                             isOpenHandler = false;

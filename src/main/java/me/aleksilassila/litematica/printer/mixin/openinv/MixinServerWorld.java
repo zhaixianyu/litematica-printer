@@ -22,9 +22,9 @@ public class MixinServerWorld {
             TickList list = tickMap.get(s);
             if (!list.world.areEntitiesLoaded(
                     //#if MC > 12111
-                    ChunkPos.containing(list.pos).pack()
+                    //$$ ChunkPos.containing(list.pos).pack()
                     //#else
-                    //$$ ChunkPos.asLong(list.pos)
+                    ChunkPos.asLong(list.pos)
                     //#endif
             )) {
                 list.world.shouldTickBlocksAt(list.pos

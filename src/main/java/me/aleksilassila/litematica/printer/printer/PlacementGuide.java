@@ -211,12 +211,12 @@ public class PlacementGuide extends PrinterUtils {
                     Action action = new Action().setSides(requiredState.getValue(RotatedPillarBlock.AXIS));
 
                     // If is stripped log && should use normal log instead
-                    if (AxeItemAccessor.getStrippables().containsValue(requiredState.getBlock()) &&
+                    if (AxeItemAccessor.getStrippedBlocks().containsValue(requiredState.getBlock()) &&
                             LitematicaMixinMod.STRIP_LOGS.getBooleanValue()) {
                         Block stripped = requiredState.getBlock();
 
-                        for (Block log : AxeItemAccessor.getStrippables().keySet()) {
-                            if (AxeItemAccessor.getStrippables().get(log) != stripped) continue;
+                        for (Block log : AxeItemAccessor.getStrippedBlocks().keySet()) {
+                            if (AxeItemAccessor.getStrippedBlocks().get(log) != stripped) continue;
 
                             if (!playerHasAccessToItem(client.player, stripped.asItem()) &&
                                     playerHasAccessToItem(client.player, log.asItem())) {
@@ -542,7 +542,7 @@ public class PlacementGuide extends PrinterUtils {
                     break;
                 }
                 case PILLAR: {
-                    Block stripped = AxeItemAccessor.getStrippables().get(currentState.getBlock());
+                    Block stripped = AxeItemAccessor.getStrippedBlocks().get(currentState.getBlock());
                     if (stripped != null && stripped == requiredState.getBlock()) {
                         return new ClickAction().setItems(Implementation.AXES);
                     }
@@ -917,7 +917,7 @@ public class PlacementGuide extends PrinterUtils {
         LEVER(LeverBlock.class),
 
         // Other
-        FARMLAND(FarmlandBlock.class),
+        FARMLAND(FarmBlock.class),
         DIRT_PATH(DirtPathBlock.class),
         SKIP(SkullBlock.class, GrindstoneBlock.class, SignBlock.class, VineBlock.class,EndPortalBlock.class),
         FLUID(LiquidBlock.class),

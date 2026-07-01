@@ -205,12 +205,12 @@ public class OpenInventoryPacket {
     }
     public static void init(){
         //#if MC > 12004
-        PayloadTypeRegistry.clientboundPlay().register(OPEN_INVENTORY_ID, OpenPackage.CODEC);
-        PayloadTypeRegistry.clientboundPlay().register(OPEN_RETURN_ID, ReturnPackage.CODEC);
-        PayloadTypeRegistry.clientboundPlay().register(HELLO_REMOTE_INTERACTIONS_ID, HelloPackage.CODEC);
-        PayloadTypeRegistry.serverboundPlay().register(OPEN_INVENTORY_ID, OpenPackage.CODEC);
-        PayloadTypeRegistry.serverboundPlay().register(OPEN_RETURN_ID, ReturnPackage.CODEC);
-        PayloadTypeRegistry.serverboundPlay().register(HELLO_REMOTE_INTERACTIONS_ID, HelloPackage.CODEC);
+        PayloadTypeRegistry.playC2S().register(OPEN_INVENTORY_ID, OpenPackage.CODEC);
+        PayloadTypeRegistry.playC2S().register(OPEN_RETURN_ID, ReturnPackage.CODEC);
+        PayloadTypeRegistry.playC2S().register(HELLO_REMOTE_INTERACTIONS_ID, HelloPackage.CODEC);
+        PayloadTypeRegistry.playS2C().register(OPEN_INVENTORY_ID, OpenPackage.CODEC);
+        PayloadTypeRegistry.playS2C().register(OPEN_RETURN_ID, ReturnPackage.CODEC);
+        PayloadTypeRegistry.playS2C().register(HELLO_REMOTE_INTERACTIONS_ID, HelloPackage.CODEC);
         //#endif
     }
 
@@ -257,9 +257,9 @@ public class OpenInventoryPacket {
         if (blockState == null) {
             //#if MC > 12104
                 //#if MC >= 260100
-                world.getChunkSource().addTicketWithRadius(OPEN_TICKET, ChunkPos.containing(pos), 2);
+                //$$ world.getChunkSource().addTicketWithRadius(OPEN_TICKET, ChunkPos.containing(pos), 2);
                 //#else
-                //$$ world.getChunkSource().addTicketWithRadius(OPEN_TICKET, new ChunkPos(pos), 2);
+                world.getChunkSource().addTicketWithRadius(OPEN_TICKET, new ChunkPos(pos), 2);
                 //#endif
             //#else
             //$$ world.getChunkSource().addRegionTicket(OPEN_TICKET, new ChunkPos(pos), 2, new ChunkPos(pos));

@@ -51,9 +51,9 @@ public abstract class MixinMinecraft {
     //鼠标中键从打印机库存或通过快捷濳影盒 取出对应物品
     //#if MC > 12101
         //#if MC > 12111
-        @WrapOperation(method = "pickBlockOrEntity",at = @At(value = "INVOKE", target = "Lnet/minecraft/client/multiplayer/MultiPlayerGameMode;handlePickItemFromBlock(Lnet/minecraft/core/BlockPos;Z)V" ))
+        //$$ @WrapOperation(method = "pickBlockOrEntity",at = @At(value = "INVOKE", target = "Lnet/minecraft/client/multiplayer/MultiPlayerGameMode;handlePickItemFromBlock(Lnet/minecraft/core/BlockPos;Z)V" ))
         //#else
-        //$$ @WrapOperation(method = "pickBlock",at = @At(value = "INVOKE", target = "Lnet/minecraft/client/multiplayer/MultiPlayerGameMode;handlePickItemFromBlock(Lnet/minecraft/core/BlockPos;Z)V" ))
+        @WrapOperation(method = "pickBlock",at = @At(value = "INVOKE", target = "Lnet/minecraft/client/multiplayer/MultiPlayerGameMode;handlePickItemFromBlock(Lnet/minecraft/core/BlockPos;Z)V" ))
         //#endif
     private void doItemPick(MultiPlayerGameMode instance, BlockPos blockPos, boolean bl, Operation<Void> original) {
         if(level == null) {

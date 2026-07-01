@@ -27,7 +27,7 @@ import net.minecraft.world.level.block.Block;
 import net.minecraft.client.Minecraft;
 import net.minecraft.world.inventory.AbstractContainerMenu;
 import net.minecraft.world.inventory.Slot;
-import net.minecraft.world.inventory.ContainerInput;
+import net.minecraft.world.inventory.ClickType;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.core.BlockPos;
@@ -264,12 +264,12 @@ public class ZxyUtils {
                     if (same) {
                         //有多
                         while (currNum > tarNum) {
-                            sc.clicked(i, 0, ContainerInput.THROW, client.player);
+                            sc.clicked(i, 0, ClickType.THROW, client.player);
                             currNum--;
                         }
                     } else {
                         //不同直接扔出
-                        sc.clicked(i, 1, ContainerInput.THROW, client.player);
+                        sc.clicked(i, 1, ClickType.THROW, client.player);
                         times++;
                     }
                     boolean thereAreItems = false;
@@ -281,12 +281,12 @@ public class ZxyUtils {
                         boolean same2 = thereAreItems = ItemStack.isSameItemSameComponents(item2,stack);
                         if (same2 && !stack.isEmpty()) {
                             int i2 = stack.getCount();
-                            sc.clicked(i1, 0, ContainerInput.PICKUP, client.player);
+                            sc.clicked(i1, 0, ClickType.PICKUP, client.player);
                             for (; currNum < tarNum && i2 > 0; i2--) {
-                                sc.clicked(i, 1, ContainerInput.PICKUP, client.player);
+                                sc.clicked(i, 1, ClickType.PICKUP, client.player);
                                 currNum++;
                             }
-                            sc.clicked(i1, 0, ContainerInput.PICKUP, client.player);
+                            sc.clicked(i1, 0, ClickType.PICKUP, client.player);
                         }
                         //这里判断没啥用，因为一个游戏刻操作背包太多次.getStack().getCount()获取的数量不准确 下次一定优化，
                         if (currNum != tarNum) times++;
@@ -421,7 +421,7 @@ public class ZxyUtils {
                 player.containerMenu.containerId,
                 player.containerMenu.getStateId(),
                 (short) -999, (byte) 2,
-                ContainerInput.QUICK_CRAFT,
+                ClickType.QUICK_CRAFT,
                 //#if MC < 12105
                 //$$ uniqueItem,
                 //$$ new Int2ObjectOpenHashMap<>()

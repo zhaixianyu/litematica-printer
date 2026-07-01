@@ -16,7 +16,7 @@ public class UpdateChecker {
             MutableComponent bv1 = Messager.createOpenUrlText("BV1q44y1T7hE", "https://www.bilibili.com/video/BV1q44y1T7hE");
             MutableComponent bv2 = Messager.createOpenUrlText("BV1Fv411P7Vc", "https://www.bilibili.com/video/BV1Fv411P7Vc");
             MutableComponent source = Messager.createOpenUrlText("Github", "https://github.com/aleksilassila/litematica-printer");
-            client.gui.getChat().addClientSystemMessage(
+            client.gui.getChat().addMessage(
                     Component.literal("").copy().append("[Litematica-Printer]\n此版本为宅闲鱼二改版，初版视频：")
                             .append(bv1)
                             .append("\n投影打印机原作😁：")
