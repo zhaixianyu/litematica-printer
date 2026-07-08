@@ -64,7 +64,7 @@ public class SwitchItem {
 //                        Class quickShulker = Class.forName("net.kyrptonaught.quickshulker.client.ClientUtil");
 //                        Method checkAndSend = quickShulker.getDeclaredMethod("CheckAndSend",ItemStack.class,int.class);
 //                        checkAndSend.invoke(checkAndSend,sc.slots.get(itemStatistics.shulkerBoxSlot).getStack(),itemStatistics.shulkerBoxSlot);
-                        client.player.containerMenu.clicked(itemStatistics.shulkerBoxSlot,1, ContainerInput.PICKUP,client.player);
+                        client.gameMode.handleContainerInput(sc.containerId,itemStatistics.shulkerBoxSlot,1, ContainerInput.PICKUP,client.player);
                         Statistics.closeScreen++;
                     } catch (Exception ignored){
                         removeItem(reSwitchItem);

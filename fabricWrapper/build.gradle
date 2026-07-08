@@ -4,7 +4,6 @@ import groovy.json.JsonSlurper
 plugins {
     id("java-library")
     id("maven-publish")
-    id("com.github.breadmoirai.github-release").version('2.4.1')
 }
 
 version = gradle.modVersion

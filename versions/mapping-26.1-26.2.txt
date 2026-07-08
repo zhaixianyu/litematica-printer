@@ -1,6 +1,3 @@
 fi.dy.masa.litematica.util.WorldUtils applyCarpetProtocolHitVec() fi.dy.masa.litematica.util.EasyPlaceUtils applyCarpetProtocolHitVec()
 fi.dy.masa.litematica.util.WorldUtils applyPlacementProtocolV3() fi.dy.masa.litematica.util.EasyPlaceUtils applyPlacementProtocolV3()
 fi.dy.masa.malilib.util.position.IntBoundingBox containsPos() contains()
-net.minecraft.client.Minecraft setScreen() gui.setScreen()
-net.minecraft.client.gui.Gui getChat() hud.getChat()
-net.minecraft.client.gui.Gui setOverlayMessage() hud.setOverlayMessage()

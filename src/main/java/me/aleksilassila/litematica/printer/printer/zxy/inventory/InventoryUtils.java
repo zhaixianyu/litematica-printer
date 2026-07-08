@@ -192,8 +192,8 @@ public class InventoryUtils {
                             player.closeContainer();
                             //刷新濳影盒
                             if (shulkerBoxSlot != -1) {
-                                client.player.containerMenu.clicked(shulkerBoxSlot, 0, ContainerInput.PICKUP, client.player);
-                                client.player.containerMenu.clicked(shulkerBoxSlot, 0, ContainerInput.PICKUP, client.player);
+                                client.gameMode.handleContainerInput(sc.containerId,shulkerBoxSlot, 0, ContainerInput.PICKUP, client.player);
+                                client.gameMode.handleContainerInput(sc.containerId,shulkerBoxSlot, 0, ContainerInput.PICKUP, client.player);
                             }
                             shulkerBoxSlot = -1;
                             isOpenHandler = false;

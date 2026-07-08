@@ -29,6 +29,8 @@ import java.util.concurrent.atomic.AtomicBoolean;
 
 import static me.aleksilassila.litematica.printer.printer.zxy.inventory.InventoryUtils.getItemName;
 
+
+//TODO 投影材料列表根据打印机库存刷新
 public class SearchItem {
     static AtomicBoolean hasItem = new AtomicBoolean(false);
     static boolean isPrinterMemory = false;
@@ -40,7 +42,7 @@ public class SearchItem {
         maxPage = 0;
         page = 0;
         currItems.forEach((k,v) -> {
-            if(v == null)return;
+            if(v == null) return;
             maxPage+=v.size();
         });
     }
