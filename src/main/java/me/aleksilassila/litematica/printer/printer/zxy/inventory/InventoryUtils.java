@@ -259,7 +259,7 @@ public class InventoryUtils {
         for (Item item : items) {
             if (Implementation.getAbilities(player).instabuild) {
                 fi.dy.masa.litematica.util.InventoryUtils.setPickedItemToHand(new ItemStack(item), client);
-                client.gameMode.handleCreativeModeItemAdd(client.player.getItemInHand(InteractionHand.MAIN_HAND), 36 + getSelectedSlot());
+//                client.gameMode.handleCreativeModeItemAdd(client.player.getItemInHand(InteractionHand.MAIN_HAND), 36 + getSelectedSlot());
                 return true;
             } else {
                 int slot = -1;
