@@ -23,6 +23,7 @@ import net.minecraft.world.item.Items;
 import net.minecraft.world.level.block.*;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.properties.*;
+import net.minecraft.world.level.material.*;
 import net.minecraft.world.level.portal.PortalShape;
 import net.minecraft.world.phys.Vec3;
 import net.minecraft.world.level.Level;
@@ -195,7 +196,6 @@ public class PlacementGuide extends PrinterUtils {
                 }
                 case TRAPDOOR: {
                     Direction half = getHalf(requiredState.getValue(TrapDoorBlock.HALF));
-
                     Map<Direction, Vec3> sides = new HashMap<>(){{
                         put(half,
                             Vec3.atLowerCornerOf(half.getUnitVec3i()).scale(0.25));
@@ -434,8 +434,19 @@ public class PlacementGuide extends PrinterUtils {
                     break;
                 }
                 case DOOR: {
-                    if (requiredState.getValue(DoorBlock.OPEN) != currentState.getValue(DoorBlock.OPEN))
+                    if (requiredState.getValue(DoorBlock.OPEN) != currentState.getValue(DoorBlock.OPEN)){
+                        if(requiredState.getBlock() instanceof DoorBlock doorBlock){
+                            //#if MC >= 12001
+                            if (!doorBlock.type().canOpenByHand()) break;
+                            //#else
+                            //$$ if (requiredState.getMaterial() == Material.METAL) {
+                            //$$     break;
+                            //$$ }
+                            //#endif
+                        }
+
                         return new ClickAction();
+                    }
 
                     break;
                 }
@@ -470,8 +481,16 @@ public class PlacementGuide extends PrinterUtils {
                     break;
                 }
                 case TRAPDOOR: {
-                    if (requiredState.getValue(TrapDoorBlock.OPEN) != currentState.getValue(TrapDoorBlock.OPEN))
+                    if (requiredState.getValue(TrapDoorBlock.OPEN) != currentState.getValue(TrapDoorBlock.OPEN)){
+                        if(requiredState.getBlock() instanceof TrapDoorBlock trapDoorBlock){
+                            //#if MC >= 12001
+                            if (!trapDoorBlock.type.canOpenByHand()) break;
+                            //#else
+                            //$$ if (requiredState.getMaterial() == Material.METAL) break;
+                            //#endif
+                        }
                         return new ClickAction();
+                    }
 
                     break;
                 }

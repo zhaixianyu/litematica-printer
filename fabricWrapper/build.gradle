@@ -23,18 +23,24 @@ def fabric_subprojects = project.parent.subprojects.findAll({
     it.name != "fabricWrapper"
 })
 
-//fabric_subprojects.collect {
-//    evaluationDependsOn(":${it.name}")
-//}
+def getJarTaskName = { proj ->
+    if (proj.tasks.names.contains('remapJar')) return 'remapJar'
+    if (proj.tasks.names.contains('jar')) return 'jar'
+    return 'remapJar'
+}
+
+// 使用 lazy Provider 将任务名解析延迟到执行阶段，避免配置阶段过早访问子项目任务
+fabric_subprojects.each { proj ->
+    def jarTaskProvider = project.provider {
+        def taskName = getJarTaskName(proj)
+        proj.tasks.named(taskName).get()
+    }
+    jar.dependsOn(jarTaskProvider)
+}
 
 jar {
     // disable cache
     outputs.upToDateWhen { false }
-
-    dependsOn(fabric_subprojects.collect {
-        if(it.ext.mcVersion > 12111)it.tasks.jar
-        else it.tasks.remapJar
-    })
 
     doFirst {
         delete fileTree("build/tmp/submods/META-INF/jars")
@@ -42,8 +48,8 @@ jar {
         copy {
             from {
                 fabric_subprojects.collect {
-                    if(it.ext.mcVersion > 12111)it.jar.outputs.files
-                    else it.remapJar.outputs.files
+                    def taskName = getJarTaskName(it)
+                    it.tasks.named(taskName).get().outputs.files
                 }
             }
 

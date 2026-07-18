@@ -303,6 +303,8 @@ loom {
         enableDependencyInterfaceInjection.set(true)
     }
 
+    accessWidenerPath = file("litematica-printer.accesswidener")
+
     runConfigs.configureEach {
         // Dump modified classes automatically.
         property("mixin.debug.export", "true")
@@ -419,6 +421,8 @@ java {
 
 
 processResources {
+    from "litematica-printer.accesswidener"
+
     outputs.upToDateWhen { false }
 
     from("${rootDir}/LICENSE")

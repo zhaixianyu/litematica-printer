@@ -5,6 +5,7 @@
   "icon": "assets/${mod_id}/icon.png",
   "name": "${mod_name}",
   "description": "A fork of Litematica that adds the missing printer functionality",
+  "accessWidener": "litematica-printer.accesswidener",
   "authors": [
     "aleksilassila",
     "zhaixianyu"

@@ -1,0 +1,9 @@
+accessWidener	v1	official
+
+accessible  field  net/minecraft/world/level/block/TrapDoorBlock type Lnet/minecraft/world/level/block/state/properties/BlockSetType;
+
+# Makes the SensorType(Supplier) constructor public
+#accessible  method  net/minecraft/world/entity/ai/sensing/SensorType  <init>  (Ljava/util/function/Supplier;)V
+
+# Makes the formatValue() method of return type String in TextColor public
+#accessible    method    net/minecraft/network/chat/TextColor    formatValue    ()Ljava/lang/String;

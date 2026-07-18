@@ -1,0 +1,3 @@
+accessWidener	v1	named
+
+accessible  field  net/minecraft/world/level/block/TrapDoorBlock type Lnet/minecraft/world/level/block/state/properties/BlockSetType;
