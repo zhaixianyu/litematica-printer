@@ -27,8 +27,7 @@ public class Configs implements IConfigHandler {
 
     public static ImmutableList<IConfigBase> addGeneral(){
         List<IConfigBase> list = new ArrayList<>();
-        if(loadChestTracker) list.add(INVENTORY);
-        if(loadChestTracker) list.add(AUTO_INVENTORY);
+        if(loadChestTracker) list.add(INVENTORY_CONFIG);
         if(loadQuickShulker) list.add(QUICKSHULKER);
         list.add(PRINT_TIMEOUT);
         list.add(PRINT_INTERVAL);
@@ -41,7 +40,6 @@ public class Configs implements IConfigHandler {
         else list.add(MULTI_BREAK);
         list.add(RENDER_LAYER_LIMIT);
         list.add(FLUID_BLOCK_LIST);
-        if(loadChestTracker) list.add(INVENTORY_LIST);
         list.add(BEDROCK_LIST);
 
         return ImmutableList.copyOf(list);
@@ -93,16 +91,7 @@ public class Configs implements IConfigHandler {
             list.add(REPLACE_BLOCK);
         }
         list.add(CLOSE_ALL_MODE);
-        list.add(SYNC_INVENTORY);
-        if(loadChestTracker){
-            list.add(PRINTER_INVENTORY);
-            list.add(REMOVE_PRINT_INVENTORY);
-            //#if MC >= 12001
-            list.add(LAST);
-            list.add(NEXT);
-            list.add(DELETE);
-            //#endif
-        }
+        list.add(SYNC_INVENTORY_CONFIG);
         if(FabricLoader.getInstance().isDevelopmentEnvironment()) list.add(TEST);
         if(FabricLoader.getInstance().isDevelopmentEnvironment()) list.add(TEST1);
 
@@ -111,7 +100,8 @@ public class Configs implements IConfigHandler {
 
     public static ImmutableList<IConfigBase> addColor(){
         List<IConfigBase> list = new ArrayList<>();
-        list.add(SYNC_INVENTORY_COLOR);
+        list.addAll(getColorsList());
+//        list.add(SYNC_INVENTORY_COLOR);
 
         return ImmutableList.copyOf(list);
     }

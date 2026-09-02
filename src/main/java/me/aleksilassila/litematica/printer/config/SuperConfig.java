@@ -1,122 +1,64 @@
 package me.aleksilassila.litematica.printer.config;
 
-import com.google.gson.JsonElement;
-import fi.dy.masa.malilib.config.ConfigType;
-import fi.dy.masa.malilib.config.IConfigBase;
-import fi.dy.masa.malilib.gui.LeftRight;
+import fi.dy.masa.malilib.config.*;
+import fi.dy.masa.malilib.config.options.ConfigBoolean;
 import fi.dy.masa.malilib.gui.MaLiLibIcons;
 import fi.dy.masa.malilib.gui.button.ButtonGeneric;
 import fi.dy.masa.malilib.gui.interfaces.IGuiIcon;
-import fi.dy.masa.malilib.hotkeys.IHotkey;
-import fi.dy.masa.malilib.hotkeys.IKeybind;
+import fi.dy.masa.malilib.gui.widgets.WidgetContainer;
 import me.aleksilassila.litematica.printer.interfaces.IButtonGenericAccessor;
+import me.aleksilassila.litematica.printer.mixin.masa.malilibConfig.WidgetContainerAccess;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Arrays;
+import java.util.LinkedHashMap;
 import java.util.LinkedList;
 
-public class SuperConfig <T extends IConfigBase> implements IConfigBase, IHotkey {
+public class SuperConfig extends ConfigBoolean {
     /*
-    * 在配置按钮左侧占用一部分位置创建一个展开按钮
-    * 缩减时图标为+展开时图标为-
-    * 找到创建按钮方式
-    * */
-    public T mainConfig;
+     * 在配置按钮左侧占用一部分位置创建一个展开按钮
+     * 缩减时图标为+展开时图标为-
+     * 找到创建按钮方式
+     * */
+    public IConfigBase mainConfig;
     public LinkedList<IConfigBase> subConfigs = new LinkedList<>();
     public IGuiIcon icon;
     public boolean expand;
     public @NotNull ButtonGeneric expandButton;
+    public int level;
 
-    public SuperConfig(T mainConfig, IConfigBase... args) {
+    public static SuperConfig config;
+    public static int xStart = 0;
+    //记录配置列表中的索引值
+    public static LinkedHashMap<Integer, Integer> superConfigMap = new LinkedHashMap<>();
+
+    public SuperConfig(IConfigBase mainConfig, IConfigBase... args) {
+        super("", false
+        //#if MC <= 12006
+                , ""
+        //#endif
+        );
         this.mainConfig = mainConfig;
         subConfigs.addAll(Arrays.stream(args).toList());
+        subConfigs.forEach(iConfigBase -> {
+            if (iConfigBase instanceof SuperConfig sc) sc.level = this.level + 1;
+        });
         icon = MaLiLibIcons.PLUS;
         expand = false;
-//        expandButton = new ButtonGeneric(0, 0, icon);
-//        expandButton.setIconAlignment(LeftRight.CENTER);
-//        expandButton.setActionListener((buttonBase, i) -> switchExpand());
     }
 
     public void switchExpand() {
         expand = !expand;
         icon = expand ? MaLiLibIcons.MINUS : MaLiLibIcons.PLUS;
         ((IButtonGenericAccessor) expandButton).setIcon(icon);
+        ConfigUi.refresh();
     }
 
-    @Override
-    public ConfigType getType() {
-        return mainConfig.getType();
+    public static void createButton(WidgetContainer widgetContainer, int x, int y) {
+        SuperConfig copyConfig = SuperConfig.config;
+        SuperConfig.config = null;
+        copyConfig.expandButton = new ButtonGeneric(x, y, 20, 20, null, copyConfig.icon);
+        copyConfig.expandButton.setActionListener((buttonGeneric, i) -> copyConfig.switchExpand());
+        ((WidgetContainerAccess) widgetContainer).invoker_addWidget(copyConfig.expandButton);
     }
-
-    @Override
-    public String getName() {
-        return mainConfig.getName();
-    }
-
-    @Override
-    public String getComment() {
-        return mainConfig.getComment();
-    }
-
-    @Override
-    public void setValueFromJsonElement(JsonElement jsonElement) {
-        mainConfig.setValueFromJsonElement(jsonElement);
-    }
-
-    @Override
-    public JsonElement getAsJsonElement() {
-        return mainConfig.getAsJsonElement();
-    }
-    @Override
-    public IKeybind getKeybind() {
-        if (mainConfig instanceof IHotkey) {
-            return ((IHotkey) mainConfig).getKeybind();
-        }
-        return null;
-    }
-
-    //#if MC > 12006
-    @Override
-    public String getTranslatedName() {
-        return mainConfig.getTranslatedName();
-    }
-
-    @Override
-    public void setPrettyName(String s) {
-        mainConfig.setPrettyName(s);
-    }
-
-    @Override
-    public void setTranslatedName(String s) {
-        mainConfig.setTranslatedName(s);
-    }
-
-    @Override
-    public void setComment(String s) {
-        mainConfig.setComment(s);
-    }
-    //#endif
-
-
-    //#if MC > 12106
-    @Override
-    public boolean isDirty() {
-        return mainConfig.isDirty();
-    }
-
-    @Override
-    public void markDirty() {
-        mainConfig.markDirty();
-    }
-
-    @Override
-    public void markClean() {
-        mainConfig.markDirty();
-    }
-
-    @Override
-    public void checkIfClean() {
-        mainConfig.checkIfClean();
-    }
-    //#endif
 }

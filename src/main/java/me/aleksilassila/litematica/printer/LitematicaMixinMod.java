@@ -66,10 +66,9 @@ public class LitematicaMixinMod implements ModInitializer, ClientModInitializer 
 	public static final ConfigBoolean QUICKSHULKER = new ConfigBoolean("快捷潜影盒", false, "在有快捷潜影盒mod的情况下可以直接从背包内的潜影盒取出物品\n替换的位置为投影的预设位置,如果所有预设位置都有濳影盒则不会替换。");
 	public static final ConfigBoolean INVENTORY = new ConfigBoolean("远程交互容器", false, "在服务器支持远程交互容器或单机的情况下可以远程交互\n替换的位置为投影的预设位置。");
 	public static final ConfigBoolean AUTO_INVENTORY = new ConfigBoolean("自动设置远程交互", false, "在服务器若允许使用则自动开启远程交互容器，反之则自动关闭");
-
+	public static final ConfigStringList INVENTORY_LIST = new ConfigStringList("库存白名单", ImmutableList.of("minecraft:chest"), "");
 	public static final ConfigBoolean PRINT_CHECK = new ConfigBoolean("有序存放", false, "在背包满时将从快捷盒子或打印机库存中取出的物品还原到之前位置，关闭后将会打乱打印机库存以及濳影盒");
 
-	public static final ConfigStringList INVENTORY_LIST = new ConfigStringList("库存白名单", ImmutableList.of("minecraft:chest"), "");
 	public static final ConfigOptionList EXCAVATE_LIMITER = new ConfigOptionList("挖掘模式限制器",State.ExcavateListMode.ME,"使用tw挖掘限制预设或自带的限制");
 	public static final ConfigOptionList EXCAVATE_LIMIT = new ConfigOptionList("挖掘模式限制", UsageRestriction.ListType.NONE,"");
 	public static final ConfigStringList EXCAVATE_WHITELIST = new ConfigStringList("挖掘白名单", ImmutableList.of(""), "#minecraft:*** 前方加入#可以按标签搜索，用,分隔可以填入参数\n" +
@@ -81,7 +80,7 @@ public class LitematicaMixinMod implements ModInitializer, ClientModInitializer 
 	public static final ConfigStringList REPLACEABLE_LIST = new ConfigStringList("可覆盖方块",
 			ImmutableList.of("minecraft:snow","minecraft:lava","minecraft:water","minecraft:bubble_column","minecraft:short_grass"), "打印时将忽略这些错误方块 直接替换。");
 	public static final ConfigHotkey TEST = new ConfigHotkey("test", "","测试用的，别乱设置");
-	public static final SuperConfig<ConfigHotkey> TEST1 = new SuperConfig<>(TEST,INVENTORY,INVENTORY_LIST);
+	public static final SuperConfig TEST1 = new SuperConfig(USE_EASY_MODE,EASY_MODE);
 
 	public static ImmutableList<IConfigBase> getConfigList() {
 		List<IConfigBase> list = new java.util.ArrayList<>(Configs.Generic.OPTIONS);
@@ -111,7 +110,6 @@ public class LitematicaMixinMod implements ModInitializer, ClientModInitializer 
 			"建议库存区域内放置假人来常加载区块");
 	public static final ConfigHotkey REMOVE_PRINT_INVENTORY = new ConfigHotkey("清空打印机库存", "", "清空打印机库存");
 
-
 	public static List<IConfigBase> getHotkeyList() {
 		List<IConfigBase> list = new java.util.ArrayList<>(Hotkeys.HOTKEY_LIST);
 		list.add(PRINT);
@@ -124,9 +122,14 @@ public class LitematicaMixinMod implements ModInitializer, ClientModInitializer 
 		return ImmutableList.copyOf(list);
 	}
 	public static final ConfigColor SYNC_INVENTORY_COLOR = new ConfigColor("容器同步与打印机添加库存高亮颜色","#4CFF4CE6", "");
-
+	public static final SuperConfig INVENTORY_CONFIG = new SuperConfig(INVENTORY, AUTO_INVENTORY,PRINT_CHECK,INVENTORY_LIST,PRINTER_INVENTORY,REMOVE_PRINT_INVENTORY
+			//#if MC >= 12001
+			,LAST,NEXT,DELETE
+			//#endif
+	);
+	public static final SuperConfig SYNC_INVENTORY_CONFIG = new SuperConfig(SYNC_INVENTORY,SYNC_INVENTORY_CHECK,SYNC_INVENTORY_COLOR);
 	public static ImmutableList<IConfigBase> getColorsList() {
-		List<IConfigBase> list = new java.util.ArrayList<>(Configs.Colors.OPTIONS);
+		List<IConfigBase> list = new java.util.ArrayList<>();
 		list.add(SYNC_INVENTORY_COLOR);
 		return ImmutableList.copyOf(list);
 	}

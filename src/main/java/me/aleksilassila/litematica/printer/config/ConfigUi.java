@@ -10,15 +10,20 @@ import net.fabricmc.loader.api.FabricLoader;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
+
 import static me.aleksilassila.litematica.printer.config.ConfigUi.Tab.*;
 import static me.aleksilassila.litematica.printer.config.Configs.addGeneral;
 import static me.aleksilassila.litematica.printer.config.Configs.addHotkeys;
+import static me.aleksilassila.litematica.printer.config.SuperConfig.superConfigMap;
 
 public class ConfigUi extends GuiConfigsBase {
     private static Tab tab = Tab.ALL;
+    public static ConfigUi instance;
 
     public ConfigUi() {
-        super(10, 50, LitematicaMixinMod.MOD_ID, null, "litematica-printer"+ FabricLoader.getInstance().getModContainer(LitematicaMixinMod.MOD_ID).get().getMetadata().getVersion());
+        super(10, 50, LitematicaMixinMod.MOD_ID, null, "litematica-printer" + FabricLoader.getInstance().getModContainer(LitematicaMixinMod.MOD_ID).get().getMetadata().getVersion());
+        instance = this;
     }
 
     @Override
@@ -34,6 +39,12 @@ public class ConfigUi extends GuiConfigsBase {
 
     }
 
+    @Override
+    protected void closeGui(boolean showParent) {
+        super.closeGui(showParent);
+        instance = null;
+    }
+
     private int createButton(int x, int y, int width, Tab tab) {
         ButtonGeneric button = new ButtonGeneric(x, y, width, 20, tab.name);
         button.setEnabled(ConfigUi.tab != tab);
@@ -41,6 +52,7 @@ public class ConfigUi extends GuiConfigsBase {
 
         return button.getWidth() + 2;
     }
+
 
     //按钮宽度
 //    @Override
@@ -65,7 +77,7 @@ public class ConfigUi extends GuiConfigsBase {
         Tab tab = ConfigUi.tab;
         if (tab == Tab.ALL) {
             configs = Configs.addAllConfigs();
-        } else if(tab == GENERAL) {
+        } else if (tab == GENERAL) {
             configs = addGeneral();
         } else if (tab == PUT) {
             configs = Configs.addPut();
@@ -75,25 +87,45 @@ public class ConfigUi extends GuiConfigsBase {
             configs = addHotkeys();
         } else if (tab == COLOR) {
             configs = Configs.addColor();
-        } else if(tab == null){
+        } else if (tab == null) {
             return null;
         } else {
             configs = Configs.addAllConfigs();
         }
-        
+
+        superConfigMap.clear();
         List<IConfigBase> processedConfigs = new ArrayList<>();
-        for (IConfigBase config : configs) {
-            if (config instanceof SuperConfig<?> superConfig) {
-                processedConfigs.add(superConfig);
-                if (superConfig.expand) {
-                    processedConfigs.addAll(superConfig.subConfigs);
-                }
-            } else {
-                processedConfigs.add(config);
+        for (int i = 0; i < configs.size(); i++) {
+            IConfigBase configBase = configs.get(i);
+            processedConfigs.add(configBase);
+            if (configBase instanceof SuperConfig superConfig && superConfig.expand) {
+                processedConfigs.addAll(getSubConfig(superConfig.subConfigs, processedConfigs.size() - 1, superConfig.level));
             }
         }
-        
+
         return ConfigOptionWrapper.createFor(processedConfigs);
+    }
+
+    public List<IConfigBase> getSubConfig(List<IConfigBase> configBases, int index, int level) {
+        List<IConfigBase> processedConfigs = new ArrayList<>();
+        int levelFix = 10 * (level + 1);
+        for (int i = 0; i < configBases.size(); i++) {
+            IConfigBase config = configBases.get(i);
+            processedConfigs.add(config);
+            superConfigMap.put(index + i + 1, levelFix);
+            if (config instanceof SuperConfig superConfig && superConfig.expand) {
+                List<IConfigBase> subConfigs = getSubConfig(superConfig.subConfigs, index + superConfig.subConfigs.size() + i, superConfig.level);
+                processedConfigs.addAll(subConfigs);
+                index += subConfigs.size();
+            }
+        }
+
+        return processedConfigs;
+    }
+
+    public static void refresh() {
+        if (instance == null) return;
+        Objects.requireNonNull(instance.getListWidget()).refreshEntries();
     }
 
     private static class ButtonListener implements IButtonActionListener {
