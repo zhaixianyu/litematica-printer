@@ -4,6 +4,7 @@ import com.llamalad7.mixinextras.injector.wrapoperation.Operation;
 import com.llamalad7.mixinextras.injector.wrapoperation.WrapOperation;
 import fi.dy.masa.malilib.gui.GuiScrollBar;
 import fi.dy.masa.malilib.gui.widgets.WidgetListBase;
+import fi.dy.masa.malilib.gui.widgets.WidgetListConfigOptions;
 import fi.dy.masa.malilib.gui.widgets.WidgetListEntryBase;
 import me.aleksilassila.litematica.printer.config.SuperConfig;
 import org.spongepowered.asm.mixin.Mixin;
@@ -29,6 +30,7 @@ public abstract class MixinWidgetListBase<TYPE, WIDGET extends WidgetListEntryBa
 
     @WrapOperation(method = "reCreateListEntryWidgets", at = @At(value = "INVOKE", target = "Lfi/dy/masa/malilib/gui/widgets/WidgetListBase;createListEntryWidgetIfSpace(IIIII)Lfi/dy/masa/malilib/gui/widgets/WidgetListEntryBase;"))
     private WIDGET onReCreateListEntryWidgets(WidgetListBase instance, int x, int y, int listIndex, int usableHeight, int usedHeight, Operation<WIDGET> original) {
+        if(!(instance instanceof WidgetListConfigOptions)) return original.call(instance, x, y, listIndex, usableHeight, usedHeight);
         this.listContents.clear();
         Collection<TYPE> entries = this.getAllEntries();
         if (this.hasFilter()) {
