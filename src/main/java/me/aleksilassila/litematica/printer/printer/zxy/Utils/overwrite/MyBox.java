@@ -115,12 +115,7 @@ public class MyBox implements Iterable<BlockPos> {
 
             @Override
             public boolean hasNext() {
-                int x = currPos.getX();
-                int y = currPos.getY();
-                int z = currPos.getZ();
-                boolean b = (yIncrement ? y == maxY : y == minY) && x == (sphereMode ? sphereMaxX : maxX) && z == (sphereMode ? sphereMaxZ : maxZ);
-                if (b) currPos = null;
-                return !b;
+                return currPos != null;
             }
 
             //思路，理解为将球体切片，再分成条，根据当前y计算xz的有效范围
@@ -130,6 +125,7 @@ public class MyBox implements Iterable<BlockPos> {
 //                    initCurrPos();
 //                    return currPos;
 //                }
+                BlockPos returnPos = currPos;
                 int x = currPos.getX();
                 int y = currPos.getY();
                 int z = currPos.getZ();
@@ -142,14 +138,13 @@ public class MyBox implements Iterable<BlockPos> {
                         z = getZNode(y);
                         x = getXNode(z, y);
                         if (yIncrement ? y > maxY : y < minY) {
-                            y = (int) (yIncrement ? minY : maxY);
-                            z = getZNode(y);
-                            x = getXNode(z, y);
+                            currPos = null;
+                            return returnPos;
                         }
                     }
                 }
                 currPos = new BlockPos(x, y, z);
-                return currPos;
+                return returnPos;
             }
             public int getZNode(int y){
                 if (!sphereMode) return (int) minZ;
