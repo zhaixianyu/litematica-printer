@@ -9,11 +9,12 @@ import me.aleksilassila.litematica.printer.interfaces.Implementation;
 import me.aleksilassila.litematica.printer.mixin.FlowerPotBlockAccessor;
 import me.aleksilassila.litematica.printer.printer.zxy.Utils.PlayerAction;
 import me.aleksilassila.litematica.printer.printer.zxy.inventory.SwitchItem;
-import net.fabricmc.fabric.mixin.content.registry.AxeItemAccessor;
+import net.fabricmc.fabric.mixin.content.registry.*;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.core.FrontAndTop;
+import net.minecraft.core.Holder;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
@@ -30,6 +31,11 @@ import net.minecraft.world.level.Level;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import java.util.*;
+
+//#if MC > 260200
+import net.minecraft.core.component.*;
+import net.minecraft.world.level.block.state.BlockBehaviour;
+//#endif
 
 import static me.aleksilassila.litematica.printer.printer.Printer.*;
 import static me.aleksilassila.litematica.printer.printer.qwer.PrintWater.*;
@@ -210,19 +216,13 @@ public class PlacementGuide extends PrinterUtils {
                     Action action = new Action().setSides(requiredState.getValue(RotatedPillarBlock.AXIS));
 
                     // If is stripped log && should use normal log instead
-                    if (AxeItemAccessor.getStrippables().containsValue(requiredState.getBlock()) &&
-                            LitematicaMixinMod.STRIP_LOGS.getBooleanValue()) {
+                    if (LitematicaMixinMod.STRIP_LOGS.getBooleanValue() && isStrippedLog(requiredState.getBlock())) {
                         Block stripped = requiredState.getBlock();
-
-                        for (Block log : AxeItemAccessor.getStrippables().keySet()) {
-                            if (AxeItemAccessor.getStrippables().get(log) != stripped) continue;
-
-                            if (!playerHasAccessToItem(client.player, stripped.asItem()) &&
-                                    playerHasAccessToItem(client.player, log.asItem())) {
-                                action.setItem(log.asItem());
-                            }
-                            break;
-
+                        Block log = getLogForStripped(stripped);
+                        
+                        if (log != null && !playerHasAccessToItem(client.player, stripped.asItem()) &&
+                                playerHasAccessToItem(client.player, log.asItem())) {
+                            action.setItem(log.asItem());
                         }
                     }
 
@@ -560,11 +560,9 @@ public class PlacementGuide extends PrinterUtils {
                     break;
                 }
                 case PILLAR: {
-                    Block stripped = AxeItemAccessor.getStrippables().get(currentState.getBlock());
-                    if (stripped != null && stripped == requiredState.getBlock()) {
+                    if (isStrippableBlock(world, pos, currentState, requiredState)) {
                         return new ClickAction().setItems(Implementation.AXES);
                     }
-                    excavateErrorSchematicBlock(pos,requiredState);
                     break;
                 }
                 case FLUID:{
@@ -594,6 +592,59 @@ public class PlacementGuide extends PrinterUtils {
         if (shouldBreak && canBreakBlock(pos)) {
             excavateBlock(pos);
         }
+    }
+
+    public boolean isStrippableBlock(Level world, BlockPos pos,BlockState currentState, BlockState requiredState){
+            
+        //#if MC > 260200
+        boolean[] b = {false};
+        Holder<BlockTransformer> transformerHolder = Items.DIAMOND_AXE.getDefaultInstance().get(DataComponents.BLOCK_TRANSFORMER);
+        if (transformerHolder != null) {
+            transformerHolder.value().transforms().forEach(transform -> {
+                BlockState newBlockState = transform.blockStateProvider().value().getOptionalState(world, world.getRandom(), pos);
+                if (newBlockState != null) {
+                    b[0] = newBlockState.getBlock().equals(requiredState.getBlock());
+                }
+            });
+        }
+        return b[0];
+        //#else
+        //$$ Block stripped = AxeItemAccessor.getStrippables().get(currentState.getBlock());
+        //$$ return stripped != null && stripped == requiredState.getBlock();
+        //#endif
+    }
+    
+    public boolean isStrippedLog(Block block) {
+        //#if MC > 260200
+        if (!(block instanceof RotatedPillarBlock)) return false;
+        String blockName = block.toString().toLowerCase();
+        return blockName.contains("stripped");
+        //#else
+        //$$ return AxeItemAccessor.getStrippables().containsValue(block);
+        //#endif
+    }
+    
+    public Block getLogForStripped(Block stripped) {
+        //#if MC > 260200
+        if (!(stripped instanceof RotatedPillarBlock)) return null;
+
+        String strippedName = stripped.toString();
+        for (Block block : net.minecraft.core.registries.BuiltInRegistries.BLOCK) {
+            if (block instanceof RotatedPillarBlock) {
+                String blockName = block.toString();
+                // Check if this log's name matches the stripped log's name without "stripped_"
+                if (strippedName.replace("stripped_", "").equals(blockName)) {
+                    return block;
+                }
+            }
+        }
+        return null;
+        //#else
+        //$$ for (Map.Entry<Block, Block> entry : AxeItemAccessor.getStrippables().entrySet()) {
+        //$$     if (entry.getValue() == stripped) return entry.getKey();
+        //$$ }
+        //$$ return null;
+        //#endif
     }
 
     public static class Action {
@@ -812,7 +863,13 @@ public class PlacementGuide extends PrinterUtils {
         public void sendQueue(LocalPlayer player) {
             if (target == null || hitModifier == null) return;
 
-            boolean wasSneaking = player.swinging;
+            boolean wasSneaking = player.isSwimming();
+//                    //#if MC > 260200
+//                            isSwimming()
+//                    //#else
+//                    //$$       isSwimming()
+//                    //#endif
+//                    ;
 
             Direction direction = side.getAxis() == Direction.Axis.Y ?
                     ((lookDirection == null || !lookDirection.getAxis().isHorizontal())
@@ -926,7 +983,7 @@ public class PlacementGuide extends PrinterUtils {
 
         // Other
         FARMLAND(FarmlandBlock.class),
-        DIRT_PATH(DirtPathBlock.class),
+        DIRT_PATH(PathBlock.class),
         SKIP(SkullBlock.class, GrindstoneBlock.class, SignBlock.class, VineBlock.class,EndPortalBlock.class),
         FLUID(LiquidBlock.class),
         DEFAULT;

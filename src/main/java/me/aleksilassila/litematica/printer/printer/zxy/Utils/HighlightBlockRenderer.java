@@ -9,7 +9,7 @@ import net.minecraft.util.profiling.ProfilerFiller;
 import org.joml.Matrix4f;
 import fi.dy.masa.litematica.Litematica;
 import com.mojang.blaze3d.vertex.DefaultVertexFormat;
-import com.mojang.blaze3d.vertex.VertexFormat;
+import com.mojang.blaze3d.vertex.*;
 import fi.dy.masa.malilib.config.options.ConfigColor;
 import fi.dy.masa.malilib.event.RenderEventHandler;
 import fi.dy.masa.malilib.interfaces.IRenderer;
@@ -30,13 +30,12 @@ import java.util.*;
     //$$ import net.minecraft.client.renderer.FogParameters;
     //$$ import com.mojang.blaze3d.buffers.BufferUsage;
     //#endif
-import com.mojang.blaze3d.vertex.VertexFormat;
 import fi.dy.masa.malilib.render.MaLiLibPipelines;
 import fi.dy.masa.malilib.render.RenderContext;
 //#endif
 
 //#if MC > 12111
-import com.mojang.blaze3d.buffers.GpuBufferSlice;
+import com.mojang.renderpearl.api.buffers.GpuBufferSlice;
 import net.minecraft.client.renderer.state.level.CameraRenderState;
 import org.joml.Matrix4fc;
 import org.joml.Vector4f;
@@ -193,7 +192,11 @@ public class HighlightBlockRenderer implements IRenderer {
     @Override
     //#if MC > 12004
         //#if MC > 12111
-        public void onRenderWorldLast(RenderTarget fb, Matrix4fc matrices, CameraRenderState cameraState, Frustum culling, RenderBuffers buffers, GpuBufferSlice terrainFog, Vector4f fogColor, ProfilerFiller profiler) {
+            //#if MC > 260200
+            public void onRenderWorldLast(RenderTarget fb, CameraRenderState cameraState, Frustum culling, RenderBuffers buffers, GpuBufferSlice terrainFog, Vector4f fogColor, ProfilerFiller profiler) {
+            //#else
+            //$$ public void onRenderWorldLast(RenderTarget fb, Matrix4fc matrices, CameraRenderState cameraState, Frustum culling, RenderBuffers buffers, GpuBufferSlice terrainFog, Vector4f fogColor, ProfilerFiller profiler) {
+            //#endif
         //#else
         //$$ public void onRenderWorldLast(Matrix4f matrices, Matrix4f projMatrix){
         //#endif

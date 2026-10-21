@@ -27,6 +27,10 @@ import static me.aleksilassila.litematica.printer.printer.zxy.Utils.ZxyUtils.get
 //$$ import net.minecraft.world.level.material.Material;
 //#endif
 
+//#if MC > 260200
+import net.minecraft.world.attribute.*;
+//#endif
+
 public class PrintWater {
 
     // 判断方块是否含水
@@ -67,15 +71,19 @@ public class PrintWater {
         Minecraft client = ZxyUtils.client;
         boolean b = false;
         //冰碎后无法产生水
-        //#if MC > 11904
-        BlockState material = client.level.getBlockState(pos.below());
-        b = material.liquid();
+        //#if MC > 260200
+        b = !client.level.environmentAttributes().getValue(EnvironmentAttributes.WATER_EVAPORATES, pos);
         //#else
-        //$$ Material material = client.level.getBlockState(pos.below()).getMaterial();
-        //$$ b = material.isLiquid();
+           //#if MC > 11904
+           //$$ BlockState material = client.level.getBlockState(pos.below());
+           //$$ b = material.blocksMotion() || material.liquid();
+           //#else
+           //$$ Material material = client.level.getBlockState(pos.below()).getMaterial();
+           //$$ b = material.isLiquid();
+           //#endif
         //#endif
 
-        if (material.blocksMotion() || b) {
+        if (b) {
             return true;
         }else {
             Messager.actionBar("冰碎后无法产生水");

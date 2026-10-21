@@ -34,7 +34,6 @@ import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.phys.Vec3;
 import org.jetbrains.annotations.NotNull;
-import org.lwjgl.glfw.GLFW;
 import it.unimi.dsi.fastutil.ints.Int2ObjectOpenHashMap;
 
 import java.util.*;
@@ -372,18 +371,6 @@ public class ZxyUtils {
     }
     public static int getRage(){
         return LitematicaMixinMod.PRINTER_RANGE.getIntegerValue();
-    }
-
-    public static int maximumFrameRate = 10;
-    public static int frameGenerationTime = getMonitorRefreshRate();
-    //根据帧率计算超时时间 尽量不占用帧生成时间 6毫秒预留给打印机处理
-    public static int printTimedOut = Math.max(3,frameGenerationTime -6);
-
-    public static int getMonitorRefreshRate() {
-        int refreshRate = Math.max(GLFW.glfwGetVideoMode(GLFW.glfwGetPrimaryMonitor()).refreshRate(),60);
-        maximumFrameRate = refreshRate;
-        return Math.max(1,1000 / refreshRate);
-//        System.out.println("The monitor refresh rate is " + refreshRate);
     }
     public static void exitGameReSet(){
         SwitchItem.reSet();

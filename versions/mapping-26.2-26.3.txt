@@ -1,0 +1,3 @@
+com.mojang.blaze3d.buffers.GpuBufferSlice com.mojang.renderpearl.api.buffers.GpuBufferSlice
+net.minecraft.world.level.block.RedStoneWireBlock net.minecraft.world.level.block.RedstoneWireBlock
+net.minecraft.world.level.block.DirtPathBlock net.minecraft.world.level.block.PathBlock

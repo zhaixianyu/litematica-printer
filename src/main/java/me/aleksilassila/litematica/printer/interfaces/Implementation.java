@@ -160,7 +160,7 @@ public class Implementation {
     public static Class<?>[] interactiveBlocks = {
             ChestBlock.class, AbstractFurnaceBlock.class, CraftingTableBlock.class,
             LeverBlock.class, DoorBlock.class, TrapDoorBlock.class,
-            BedBlock.class, RedStoneWireBlock.class, ScaffoldingBlock.class, HopperBlock.class,
+            BedBlock.class, RedstoneWireBlock.class, ScaffoldingBlock.class, HopperBlock.class,
             EnchantingTableBlock.class, NoteBlock.class, JukeboxBlock.class, CakeBlock.class,
             FenceGateBlock.class, BrewingStandBlock.class, DragonEggBlock.class, CommandBlock.class,
             BeaconBlock.class, AnvilBlock.class, ComparatorBlock.class, RepeaterBlock.class,

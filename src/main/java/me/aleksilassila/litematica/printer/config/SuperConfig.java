@@ -35,7 +35,7 @@ public class SuperConfig extends ConfigBoolean {
     public SuperConfig(IConfigBase mainConfig, IConfigBase... args) {
         super("", false
         //#if MC <= 12006
-                , ""
+        //$$         , ""
         //#endif
         );
         this.mainConfig = mainConfig;

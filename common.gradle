@@ -10,7 +10,7 @@ repositories {
     var github_username  = System.getenv("GITHUB_USERNAME")
     var github_token = System.getenv("GITHUB_TOKEN")
 
-    maven { url = 'https://masa.dy.fi/maven' }
+//    maven { url = 'https://masa.dy.fi/maven' }
     maven { url = "https://www.cursemaven.com" }
 
     maven { url = 'https://maven.fabricmc.net' }
@@ -150,18 +150,23 @@ def mod_dependencies = [
         [getQuiShulkerBox(), "quick_shulker", mcVersion == 12006 ? 6 : 10,"*"],
         ["net.kyrptonaught:kyrptconfig", "kyrptconfig", mcVersion > 12004 ? 0 : 1],
         ["net.kyrptonaught:shulkerutils", "shulkerutils", mcVersion > 12004 ? 0 : 1],
-        [getYacl(), "yacl", mcVersion >= 12001 ? 1 : 0],
-        ["maven.modrinth:chest-tracker" + (mcVersion >= 12106 ? "-port" : ""), "chesttracker", 1],
-        ["maven.modrinth:where-is-it" + (mcVersion >= 12106 ? "-port" : ""), "whereisit", 1],
+        [getYacl(), "yacl", mcVersion >= 12001 ? getChestTrackerCompatibility() : 0],
+        ["maven.modrinth:chest-tracker" + (mcVersion >= 12106 ? "-port" : ""), "chesttracker", getChestTrackerCompatibility()],
+        ["maven.modrinth:where-is-it" + (mcVersion >= 12106 ? "-port" : ""), "whereisit", getChestTrackerCompatibility()],
 //        [(mcVersion >= 12106 ? "red.jackf:whereisit" : "maven.modrinth:where-is-it"), "whereisit", 1],
-        ["red.jackf.jackfredlib:jackfredlib", "jackfredlib", mcVersion >= 12001 ? 1 : 0],
-        ["com.blamejared.searchables", "searchables", mcVersion >= 12001 ? 1 : 0],
+        ["red.jackf.jackfredlib:jackfredlib", "jackfredlib", mcVersion >= 12001 ? getChestTrackerCompatibility() : 0],
+        ["com.blamejared.searchables", "searchables", mcVersion >= 12001 ? getChestTrackerCompatibility() : 0],
         ["maven.modrinth:modmenu", "modmenu", 1],
         ["maven.modrinth:cloth-config", "cloth_config", mcVersion < 12001 ? 1 : 0],
         ["me.shedaniel.cloth.api:cloth-api", "cloth_api", mcVersion < 11904 ? 1 : 0],
         [LibGuiStatus ? "io.github.cottonmc:LibGui" : "cottonmc/LibGui", "LibGui", mcVersion < 12001 ? (LibGuiStatus ? 1 : 6) : 0],  // cottonmc的仓库喜欢跑路!!!!
 //        ["cottonmc/LibGui", "LibGui", mcVersion < 12001 ? 6 : 0],
 ]
+
+int getChestTrackerCompatibility(){
+    return 1
+//    return mcVersion >= 26.3 ? 4 : 1
+}
 
 String getYacl() {
 //    return "maven.modrinth:yacl";
